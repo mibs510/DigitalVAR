@@ -11,14 +11,26 @@
 #
 # By default this script does nothing.
 
-echo "Updating DigitalVAR specific scripts & binaries..."
-
 GITHUB_URL="https://raw.githubusercontent.com/mibs510/DigitalVAR/master/beast"
+
+# Should we update?
+curl -sf $GITHUB_URL/update > /tmp/update
+
+if [ "$?" != "0" ]; then
+	echo "Has Connor gone MIA?"
+	exit 0
+fi
+
+if [ "$(cat /tmp/update)" == "false" ]; then
+	exit 0
+fi
+
+echo "Updating DigitalVAR specific scripts & binaries..."
 
 # Download list of files
 curl -s $GITHUB_URL/files > /tmp/files
 curl -s $GITHUB_URL/file-dest > /tmp/file-dest
-curl -s $GITHUB_URL/file-dest > /tmp/file-chmodx
+curl -s $GITHUB_URL/file-chmodx > /tmp/file-chmodx
 
 # Put list of files into an array
 i=0
@@ -30,12 +42,24 @@ do
 	i=$((i+1))
 done < /tmp/files
 
-# Put list of file destinations into an array and move them
+# Put list of file destinations into an array
 i=0
 while read line
 do
 	DEST[$i]="$line"
-	echo "Moving ${FILE[$i]} to ${DEST[$i]}"
-	sudo mv /tmp/${FILE[$i]} ${DEST[$i]}
+	 mv ${FILE[$i]} ${DEST[$i]}
 	i=$((i+1))
 done < /tmp/file-dest
+
+echo "Installing new updates..."
+
+# chmod files as needed
+i=0
+while read line
+do
+	CHMODX[$i]="$line"
+	chmod +x ${CHMODX[$i]}
+	i=$((i+1))
+done < /tmp/file-chmodx
+
+exit 0
