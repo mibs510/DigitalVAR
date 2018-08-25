@@ -3,13 +3,10 @@
 if [ "${1}" != "7880" ] || [ "${1}" != "8500" ] || [ "${1}" != "8609" ] || [ "${1}" != "8610" ] || [ "${1}" != "8599" ]; then
 	echo "ERROR: Invalid arguments"
 	echo "Example: ${0} 7880"
-	echo "		   ${0} [PART NUMBER]"
+	echo "         ${0} [PART NUMBER]"
 	echo ""
-	echo "PART NUMBER:	7880"
-	echo "				8500"
-	echo "				8609"
-	echo "				8610"
-	echo "				8599"
+	echo "PART NUMBER:  7880, 8500, 8599, 8609, 8610"
+	exit 1
 fi
 
 for i in {b..z}; do
