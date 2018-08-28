@@ -17,11 +17,11 @@ GITHUB_URL="https://raw.githubusercontent.com/mibs510/DigitalVAR/master/beast"
 curl -sf $GITHUB_URL/update > /tmp/update
 
 if [ "$?" != "0" ]; then
-	echo "Has Connor gone MIA?"
+	echo "DigitalVAR repo not found..."
 	exit 0
 fi
 
-if [ "$(cat /tmp/update)" == "false" ]; then
+if [ "$(cat /tmp/update)" != "true" ]; then
 	exit 0
 fi
 
@@ -47,7 +47,7 @@ i=0
 while read line
 do
 	DEST[$i]="$line"
-	 mv ${FILE[$i]} ${DEST[$i]}
+	 mv /tmp/${FILE[$i]} ${DEST[$i]}
 	i=$((i+1))
 done < /tmp/file-dest
 
