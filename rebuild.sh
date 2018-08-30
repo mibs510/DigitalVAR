@@ -29,7 +29,7 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	fi
 	sudo cp server/drblwp.png server/squashfs-root/tftpboot/nbi_img
 	sudo cp server/interfaces server/squashfs-root/etc/network
-	sudo cp server/{server1_motd.txt,server2_motd.txt,profile} server/squashfs-root/etc
+	sudo cp server/{rc.local,hosts} server/squashfs-root/etc
 	sudo cp server/70-presistent-net.rules server/squashfs-root/etc/udev/rules.d
 	
 	sudo rm -rf server/filesystem.squashfs && sudo mksquashfs server/squashfs-root server/filesystem.squashfs -b 1024k -comp xz -Xbcj x86 -e boot

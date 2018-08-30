@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# By default this script does nothing.
+if [ -b "/dev/disk/by-uuid/7372bcf9-f869-452c-8dd5-dd8dac193433" ]; then
+	# Server #1
+	mount /dev/disk/by-uuid/7372bcf9-f869-452c-8dd5-dd8dac193433 /home/partimag
+fi
+
+if [ -b "/dev/disk/by-uuid/56cf432b-9306-444c-8cf9-f7d691e1f42c" ]; then
+	# Server #2
+	mount /dev/disk/by-uuid/56cf432b-9306-444c-8cf9-f7d691e1f42c /home/partimag
+fi
+
+
+exit 0
