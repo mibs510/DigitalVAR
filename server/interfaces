@@ -5,15 +5,19 @@
 auto lo
 iface lo inet loopback
 
-auto server1
-allow-hotplug server1
-iface server1 inet static
+auto eth0 eth1
+
+iface eth0 inet static
+	address 10.1.0.1
+	netmask 255.255.255.0
+	gateway 10.1.0.254
+
+iface eth1 inet static
 	address 192.168.168.1
-	netmask 255.255.2255.0
-
-
-auto server2
-allow-hotplug server2
-iface server2 inet static
+	netmask 255.255.255.0
+	pre-up /usr/share/doc/ifupdown/examples/check-mac-address.sh eth1 00:1E:67:C7:EE:8F
+	
+iface eth1 inet static
 	address 192.168.168.2
-	netmask 255.255.2255.0
+	netmask 255.255.255.0
+	pre-up /usr/share/doc/ifupdown/examples/check-mac-address.sh eth1 00:1E:67:E0:9D:6F

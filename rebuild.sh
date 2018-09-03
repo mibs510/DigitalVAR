@@ -30,7 +30,9 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	sudo cp server/drblwp.png server/squashfs-root/tftpboot/nbi_img
 	sudo cp server/interfaces server/squashfs-root/etc/network
 	sudo cp server/{rc.local,hosts} server/squashfs-root/etc
-	sudo cp server/70-presistent-net.rules server/squashfs-root/etc/udev/rules.d
+	sudo cp server/{Super_Thunar.desktop,Clonezilla-server.desktop} server/squashfs-root/usr/share/drbl/setup/files/misc/desktop-icons/drbl-live
+	
+	sudo chmod +x server/squashfs-root/usr/share/doc/ifupdown/examples/usr/share/doc/ifupdown/examples/check-mac-address.sh
 	
 	sudo rm -rf server/filesystem.squashfs && sudo mksquashfs server/squashfs-root server/filesystem.squashfs -b 1024k -comp xz -Xbcj x86 -e boot
 	exit 0
@@ -49,6 +51,42 @@ if [ "${1}" == "--server-chroot" ] || [ "${1}" == "server-chroot" ]; then
 	exit 0
 fi
 
+if [ "${1}" == "--test-initrd" ] || [ "${1}" == "test-initrd" ]; then
+	sudo qemu-system-x86_64 \
+    -monitor stdio \
+    -soundhw ac97 \
+    -machine accel=kvm \
+    -m 256 \
+    -boot once=c,menu=on \
+    -net nic,vlan=0 \
+    -net user,vlan=0 \
+    -kernel server/vmlinuz \
+    -initrd server/initrd.img\
+    -append 'debug boot=live union=overlay config \
+    components nomodeset net.ifnames=0 nosplash noeject \
+    netboot=nfs nfsroot=192.168.100.254:tftpboot/node_root/clonezilla-live \
+    ocs_server="192.168.100.254" hostname=ocs-client \
+    username=clonezilla systemd.unit=multi-user.target \
+    drbl_live_noconfx stick-to-pxe-srv dhcp-vendor-id=DRBLClient \
+    drbl_prerun1="mkdir -p /var/lib/live/clonezilla/ocs-live.d" \
+    drbl_prerun2="grep -qsE ^sudo -i ocs-live-run-menu /home/clonezilla/.bash_profile || echo sudo -i ocs-live-run-menu >> /home/clonezilla/.bash_profile" \
+    keyboard-layous=us locales=en_US.UTF-8 ocs_daemonon="ssh" \
+    ocs_prerun="mount -t nfs 192.168.100.254:/home/partimag/" \
+    ocs_live_run="ocs-sr -l en_US.UTF-8 --use-partclone --clone-hidden-data -p reboot -zip -i 2000 -scr savedisk 2018-09-02-05-img sda"' \
+    -rtc base=localtime \
+    -name "Clonezilla Live - PXE"
+	
+	exit 0
+fi
+
+if [ "${1}" == "--initrd" ] || [ "${1}" == "initrd" ]; then
+	sudo rm -rf server/initrd.img
+	cd server/initrd-root
+	sudo find . | sudo cpio --quiet -o -H newc | sudo gzip -9 > ../initrd.img
+	cd $OLDPWD
+	exit 0
+fi
+
 echo "ERROR: Wrong arguments or not enough arguments"
 echo "Example: ${0} [OPTION]"
 echo "OPTION:"
@@ -56,4 +94,6 @@ echo "			--beast, beast                 - Rebuild for imaging beast"
 echo "          --beast-chroot, beast-chroot   - Chroot into beast's rootfs"
 echo "			--server, server               - Rebuild for imaging servers"
 echo "			--server-chroot, server-chroot - Chroot into server's rootfs"
+echo "          --test-initrd, test-initrd     - Test Clonezilla-Live initrd with qemu"
+echo "          --initrd, initrd               - Rebuild initrd.img for Clonezilla-Live.initrd.img"
 exit 1

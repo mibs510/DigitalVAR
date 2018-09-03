@@ -1,2 +1,0 @@
-SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="00:1e:67:cf:ee:8f", ATTR{dev_id}=="0x0", ATTR{type}=="1", KERNEL=="eth*", NAME=="server1"
-SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="00:1e:67:e0:9d:6f", ATTR{dev_id}=="0x0", ATTR{type}=="1", KERNEL=="eth*", NAME=="server2"

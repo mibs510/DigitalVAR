@@ -40,11 +40,11 @@ for i in "${@}"; do
 	echo ""
 	echo ""
 	echo "=================================================================================================================================="
-	echo "EXECUTING: sudo ocs-sr -batch -nogui -g auto -e1 auto -e2 -c -r -j2 -scr -p true restoredisk ${IMG} sd${i} | tee /tmp/sd${i}.txt"
+	echo "EXECUTING: sudo ocs-sr -batch -nogui -g auto -e1 auto -e2 -r -j2 -scr -p true restoredisk ${IMG} sd${i} | tee /tmp/sd${i}.txt"
 	echo "=================================================================================================================================="
 	echo ""
 	echo ""
-	sudo ocs-sr -batch -nogui -g auto -e1 auto -e2 -c -r -j2 -scr -p true restoredisk ${IMG} sd${i} | tee /tmp/sd${i}.txt
+	sudo ocs-sr -batch -nogui -g auto -e1 auto -e2 -r -j2 -scr -p true restoredisk ${IMG} sd${i} | tee /tmp/sd${i}.txt
 done
 
 for i in "${@}"; do
