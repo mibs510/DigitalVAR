@@ -50,7 +50,7 @@ done
 for i in "${@}"; do
 	echo "============================================"
 	echo "/dev/sd${i} completed: "
-	cat /tmp/sd${i}.txt | grep "error"
+	cat /tmp/sd${i}.txt | grep "Finished!"
 	echo "============================================"
 done
 
