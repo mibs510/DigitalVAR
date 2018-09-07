@@ -49,8 +49,8 @@ int main(int argc, char *argv[]){
   
   if (argc == 4){
 	printf("\n\n%s has a xxhsum of %s\n\n", IMG, XXHSUM);
-    printf("EXECUTING: xxhsum /dev/sd%s\n", argv[3]);
-    sprintf(command, "xxhsum /dev/sd%s\n", argv[3]);
+    printf("EXECUTING: sudo xxhsum /dev/sd%s\n", argv[3]);
+    sprintf(command, "sudo xxhsum /dev/sd%s\n", argv[3]);
     system(command);
     return 0;
   }
@@ -77,7 +77,7 @@ int main(int argc, char *argv[]){
 
   for (int i = argc - 3; i < argc; i++){
     printf("EXECUTING: xxhsum /dev/sd%s\n", argv[i]);
-    sprintf(command, "xxhsum /dev/sd%s\n", argv[i]);
+    sprintf(command, "sudo xxhsum /dev/sd%s\n", argv[i]);
     system(command);
   }
   

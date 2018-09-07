@@ -6,6 +6,7 @@ if [ "${1}" == "--beast" ] || [ "${1}" == "beast" ]; then
 	sudo cp beast/{motd.txt,profile,rc.local} beast/squashfs-root/etc
 	sudo cp beast/interfaces beast/squashfs-root/etc/network
 	sudo rm -rf beast/filesystem.squashfs && sudo mksquashfs beast/squashfs-root beast/filesystem.squashfs -b 1024k -comp xz -Xbcj x86 -e boot
+	echo "NOTE: Copy filesystem.squashfs to USB_FLASH_DRIVE/live"
 	exit 0
 fi
 
@@ -27,14 +28,33 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 		echo "ERROR: Exit from chroot!!!"
 		exit 1
 	fi
+	# Propigate kernel modules throughout everywhere
+	sudo rm -rf server/squashfs-root/tftpboot/node_root/lib/modules/*
+	sudo cp -a server/initrd-root/lib/modules/4.9.0-2-amd64 server/squashfs-root/tftpboot/node_root/lib/modules
+	sudo rm -rf server/squashfs-root/usr/lib/modules/*
+	sudo cp -a server/initrd-root/lib/modules/4.9.0-2-amd64 server/squashfs-root
+	#
+	
+	# sudo cp server/ifupdownsucks.sh server/squashfs-root/usr/sbin
+	sudo cp server/check-mac-address.sh server/squashfs-root/usr/bin
+	sudo cp server/Forcevideo-drbl-live server/squashfs-root/tftpboot/node_root/sbin
+	sudo cp server/firstboot server/squashfs-root/tftpboot/node_root/etc/init.d
 	sudo cp server/drblwp.png server/squashfs-root/tftpboot/nbi_img
 	sudo cp server/interfaces server/squashfs-root/etc/network
 	sudo cp server/{rc.local,hosts} server/squashfs-root/etc
 	sudo cp server/{Super_Thunar.desktop,Clonezilla-server.desktop} server/squashfs-root/usr/share/drbl/setup/files/misc/desktop-icons/drbl-live
+	sudo cp server/firstboot.default-DBN.drbl server/squashfs-root/usr/share/drbl/setup/files/DBN
+	sudo cp server/desktop-wallpaper/* server/squashfs-root/usr/share/desktop-base/softwaves-theme/wallpaper/contents/images
+	sudo cp -a server/desktop-background server/squashfs-root/etc/alternatives/desktop-background
 	
-	sudo chmod +x server/squashfs-root/usr/share/doc/ifupdown/examples/usr/share/doc/ifupdown/examples/check-mac-address.sh
+	# sudo chmod +x server/squashfs-root/usr/sbin/ifupdownsucks.sh
+	sudo chmod +x server/squashfs-root/usr/bin/check-mac-address.sh
+	sudo chmod +x server/squashfs-root/usr/share/drbl/setup/files/DBN/firstboot.default-DBN.drbl
+	sudo chmod +x server/squashfs-root/tftpboot/node_root/etc/init.d/firstboot
+	sudo chmod +x server/squashfs-root/tftpboot/node_root/sbin/Forcevideo-drbl-live
 	
 	sudo rm -rf server/filesystem.squashfs && sudo mksquashfs server/squashfs-root server/filesystem.squashfs -b 1024k -comp xz -Xbcj x86 -e boot
+	echo "NOTE: Copy vmlinuz, initrd.img, and filesystem.squashfs to USB_FLASH_DRIVE/live"
 	exit 0
 fi
 
@@ -56,11 +76,11 @@ if [ "${1}" == "--test-initrd" ] || [ "${1}" == "test-initrd" ]; then
     -monitor stdio \
     -soundhw ac97 \
     -machine accel=kvm \
-    -m 256 \
+    -m 1024 \
     -boot once=c,menu=on \
     -net nic,vlan=0 \
     -net user,vlan=0 \
-    -kernel server/vmlinuz \
+    -kernel server/bzImage \
     -initrd server/initrd.img\
     -append 'debug boot=live union=overlay config \
     components nomodeset net.ifnames=0 nosplash noeject \
@@ -82,6 +102,8 @@ fi
 if [ "${1}" == "--initrd" ] || [ "${1}" == "initrd" ]; then
 	sudo rm -rf server/initrd.img
 	cd server/initrd-root
+	# Strip kernel modules
+	sudo find lib/modules/*/ -iname "*.ko" -exec strip --strip-debug {} \;
 	sudo find . | sudo cpio --quiet -o -H newc | sudo gzip -9 > ../initrd.img
 	cd $OLDPWD
 	exit 0

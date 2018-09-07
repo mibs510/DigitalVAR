@@ -15,9 +15,9 @@ iface eth0 inet static
 iface eth1 inet static
 	address 192.168.168.1
 	netmask 255.255.255.0
-	pre-up /usr/share/doc/ifupdown/examples/check-mac-address.sh eth1 00:1E:67:C7:EE:8F
+	pre-up /usr/bin/check-mac-address.sh eth1 00:1e:67:cf:ee:8f
 	
 iface eth1 inet static
 	address 192.168.168.2
 	netmask 255.255.255.0
-	pre-up /usr/share/doc/ifupdown/examples/check-mac-address.sh eth1 00:1E:67:E0:9D:6F
+	pre-up /usr/bin/check-mac-address.sh eth1 00:1e:67:e0:9d:6f

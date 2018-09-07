@@ -58,11 +58,11 @@ int main(int argc, char *argv[]){
   
 	if (argc == 4){
 		printf("\n\nGenerating %s xxhsum...\n", IMG);
-		sprintf(command, "xxhsum %s", IMG);
+		sprintf(command, "sudo xxhsum %s", IMG);
 		printf("EXECUTING: %s\n", command);
 		system(command);
 		printf("\n\nGenerating /dev/sd%s xxhsum...\n", argv[3]);
-		sprintf(command, "xxhsum /dev/sd%s", argv[3]);
+		sprintf(command, "sudo xxhsum /dev/sd%s", argv[3]);
 		printf("EXECUTING: %s\n", command);
 		system(command);
 		return 0;
@@ -90,12 +90,12 @@ int main(int argc, char *argv[]){
 	}
 
 	printf("\n\nGenerating %s xxhsum...\n", IMG);
-	sprintf(command, "xxhsum %s", IMG);
+	sprintf(command, "sudo xxhsum %s", IMG);
 	printf("EXECUTING: %s\n", command);
 	system(command);
 
 	for (int i = argc - 3; i < argc; i++){
-		sprintf(command, "xxhsum %s", argv[i]);
+		sprintf(command, "sudo xxhsum %s", argv[i]);
 		printf("EXECUTING: %s\n", command);
 		system(command);
 	}
