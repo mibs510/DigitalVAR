@@ -10,15 +10,34 @@
 # bits.
 #
 # By default this script does nothing.
+
+# set -x
+
 if [ -b /dev/disk/by-id/ata-ST4000NM0033-9ZM170_Z1Z9F3FJ-part1 ]; then
 	# Server #1
 	mount /dev/disk/by-id/ata-ST4000NM0033-9ZM170_Z1Z9F3FJ-part1 /home/partimag
-fi
-
-if [ -b /dev/disk/by-id/ata-ST10000VN0004-1ZD101_ZA20ABZY-part1 ]; then
+	ifupdownsucks.sh &
+	startafterifupdownsucks.sh &
+	cp /opt/{thunar.xml,thunar-volman.xml} /home/user/.config/xfce4/xfconf/xfce-perchannel-xml
+	chown -R user:user /home/user/.config
+	exit 0
+elif [ -b /dev/disk/by-id/ata-ST10000VN0004-1ZD101_ZA20ABZY-part1 ]; then
 	# Server #2
 	mount /dev/disk/by-id/ata-ST10000VN0004-1ZD101_ZA20ABZY-part1 /home/partimag
+	ifupdownsucks.sh &
+	startafterifupdownsucks.sh &
+	cp /opt/{thunar.xml,thunar-volman.xml} /home/user/.config/xfce4/xfconf/xfce-perchannel-xml
+	chown -R user:user /home/user/.config
+	exit 0
 fi
+
+# This rest of this script is executed at the end of each multiuser
+# runlevel. This includes on the server and the PXE clients (units/CPUs)
+# that are to be imaged. So becareful of what is put into here on
+# afterwards. This script gets copied over to /tftpboot which is used as
+# a mount point for the PXE clients.
+
+# set +x
 
 
 exit 0

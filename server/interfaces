@@ -5,19 +5,3 @@
 auto lo
 iface lo inet loopback
 
-auto eth0 eth1
-
-iface eth0 inet static
-	address 10.1.0.1
-	netmask 255.255.255.0
-	gateway 10.1.0.254
-
-iface eth1 inet static
-	address 192.168.168.1
-	netmask 255.255.255.0
-	pre-up /usr/bin/check-mac-address.sh eth1 00:1e:67:cf:ee:8f
-	
-iface eth1 inet static
-	address 192.168.168.2
-	netmask 255.255.255.0
-	pre-up /usr/bin/check-mac-address.sh eth1 00:1e:67:e0:9d:6f
