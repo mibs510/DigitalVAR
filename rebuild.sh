@@ -7,9 +7,9 @@ if [ "${1}" == "--beast" ] || [ "${1}" == "beast" ]; then
 	fi
 	sudo cp beast/{bigbox,fluorchem,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,xxhsum} beast/squashfs-root/usr/bin
 	sudo chmod +x beast/squashfs-root/usr/bin/{bigbox,fluorchem,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,xxhsum}
-	sudo cp beast/{motd.txt,profile,rc.local} beast/squashfs-root/etc
+	sudo cp beast/{motd.txt,profile,rc.local,resolv.conf} beast/squashfs-root/etc
 	sudo cp beast/interfaces beast/squashfs-root/etc/network
-	sudo rm -rf beast/filesystem.squashfs && sudo mksquashfs beast/squashfs-root beast/filesystem.squashfs -b 1024k -comp xz -Xbcj x86 -e boot
+	sudo rm -rf beast/filesystem.squashfs && sudo mksquashfs beast/squashfs-root beast/filesystem.squashfs -b 1024k -comp xz -Xbcj x86 -e boot && \
 	echo "NOTE: Copy filesystem.squashfs to USB_FLASH_DRIVE/live"
 	exit 0
 fi
