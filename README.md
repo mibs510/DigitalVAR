@@ -11,11 +11,13 @@ which are used to automate many of our production needs for SSDs/HDDs &
 USBs.
  
 ### rebuild.sh
-The main purpose of rebuild.sh is to be able to use any filesystem.squashfs
+The main purpose of rebuild.sh is to be able to use any filesystem.squashfs,
 wether it has been modified already or not and to ultimately produce the same
-consisnent image each time, hence all the recopying of files. I've also 
-included the copying of symlinks as well. However all changes may not 
-have been accounted for so and those will be eventually dealt with.
+consistent image each time, hence all the recopying of files. All files
+located in [server/](server) and [beast/](beast)  are files that have been in some way 
+modified from the original filesystem.squashfs. I've also included the 
+copying of symlinks as well. However all changes may not have been 
+accounted for, those will be eventually dealt with.
 
 
 The following is the synopsis:
