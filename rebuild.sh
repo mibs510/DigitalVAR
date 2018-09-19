@@ -10,7 +10,7 @@ if [ "${1}" == "--beast" ] || [ "${1}" == "beast" ]; then
 	sudo cp beast/{motd.txt,profile,rc.local,resolv.conf} beast/squashfs-root/etc
 	sudo cp beast/interfaces beast/squashfs-root/etc/network
 	sudo rm -rf beast/filesystem.squashfs && sudo mksquashfs beast/squashfs-root beast/filesystem.squashfs -b 1024k -comp xz -Xbcj x86 -e boot && \
-	echo "NOTE: Copy filesystem.squashfs to USB_FLASH_DRIVE/live"
+	echo "NOTE: Copy filesystem.squashfs to CLONER/live"
 	exit 0
 fi
 
@@ -70,7 +70,7 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	
 	echo "Rebuilding filesystem.squashfs..."
 	sudo rm -rf server/filesystem.squashfs && sudo mksquashfs server/squashfs-root server/filesystem.squashfs -b 1024k -comp xz -Xbcj x86 -e boot && \
-	echo "NOTE: Copy vmlinuz, initrd.img, and filesystem.squashfs to USB_FLASH_DRIVE/live"
+	echo "NOTE: Copy vmlinuz, initrd.img, and filesystem.squashfs to CLONER SE/live"
 	exit 0
 fi
 
@@ -116,6 +116,15 @@ if [ "${1}" == "--test-initrd" ] || [ "${1}" == "test-initrd" ]; then
 fi
 
 if [ "${1}" == "--initrd" ] || [ "${1}" == "initrd" ]; then
+	if [ ! -d server/initrd-root ]; then
+		echo "First lets unpack the existing initrd.img"
+		mkdir server/initrd-root
+		cd server/initrd-root
+		zcat ../initrd.img | cpio -idmv
+		cd $OLDPWD
+		exit 0
+	fi
+	
 	sudo rm -rf server/initrd.img
 	cd server/initrd-root
 	# Strip kernel modules
