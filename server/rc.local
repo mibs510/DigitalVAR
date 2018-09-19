@@ -18,16 +18,19 @@ if [ -b /dev/disk/by-id/ata-ST4000NM0033-9ZM170_Z1Z9F3FJ-part1 ]; then
 	mount /dev/disk/by-id/ata-ST4000NM0033-9ZM170_Z1Z9F3FJ-part1 /home/partimag
 	ifupdownsucks.sh &
 	startafterifupdownsucks.sh &
+	mkdir -p /home/user/.config/gtk-3.0
 	cp /opt/{thunar.xml,thunar-volman.xml} /home/user/.config/xfce4/xfconf/xfce-perchannel-xml
-	chown -R user:user /home/user/.config
+	cp /opt/bookmarks /home/user/.config/gtk-3.0
+	chown -R user:user /home/user
 	exit 0
 elif [ -b /dev/disk/by-id/ata-ST10000VN0004-1ZD101_ZA20ABZY-part1 ]; then
 	# Server #2
 	mount /dev/disk/by-id/ata-ST10000VN0004-1ZD101_ZA20ABZY-part1 /home/partimag
 	ifupdownsucks.sh &
-	startafterifupdownsucks.sh &
+	mkdir -p /home/user/.config/gtk-3.0
 	cp /opt/{thunar.xml,thunar-volman.xml} /home/user/.config/xfce4/xfconf/xfce-perchannel-xml
-	chown -R user:user /home/user/.config
+	cp /opt/bookmarks /home/user/.config/gtk-3.0
+	chown -R user:user /home/user
 	exit 0
 fi
 
