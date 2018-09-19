@@ -47,8 +47,9 @@ You will need [qemu](https://www.qemu.org/) installed in your system.
 ### Rebuild/filesystem.squashfs
 You'll need an exisitng filesystem.squahfs as I couldn't upload my working
 copy due to file size limits on github. A link to filedropper.com can be
-found [here](https://mega.nz/#!u9ZhGIzQ). You have to uncompress it
-inside /path/to/DigitalVAR/beast by executing the following:
+found [here](https://mega.nz/#!u9ZhGIzQ!l_C5uRzM-TDhhGgjuEz2r_npwrV16YNlYHrJYxuBjlk).
+You have to uncompress it inside /path/to/DigitalVAR/beast by executing 
+the following:
 
 `unsquashfs filesystem.squashfs`
 
@@ -83,11 +84,11 @@ Much like the beast, I tried writing rebuild.sh and keeping all files that
 I've modified so that rebuild.sh can give you what I once made in a 
 presistent manner. If you don't want to go throgh and make surethat all
 changes have been made from an original copy, then you can download my
-working copy [here](https://mega.nz/#!D5YBQQKQ) (resquashed on 9/16/2018).
-Although its more than likely this has changed by the time you download it, 
-the changes won't be major from now on out. Make sure to rename it to 
-filesystem.squashfs and that it resides in the server/ directory. To 
-uncompress it, execute the following:
+working copy [here](https://mega.nz/#!D5YBQQKQ!YM46X2bZytg074hqV75LkB1kiZI_Cq9woTLLZi8DG8E) 
+(resquashed on 9/16/2018). Although its more than likely this has changed 
+by the time you download it, the changes won't be major from now on out. 
+Make sure to rename it to filesystem.squashfs and that it resides in the 
+server/ directory. To uncompress it, execute the following:
 
 `unsquashfs filesystem.squashfs`
 
