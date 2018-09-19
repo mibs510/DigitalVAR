@@ -187,6 +187,7 @@ modules. All three locations must have the same exact modules.
 * `cd linux-*`
 * `make menuconfig`
    Include all desired modules, I included: iSCSi, SCSi, PATA, SATA, NVMe, Ethernet, USB Ethernet, 802.11, and all filesystems
+   
    `make allmodconfig` did not yield a usable kernel and modules
 * `make -j 16` (16 = CPU cores * 2)
 * `mkdir install`

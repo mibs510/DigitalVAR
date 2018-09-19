@@ -43,7 +43,7 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	echo "Copying everything from 'server/' folder to where they belong..."
 	sudo cp server/syncthing.service server/squashfs-root/usr/lib/systemd/user
 	sudo cp server/{syncthing@.service,syncthing-resume.service} server/squashfs-root/lib/systemd/system
-	sudo cp server/{thunar-volman.xml,thunar.xml} server/squashfs-root/opt
+	sudo cp server/{thunar-volman.xml,thunar.xml,bookmarks} server/squashfs-root/opt
 	sudo cp server/drbl-functions server/squashfs-root/usr/share/drbl/sbin
 	sudo cp server/{ocs-live-netcfg,ifupdownsucks.sh,startafterifupdownsucks.sh,drbl-live} server/squashfs-root/usr/sbin
 	sudo cp server/drbl-live-conf-X server/squashfs-root/usr/share/drbl/sbin/drbl-live-conf-X
