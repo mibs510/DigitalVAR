@@ -11,7 +11,7 @@ which are used to automate many of our production needs for SSDs/HDDs &
 USBs.
  
 ### rebuild.sh
-The main purpose of rebuild.sh is to be able to use any filesystem.squashfs,
+The main purpose of [rebuild.sh](rebuild.sh) is to be able to use any filesystem.squashfs,
 wether it has been modified already or not and to ultimately produce the same
 consistent image each time, hence all the recopying of files. All files
 located in [server/](server) and [beast/](beast)  are files that have been in some way 
@@ -165,7 +165,7 @@ These files are copied to /opt and then are copied to
 /home/user/.config/xfce4/xfconf/xfce-perchannel-xml upon each boot as seen in [rc.local](server/rc.local)
 Both are responsible of providing modified default settings to our needs
 for the ability of (a) to click on a USB mass storage device and automatically
-mount it, and (b) to set Thunar default view as detailed list.
+mount it, and (b) to set Thunar's default view as 'detailed list'.
 
 ### Kernel
 We used Clonezilla SE stable release (2.5.1-16) as the base image for
