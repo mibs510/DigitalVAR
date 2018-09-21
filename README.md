@@ -41,14 +41,14 @@ You will need [qemu](https://www.qemu.org/) installed in your system.
 # Beast
 ---
 
-### Rebuild/filesystem.squashfs
+### beast/filesystem.squashfs
 You'll need an exisitng filesystem.squahfs as I couldn't upload my working
 copy due to file size limits on github. A download link to can be found 
 [here](https://mega.nz/#!u9ZhGIzQ!l_C5uRzM-TDhhGgjuEz2r_npwrV16YNlYHrJYxuBjlk).
 You'll have to rename it (filesystem.squashfs) and uncompress it inside 
 /path/to/[DigitalVAR/beast](beast/) by executing the following:
 
-`unsquashfs filesystem.squashfs`
+`sudo unsquashfs filesystem.squashfs`
 
 ### Packages
 I only had to install curl (which is included for offline installs)
@@ -60,13 +60,13 @@ and then installing said package:
 
 `apt update && apt install curl`
 
-### rc.local
+### beast/rc.local
 The purpose of [rc.local](beast/rc.local) was to provide a 
 quick-n-dirty-easy-updater for all scripts and C programs. It also gave
 us the flexibilty to manage updates remotely upon each boot without the
 need of repacking filesystem.squashfs for each minor change.
 
-### motd.txt
+### beast/motd.txt
 [motd.txt](beast/motd.txt) will give you a synopsis of all the scripts
 and C programs I wrote. This txt file is displayed on every tty login 
 instance, as seen in [profile](beast/profile).
@@ -76,7 +76,7 @@ Copy filesystem.squahfs to /path/to/CLONER/live
 
 # Server
 ---
-### filesystem.squashfs
+### server/filesystem.squashfs
 Much like the beast, I tried writing rebuild.sh and keeping all files that 
 I've modified so that rebuild.sh can give you what I once made in a 
 presistent manner. If you don't want to go throgh and make surethat all
@@ -87,37 +87,37 @@ by the time you download it, the changes won't be major from now on out.
 Make sure to rename it to filesystem.squashfs and that it resides in the 
 [server/](server/) directory. To uncompress it, execute the following:
 
-`unsquashfs filesystem.squashfs`
+`sudo unsquashfs filesystem.squashfs`
 
 ### Packages
 * Installed packages: syncthing
 * Uninstall packages: vim-common, vim-runtime, vim-tiny
 
-### desktop-background
+### server/desktop-background
 Symlink to reflect new default wallpapers from svgs to pngs
 
-### drbl-functions
+### server/drbl-functions
 Too long of a file. Hopefully I remebered to mention all lines edited. If not, sorry.
 * Lines edited: 2516
 * Can't remember if any other line was edited.
 
-### drbl-live
+### server/drbl-live
 Please don't tell me to press Enter to continue.
 * Lines editied: 154
 
-### drbl-live-conf-x
+### server/drbl-live-conf-x
 All other firstboot* and Forcevideo-drbl-live don't matter, I figured.
 * Lines edited: 32-32, automatically start the GUI, no need to ask us.
 
-### gnome-background.xml
+### server/gnome-background.xml
 File updated to reflect new custom wallpapers from originally svgs to pngs
 as seen in [desktop-wallpaper/](server/desktop-wallpaper).
 * Lines edited: 5-15, changed .svg to .png
 
-### hosts
+### server/hosts
 Pretty self explanatory.
 
-### ifupdownsucks.sh
+### server/ifupdownsucks.sh
 networks(5) is a powerful system daemon but it has limitations.
 Unfortunately for our case, networks(5) isn't customizable enough for our
 environment. So [ifupdownsucks.sh](server/ifupdownsucks.sh) was created 
@@ -130,25 +130,27 @@ eth0:1, and dhcp are brought up otherwise `ocs-live-netcfg`
 (or some other script in the latter) will configure eth1 as as the LAN
 that faces the PXE clients.
 
-### ocs-functions
+### server/ocs-functions
 * Line(s) edited: 4866, more `Press Enter` nonsense
 
-### ocs-live-blacklist.conf
+### server/ocs-live-blacklist.conf
 This is used to blacklist kernel modules from loading. Usually these 
 modules are completely useless but may include those causing kernel panics 
-or other issues when loaded automatically by the kernel itself.
+or other issues when loaded automatically by the kernel itself. You will
+need to rebuild the initrd (`./rebuild.sh initrd`) and the server
+filesystem.squashfs (`./rebuild.sh server`)
 
-### ocs-live-netcfg
+### server/ocs-live-netcfg
 This file basically configures the ethernet that is facing the PXE clients.
 All lines mentioned automate the configuration with a static ip address.
 * Lines edited: 146-149, 151-154, 160-164, 171,174, 442-445, 462-473
 
-### rc.local
+### server/rc.local
 rc.local not only gets executed on the server live but also on the PXE 
 clients (units to be images). So becareful of what you put in there.
 This file ultimately gets copied to /tftpboot/nbi_root
 
-### startafterifupdownsucks.sh
+### server/startafterifupdownsucks.sh
 This script, unlike [ifupdownsucks.sh](server/ifupdownsucks.sh), is meant
 to be run literally as the filename states but only executing whatever
 you want it once. So basically after all NICs have been configured and 
@@ -158,7 +160,7 @@ ssh will not work. `sudo ocs-srv-live -b start` invokes a drbl script
 that regenerates ssh certificates and in doing so when ssh had already
 done so causes ssh to fail.
 
-### syncthing*.service
+### server/syncthing*.service
 Excluding syncthing-resume.service, both of these files had to be edited
 to work in a live environment. Since we're using a live environment 
 the HDDs in the servers that contain all clonezilla images (mounted as 
@@ -167,14 +169,14 @@ the local database that syncthing uses to keep track of file and
 directories /home/partimag/{.config/syncthing/*, .stfolder, .stignore} 
 So therefore -home was added to both of these files.
 
-### thunar*.xml
+### server/thunar*.xml
 These files are copied to /opt and then are copied to
 /home/user/.config/xfce4/xfconf/xfce-perchannel-xml upon each boot as seen in [rc.local](server/rc.local)
 Both are responsible of providing modified default settings to our needs
 for the ability of (a) to click on a USB mass storage device and automatically
 mount it, and (b) to set Thunar's default view as 'detailed list'.
 
-### Kernel
+### server/vmlinuz - Kernel
 We used Clonezilla SE stable release (2.5.1-16) as the base image for
 our modified copy. The kernel that was shipped out with (4.9.0-2-amd64)
 was infact missing some entries in the modules.alias file for newer
