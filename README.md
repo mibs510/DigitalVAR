@@ -1,6 +1,3 @@
-# DigitalVAR
----
-
 This repository's main purpose is to hold and document modifications done
 to Clonezilla (Live/SE). These modifications were specifically targeted
 for our production needs. The motivation behind such changes were done
@@ -133,6 +130,14 @@ eth0:1, and dhcp are brought up otherwise `ocs-live-netcfg`
 (or some other script in the latter) will configure eth1 as as the LAN
 that faces the PXE clients.
 
+### ocs-functions
+* Line(s) edited: 4866, more `Press Enter` nonsense
+
+### ocs-live-blacklist.conf
+This is used to blacklist kernel modules from loading. Usually these 
+modules are completely useless but may include those causing kernel panics 
+or other issues when loaded automatically by the kernel itself.
+
 ### ocs-live-netcfg
 This file basically configures the ethernet that is facing the PXE clients.
 All lines mentioned automate the configuration with a static ip address.
@@ -155,10 +160,12 @@ done so causes ssh to fail.
 
 ### syncthing*.service
 Excluding syncthing-resume.service, both of these files had to be edited
-to work in a live environment. The HDDs in the servers that contain all 
-clonezilla images (mounted as /home/partmag) are responsible of holding 
-all configurations files (.config/syncthing/,.stfolder,.stignore). 
-So therefore -home was added. 
+to work in a live environment. Since we're using a live environment 
+the HDDs in the servers that contain all clonezilla images (mounted as 
+/home/partmag) are responsible of holding all configurations files and 
+the local database that syncthing uses to keep track of file and 
+directories /home/partimag/{.config/syncthing/*, .stfolder, .stignore} 
+So therefore -home was added to both of these files.
 
 ### thunar*.xml
 These files are copied to /opt and then are copied to
@@ -186,6 +193,7 @@ modules. All three locations must have the same exact modules.
 * Untar it: `tar xvf linux-*.tar.xz`
 * `cd linux-*`
 * `make menuconfig`
+   
    Include all desired modules, I included: iSCSi, SCSi, PATA, SATA, NVMe, Ethernet, USB Ethernet, 802.11, and all filesystems
    
    `make allmodconfig` did not yield a usable kernel and modules
