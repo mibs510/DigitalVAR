@@ -41,10 +41,12 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	#
 	
 	echo "Copying everything from 'server/' folder to where they belong..."
+	sudo cp server/ocs-live-blacklist.conf server/initrd-root/etc/modprobe.d
+	sudo cp server/ocs-live-blacklist.conf server/squashfs-root/etc/modprobe.d
 	sudo cp server/syncthing.service server/squashfs-root/usr/lib/systemd/user
 	sudo cp server/{syncthing@.service,syncthing-resume.service} server/squashfs-root/lib/systemd/system
 	sudo cp server/{thunar-volman.xml,thunar.xml,bookmarks} server/squashfs-root/opt
-	sudo cp server/drbl-functions server/squashfs-root/usr/share/drbl/sbin
+	sudo cp server/{drbl-functions,ocs-functions} server/squashfs-root/usr/share/drbl/sbin
 	sudo cp server/{ocs-live-netcfg,ifupdownsucks.sh,startafterifupdownsucks.sh,drbl-live} server/squashfs-root/usr/sbin
 	sudo cp server/drbl-live-conf-X server/squashfs-root/usr/share/drbl/sbin/drbl-live-conf-X
 	sudo cp server/Forcevideo-drbl-live server/squashfs-root/tftpboot/node_root/sbin
@@ -59,8 +61,9 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	sudo cp -a server/desktop-background server/squashfs-root/etc/alternatives/desktop-background
 	
 	echo "Chmoding executables..."
+	sudo chmod +x server/squashfs-root/usr/share/drbl/setup/files/misc/desktop-icons/drbl-live/{Super_Thunar.desktop,Clonezilla-server.desktop,syncthing.desktop}
 	sudo chmod +x server/squashfs-root/usr/sbin/{ocs-live-netcfg,ifupdownsucks.sh,startafterifupdownsucks.sh,drbl-live}
-	sudo chmod +x server/squashfs-root/usr/share/drbl/sbin/drbl-functions
+	sudo chmod +x server/squashfs-root/usr/share/drbl/sbin/{drbl-functions,ocs-functions}
 	sudo chmod +x server/squashfs-root/usr/sbin/ocs-live-netcfg
 	sudo chmod +x server/squashfs-root/usr/sbin/ifupdownsucks.sh
 	sudo chmod +x server/squashfs-root/usr/share/drbl/sbin/drbl-live-conf-X
