@@ -33,21 +33,21 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 		exit 1
 	fi
 	# Propigate kernel modules throughout everywhere
-	echo "Propigating kernel modules everywhere..."
+	echo " * Propigating kernel modules everywhere..."
 	sudo rm -rf server/squashfs-root/tftpboot/node_root/lib/modules/*
 	sudo cp -a server/initrd-root/lib/modules/4.18.7 server/squashfs-root/tftpboot/node_root/lib/modules
 	sudo rm -rf server/squashfs-root/usr/lib/modules/*
 	sudo cp -a server/initrd-root/lib/modules/4.18.7 server/squashfs-root/usr/lib/modules
 	#
 	
-	echo "Copying everything from 'server/' folder to where they belong..."
+	echo " * Copying everything from 'server/' folder to where they belong..."
 	sudo cp server/ocs-live-blacklist.conf server/initrd-root/etc/modprobe.d
 	sudo cp server/ocs-live-blacklist.conf server/squashfs-root/etc/modprobe.d
 	sudo cp server/syncthing.service server/squashfs-root/usr/lib/systemd/user
 	sudo cp server/{syncthing@.service,syncthing-resume.service} server/squashfs-root/lib/systemd/system
 	sudo cp server/{thunar-volman.xml,thunar.xml,bookmarks} server/squashfs-root/opt
 	sudo cp server/{drbl-functions,ocs-functions} server/squashfs-root/usr/share/drbl/sbin
-	sudo cp server/{ocs-live-netcfg,ifupdownsucks.sh,startafterifupdownsucks.sh,drbl-live} server/squashfs-root/usr/sbin
+	sudo cp server/{ocs-live-netcfg,ifupdownsucks.sh,startafterifupdownsucks.sh,drbl-live,drbl-sl} server/squashfs-root/usr/sbin
 	sudo cp server/drbl-live-conf-X server/squashfs-root/usr/share/drbl/sbin/drbl-live-conf-X
 	sudo cp server/Forcevideo-drbl-live server/squashfs-root/tftpboot/node_root/sbin
 	sudo cp server/firstboot server/squashfs-root/tftpboot/node_root/etc/init.d
@@ -60,18 +60,15 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	sudo cp server/desktop-wallpaper/* server/squashfs-root/usr/share/desktop-base/softwaves-theme/wallpaper/contents/images
 	sudo cp -a server/desktop-background server/squashfs-root/etc/alternatives/desktop-background
 	
-	echo "Chmoding executables..."
+	echo " * Chmoding executables..."
 	sudo chmod +x server/squashfs-root/usr/share/drbl/setup/files/misc/desktop-icons/drbl-live/{Super_Thunar.desktop,Clonezilla-server.desktop,syncthing.desktop}
-	sudo chmod +x server/squashfs-root/usr/sbin/{ocs-live-netcfg,ifupdownsucks.sh,startafterifupdownsucks.sh,drbl-live}
-	sudo chmod +x server/squashfs-root/usr/share/drbl/sbin/{drbl-functions,ocs-functions}
-	sudo chmod +x server/squashfs-root/usr/sbin/ocs-live-netcfg
-	sudo chmod +x server/squashfs-root/usr/sbin/ifupdownsucks.sh
-	sudo chmod +x server/squashfs-root/usr/share/drbl/sbin/drbl-live-conf-X
+	sudo chmod +x server/squashfs-root/usr/sbin/{ocs-live-netcfg,ifupdownsucks.sh,startafterifupdownsucks.sh,drbl-live,drbl-sl}
+	sudo chmod +x server/squashfs-root/usr/share/drbl/sbin/{drbl-functions,ocs-functions,drbl-live-conf-X}
 	sudo chmod +x server/squashfs-root/usr/share/drbl/setup/files/DBN/firstboot.default-DBN.drbl
 	sudo chmod +x server/squashfs-root/tftpboot/node_root/etc/init.d/firstboot
 	sudo chmod +x server/squashfs-root/tftpboot/node_root/sbin/Forcevideo-drbl-live
 	
-	echo "Rebuilding filesystem.squashfs..."
+	echo " * Rebuilding filesystem.squashfs..."
 	sudo rm -rf server/filesystem.squashfs && sudo mksquashfs server/squashfs-root server/filesystem.squashfs -b 1024k -comp xz -Xbcj x86 -e boot && \
 	echo "NOTE: Copy vmlinuz, initrd.img, and filesystem.squashfs to CLONER SE/live"
 	exit 0
@@ -91,6 +88,11 @@ if [ "${1}" == "--server-chroot" ] || [ "${1}" == "server-chroot" ]; then
 fi
 
 if [ "${1}" == "--test-initrd" ] || [ "${1}" == "test-initrd" ]; then
+	if [ "$(which qemu-system-x86_64)" == "" ]; then
+		echo "ERORR: You need to install qemu!"
+		exit 1
+	fi
+	
 	sudo qemu-system-x86_64 \
     -monitor stdio \
     -soundhw ac97 \
@@ -120,7 +122,7 @@ fi
 
 if [ "${1}" == "--initrd" ] || [ "${1}" == "initrd" ]; then
 	if [ ! -d server/initrd-root ]; then
-		echo "First lets unpack the existing initrd.img"
+		echo " * First lets unpack the existing initrd.img..."
 		mkdir server/initrd-root
 		cd server/initrd-root
 		zcat ../initrd.img | cpio -idmv
@@ -131,12 +133,12 @@ if [ "${1}" == "--initrd" ] || [ "${1}" == "initrd" ]; then
 	sudo rm -rf server/initrd.img
 	cd server/initrd-root
 	# Strip kernel modules
-	echo "Stripping kernel modules (only *.ko)..."
+	echo " * Stripping kernel modules (only *.ko)..."
 	sudo find lib/modules/*/ -iname "*.ko" -exec strip --strip-debug {} \;
-	echo "Repacking initrd.img"
+	echo " * Repacking initrd.img..."
 	sudo find . | sudo cpio --quiet -o -H newc | sudo gzip -9 > ../initrd.img
 	cd $OLDPWD
-	echo "Updated initrd.img"
+	echo " * Updated initrd.img"
 	exit 0
 fi
 

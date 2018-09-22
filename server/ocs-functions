@@ -4862,7 +4862,7 @@ check_dhcpd_if_range() {
     echo "$msg_range_found_in_dhcpd_conf"
     [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
     if [ "$ocs_batch_mode" != "on" ]; then
-      echo -n "$msg_press_enter_to_continue..."
+      # echo -n "$msg_press_enter_to_continue..."
       # read
     fi
   fi

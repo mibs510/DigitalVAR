@@ -101,6 +101,10 @@ Too long of a file. Hopefully I remebered to mention all lines edited. If not, s
 * Lines edited: 2516
 * Can't remember if any other line was edited.
 
+### drbl-sl
+Remove unwanted text (Clonezilla Live 0.0.0-0 runs on RAM) from PXE menu when imaging units
+* Lines edited: 802-804
+
 ### server/drbl-live
 Please don't tell me to press Enter to continue.
 * Lines editied: 154
@@ -131,7 +135,7 @@ eth0:1, and dhcp are brought up otherwise `ocs-live-netcfg`
 that faces the PXE clients.
 
 ### server/ocs-functions
-* Line(s) edited: 4866, more `Press Enter` nonsense
+* Line(s) edited: 4865-4866, more `Press Enter` nonsense
 
 ### server/ocs-live-blacklist.conf
 This is used to blacklist kernel modules from loading. Usually these 
