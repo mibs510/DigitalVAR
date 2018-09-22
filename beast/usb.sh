@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "${1}" != "7880" ] || [ "${1}" != "8500" ] || [ "${1}" != "8609" ] || [ "${1}" != "8610" ] || [ "${1}" != "8599" ]; then
+if [ "${1}" != "7880" ] && [ "${1}" != "8500" ] && [ "${1}" != "8609" ] && [ "${1}" != "8610" ] && [ "${1}" != "8599" ]; then
 	echo "ERROR: Invalid arguments"
 	echo "Example: ${0} 7880"
 	echo "         ${0} [PART NUMBER]"
@@ -42,11 +42,11 @@ if [ "${1}" == "7880" ]; then
 	echo ""
 	echo ""
 	echo "==================================================================================================================================================================================================================="
-	echo "EXECUTING: sudo ocs-restore-mdisks -batch -p -nogui -batch -p true -icds -t -iefi -j2 -j0 -scr green7880 sdb sdc sdd sde sdf sdg sdh sdi sdj sdk sdl sdm sdn sdo sdp sdq sdr sds sdt sdu sdv sdw sdx sdy sdz sdaa"
+	echo "EXECUTING: sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' green7880 ${USB_LIST}"
 	echo "==================================================================================================================================================================================================================="
 	echo ""
 	echo ""
-	ocs-restore-mdisks -batch -p -nogui -batch -p true -icds -t -iefi -j2 -j0 -scr green7880 ${USB_LIST}
+	sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' green7880 ${USB_LIST}
 	echo "THESE SHOULD ALL MATCH"
 	sudo blkid | less
 	exit 0
@@ -57,11 +57,11 @@ if [ "${1}" == "8500" ]; then
 	echo ""
 	echo ""
 	echo "==================================================================================================================================================================================================================="
-	echo "EXECUTING: sudo ocs-restore-mdisks -batch -p -nogui -batch -p true -icds -t -iefi -j2 -j0 -scr yellow8500 sdb sdc sdd sde sdf sdg sdh sdi sdj sdk sdl sdm sdn sdo sdp sdq sdr sds sdt sdu sdv sdw sdx sdy sdz sdaa"
+	echo "EXECUTING: sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' yellow8500 ${USB_LIST}"
 	echo "==================================================================================================================================================================================================================="
 	echo ""
 	echo ""
-	ocs-restore-mdisks -batch -p -nogui -batch -p true -icds -t -iefi -j2 -j0 -scr yellow8500 ${USB_LIST}
+	sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' yellow8500 ${USB_LIST}
 	echo "THESE SHOULD ALL MATCH"
 	sudo blkid | less
 	exit 0
@@ -72,11 +72,11 @@ if [ "${1}" == "8609" ]; then
 	echo ""
 	echo ""
 	echo "==================================================================================================================================================================================================================="
-	echo "EXECUTING: sudo ocs-restore-mdisks -batch -p -nogui -batch -p true -icds -t -iefi -j2 -j0 -scr red8609 sdb sdc sdd sde sdf sdg sdh sdi sdj sdk sdl sdm sdn sdo sdp sdq sdr sds sdt sdu sdv sdw sdx sdy sdz sdaa"
+	echo "EXECUTING: sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' red8609 ${USB_LIST}"
 	echo "==================================================================================================================================================================================================================="
 	echo ""
 	echo ""
-	ocs-restore-mdisks -batch -p -nogui -batch -p true -icds -t -iefi -j2 -j0 -scr red8609 ${USB_LIST}
+	sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' red8609 ${USB_LIST}
 	echo "THESE SHOULD ALL MATCH"
 	sudo blkid | less
 	exit 0
@@ -87,11 +87,11 @@ if [ "${1}" == "8610" ]; then
 	echo ""
 	echo ""
 	echo "==================================================================================================================================================================================================================="
-	echo "EXECUTING: sudo ocs-restore-mdisks -batch -p -nogui -batch -p true -icds -t -iefi -j2 -j0 -scr blue8610 sdb sdc sdd sde sdf sdg sdh sdi sdj sdk sdl sdm sdn sdo sdp sdq sdr sds sdt sdu sdv sdw sdx sdy sdz sdaa"
+	echo "EXECUTING: sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' blue8610 ${USB_LIST}"
 	echo "==================================================================================================================================================================================================================="
 	echo ""
 	echo ""
-	ocs-restore-mdisks -batch -p -nogui -batch -p true -icds -t -iefi -j2 -j0 -scr blue8610 ${USB_LIST}
+	sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' blue8610 ${USB_LIST}
 	echo "THESE SHOULD ALL MATCH"
 	sudo blkid | less
 	exit 0
@@ -102,11 +102,11 @@ if [ "${1}" == "8599" ]; then
 	echo ""
 	echo ""
 	echo "==================================================================================================================================================================================================================="
-	echo "EXECUTING: sudo ocs-restore-mdisks -batch -p -nogui -batch -p true -icds -t -iefi -j2 -j0 -scr lightblue8599 sdb sdc sdd sde sdf sdg sdh sdi sdj sdk sdl sdm sdn sdo sdp sdq sdr sds sdt sdu sdv sdw sdx sdy sdz sdaa"
+	echo "EXECUTING: sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' lightblue8599 ${USB_LIST}"
 	echo "==================================================================================================================================================================================================================="
 	echo ""
 	echo ""
-	ocs-restore-mdisks -batch -p -nogui -batch -p true -icds -t -iefi -j2 -j0 -scr lightblue8599 ${USB_LIST}
+	sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' lightblue8599 ${USB_LIST}
 	echo "THESE SHOULD ALL MATCH"
 	sudo blkid | less
 	exit 0
