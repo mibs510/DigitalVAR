@@ -36,8 +36,6 @@
  * Used for: 041-602, 055-114
  ------------------------------------------------------------
  * usb.sh [PART NUMBER]
- * Note: You must have 26 USB devices connected for each run!
- * 		 /dev/sda1 will mount automatically as needed.
  * Example: usb.sh 7880
  * Used for: 0110-7880, 0110-8500, 0110-8599, 0110-8609,
  * 		     0110-8610

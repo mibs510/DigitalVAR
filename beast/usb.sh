@@ -48,9 +48,9 @@ if [ "${1}" == "7880" ]; then
 	echo ""
 	sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' green7880 ${USB_LIST}
 	echo ""
-	echo "========================"
-	echo " THESE SHOULD ALL MATCH"
-	echo "========================"
+	echo "======================="
+	echo " UUID SHOULD ALL MATCH"
+	echo "======================="
 	echo ""
 	sudo blkid
 	exit 0
@@ -67,9 +67,9 @@ if [ "${1}" == "8500" ]; then
 	echo ""
 	sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' yellow8500 ${USB_LIST}
 	echo ""
-	echo "========================"
-	echo " THESE SHOULD ALL MATCH"
-	echo "========================"
+	echo "======================="
+	echo " UUID SHOULD ALL MATCH"
+	echo "======================="
 	echo ""
 	sudo blkid
 	exit 0
@@ -86,9 +86,9 @@ if [ "${1}" == "8609" ]; then
 	echo ""
 	sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' red8609 ${USB_LIST}
 	echo ""
-	echo "========================"
-	echo " THESE SHOULD ALL MATCH"
-	echo "========================"
+	echo "======================="
+	echo " UUID SHOULD ALL MATCH"
+	echo "======================="
 	echo ""
 	sudo blkid
 	exit 0
@@ -105,9 +105,9 @@ if [ "${1}" == "8610" ]; then
 	echo ""
 	sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' blue8610 ${USB_LIST}
 	echo ""
-	echo "========================"
-	echo " THESE SHOULD ALL MATCH"
-	echo "========================"
+	echo "======================="
+	echo " UUID SHOULD ALL MATCH"
+	echo "======================="
 	echo ""
 	sudo blkid
 	exit 0
@@ -124,9 +124,9 @@ if [ "${1}" == "8599" ]; then
 	echo ""
 	sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' lightblue8599 ${USB_LIST}
 	echo ""
-	echo "========================"
-	echo " THESE SHOULD ALL MATCH"
-	echo "========================"
+	echo "======================="
+	echo " UUID SHOULD ALL MATCH"
+	echo "======================="
 	echo ""
 	sudo blkid
 	exit 0
