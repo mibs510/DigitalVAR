@@ -79,15 +79,15 @@ tools on-the-fly.
 * Chmod them (`chmod +x script.sh/binarary`) if they're executables
 
   Although it's not necessary as the quick-n-dirty-easy-updater takes 
-  care of that but might be needed for development purposes.
+  care of this but it might be needed for local development purposes.
 
-* Open: [files-chmodx](beast/files-chmodx), [files-dest](beast/files-dest), and [files](beast/files)
+* Open: [file-chmodx](beast/file-chmodx), [file-dest](beast/file-dest), and [files](beast/files)
 * Add the name of the file into [files](beast/files) at the end of the existing list
-* Add the destintation of where the file will reside in the filesystem.squashfs at the end of [files-dest](beast/files-dest)
-* If the file is an executable/script add the file name with its absolute path into the end of [files-chmodx](beast/files-chmodx)
+* Add the destintation of where the file will reside in the filesystem.squashfs at the end of [file-dest](beast/file-dest)
+* If the file is an executable/script add the file name with its absolute path into the end of [file-chmodx](beast/file-chmodx)
 * Optionally add the synopsis of the new tool into [motd.txt](beast/motd.txt)
 
-Don't forget the add the new file into lines 809 in `rebuild.sh` so that
+Don't forget to add the new file into lines 8-9 in `rebuild.sh` so that
 filesystem.squashfs gets updated on the next rebuild.
 
 ### Deploying
