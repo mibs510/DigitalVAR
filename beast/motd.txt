@@ -6,41 +6,40 @@
 ██████╔╝██║╚██████╔╝██║   ██║   ██║  ██║███████╗╚████╔╝ ██║  ██║██║  ██║
 ╚═════╝ ╚═╝ ╚═════╝ ╚═╝   ╚═╝   ╚═╝  ╚═╝╚══════╝ ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═╝
                                                                         
-============================================================
- The following tools are available to make your job easier:
-============================================================
- * bigbox [target] [target] [target] [target] ...
- * Example: bigbox a b c d e f g h i j k l
- * When asked, IMG=/dev/sda or /path/to/image.img
- * Used for: N/A
-------------------------------------------------------------
- * fluorchem [target] [target] [target] [target] ...
- * Example: fluorchem a b c d e f g h i j k l
- * Where IMG=fluorchem-mfg-master-2017-11-27
- * You must be in the directory where IMG is located
- * Used for: 012-914
-------------------------------------------------------------
- * jesse.sh [target] [target] [target] [target] ...
- * Example: jesse.sh a b c d e f g h i j k l
- * Example: IMG=company_part#_version jesse.sh a b c d
- * IMG=biotechne_103-0039_v01 by default
- * IMG must be located in /home/partimag
- * Used for: 103-0039
-------------------------------------------------------------
- * onthefly.sh [master/from] [target] [target] [target] ...
- * Example: onthefly.sh a b c d e f g h i j k l
- * Used for: 041-545, 042-921
-------------------------------------------------------------
- * onthefly-ssd.sh [master/from] [target] [target] ...
- * Example: onthefly-ssd.sh a b c d e f g h i j k l
- * Used for: 041-602, 055-114
- ------------------------------------------------------------
- * usb.sh [PART NUMBER]
- * Example: usb.sh 7880
- * Used for: 0110-7880, 0110-8500, 0110-8599, 0110-8609,
- * 		     0110-8610
-------------------------------------------------------------
-============================================================
-                     USE THEM WISELY!
-============================================================
-
+=======================================================================================================================|
+                              The following tools are available to make your job easier:                               |
+=======================================================================================================================|
+ * bigbox [target] [target] [target] [target] ...           | * usb-qa.sh [PART NUMBER]                                |
+ * Example: bigbox a b c d e f g h i j k l                  | * Example: usb-qa.sh 7880                                |
+ * When asked, IMG=/dev/sda or /path/to/image.img           | * Note: THIS IS STILL IN DEVELOPMENT DO NOT USE!!        |
+ * Used for: N/A                                            | * Used for: 0110-7880,8500,8599,8609,8610                |
+------------------------------------------------------------|----------------------------------------------------------|
+ * fluorchem [target] [target] [target] [target] ...        |                                                          |
+ * Example: fluorchem a b c d e f g h i j k l               |                                                          |
+ * Where IMG=fluorchem-mfg-master-2017-11-27                |                                                          |
+ * You must be in the directory where IMG is located        |                                                          |
+ * Used for: 012-914                                        |                                                          |
+------------------------------------------------------------|----------------------------------------------------------|
+ * jesse.sh [target] [target] [target] [target] ...         |                                                          |
+ * Example: jesse.sh a b c d e f g h i j k l                |                                                          |
+ * Example: IMG=company_part#_version jesse.sh a b c d      |                                                          |
+ * IMG=biotechne_103-0039_v01 by default                    |                                                          |
+ * IMG must be located in /home/partimag                    |                                                          |
+ * Used for: 103-0039                                       |                                                          |
+------------------------------------------------------------|----------------------------------------------------------|
+ * onthefly.sh [master/from] [target] [target] [target] ... |                                                          |
+ * Example: onthefly.sh a b c d e f g h i j k l             |                                                          | 
+ * Used for: 041-545, 042-921                               |                                                          |
+------------------------------------------------------------|----------------------------------------------------------|
+ * onthefly-ssd.sh [master/from] [target] [target] ...      |                                                          |
+ * Example: onthefly-ssd.sh a b c d e f g h i j k l         |                                                          |
+ * Used for: 041-602, 055-114                               |                                                          |
+ -----------------------------------------------------------|----------------------------------------------------------|
+ * usb.sh [PART NUMBER]                                     |                                                          |
+ * Example: usb.sh 7880                                     |                                                          |
+ * Used for: 0110-7880, 0110-8500, 0110-8599, 0110-8609,    |                                                          |
+ * 		     0110-8610                                      |                                                          |
+-----------------------------------------------------------------------------------------------------------------------|
+=======================================================================================================================|
+                                                      USE THEM WISELY!                                                 |
+=======================================================================================================================|
