@@ -52,6 +52,7 @@ if [ "${1}" == "7880" ]; then
 	echo " UUID SHOULD ALL MATCH"
 	echo "======================="
 	echo ""
+	sync
 	sudo blkid
 	exit 0
 fi
@@ -71,6 +72,7 @@ if [ "${1}" == "8500" ]; then
 	echo " UUID SHOULD ALL MATCH"
 	echo "======================="
 	echo ""
+	sync
 	sudo blkid
 	exit 0
 fi
@@ -90,6 +92,7 @@ if [ "${1}" == "8609" ]; then
 	echo " UUID SHOULD ALL MATCH"
 	echo "======================="
 	echo ""
+	sync
 	sudo blkid
 	exit 0
 fi
@@ -109,6 +112,7 @@ if [ "${1}" == "8610" ]; then
 	echo " UUID SHOULD ALL MATCH"
 	echo "======================="
 	echo ""
+	sync
 	sudo blkid
 	exit 0
 fi
@@ -128,6 +132,7 @@ if [ "${1}" == "8599" ]; then
 	echo " UUID SHOULD ALL MATCH"
 	echo "======================="
 	echo ""
+	sync
 	sudo blkid
 	exit 0
 fi
