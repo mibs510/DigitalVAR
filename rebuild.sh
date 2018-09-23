@@ -5,9 +5,9 @@ if [ "${1}" == "--beast" ] || [ "${1}" == "beast" ]; then
 		echo "ERROR: Exit from chroot!!!"
 		exit 1
 	fi
-	sudo cp beast/{bigbox,fluorchem,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,xxhsum} beast/squashfs-root/usr/bin
-	sudo chmod +x beast/squashfs-root/usr/bin/{bigbox,fluorchem,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,xxhsum}
-	sudo cp beast/{motd.txt,profile,rc.local,resolv.conf} beast/squashfs-root/etc
+	sudo cp beast/{bigbox,fluorchem,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,usb-qa.sh,xxhsum} beast/squashfs-root/usr/bin
+	sudo chmod +x beast/squashfs-root/usr/bin/{bigbox,fluorchem,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,usb-qa.sh,xxhsum}
+	sudo cp beast/{lightblue8599.xxhsums,motd.txt,profile,rc.local,resolv.conf} beast/squashfs-root/etc
 	sudo cp beast/interfaces beast/squashfs-root/etc/network
 	sudo rm -rf beast/filesystem.squashfs && sudo mksquashfs beast/squashfs-root beast/filesystem.squashfs -b 1024k -comp xz -Xbcj x86 -e boot && \
 	echo "NOTE: Copy filesystem.squashfs to CLONER/live"
