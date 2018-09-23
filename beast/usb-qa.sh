@@ -96,13 +96,14 @@ for i in {b..z}; do
 			echo "ERROR: /dev/sd${i} HAS XXHSUM MISMATCH(ES)"
 			echo "Making /dev/sd${i} flash rapidly..."
 			echo "Pull drive out of USB hub!"
-			echo "===================================="
+			echo "==========================================="
 			echo ""
 			(sudo dd if=/dev/zero of=/dev/sd${i} &) > /dev/null 2>&1
 			while [ "$(pidof dd)" != "" ]
 			do
 				sleep 1
 			done
+			break
 		fi
 		sudo umount /dev/sd${i}1
 	fi
@@ -121,7 +122,7 @@ if [ -b /dev/sdaa ]; then
 		do
 			sleep 1
 		done
-		break
+		exit 1
 	fi
 	
 	sudo mount /dev/sdaa1 /mnt
@@ -138,11 +139,10 @@ if [ -b /dev/sdaa ]; then
 		do
 			sleep 1
 		done
-		break
+		exit 1
 	fi
 	
 	sudo xxhsum -c /etc/${XXHSUM_FILE}.xxhsums &> /dev/null
-	
 	if [ "$?" != "0" ]; then
 		sudo umount /dev/sdaa1
 		echo "===================================="
@@ -155,6 +155,7 @@ if [ -b /dev/sdaa ]; then
 		do
 			sleep 1
 		done
+		exit 1
 	fi
 	sudo umount /dev/sdaa1
 fi
