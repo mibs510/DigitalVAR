@@ -66,6 +66,7 @@ for i in {b..z}; do
 			echo "Making /dev/sd${i} flash rapidly..."
 			echo "Pull drive out of USB hub!"
 			echo "========================================================================="
+			echo ""
 			(sudo dd if=/dev/zero of=/dev/sd${i} &) > /dev/null 2>&1
 			while [ "$(pidof dd)" != "" ]
 			do
@@ -81,6 +82,7 @@ for i in {b..z}; do
 			echo "Making /dev/sd${i} flash rapidly..."
 			echo "Pull drive out of USB hub!"
 			echo "================================================================="
+			echo ""
 			(sudo dd if=/dev/zero of=/dev/sd${i} &) > /dev/null 2>&1
 			while [ "$(pidof dd)" != "" ]
 			do
@@ -117,6 +119,7 @@ if [ -b /dev/sdaa ]; then
 		echo "Making /dev/sdaa flash rapidly..."
 		echo "Pull drive out of USB hub!"
 		echo "========================================================================="
+		echo ""
 		(sudo dd if=/dev/zero of=/dev/sdaa &) > /dev/null 2>&1
 		while [ "$(pidof dd)" != "" ]
 		do
@@ -134,6 +137,7 @@ if [ -b /dev/sdaa ]; then
 		echo "Making /dev/sdaa flash rapidly..."
 		echo "Pull drive out of USB hub!"
 		echo "================================================================="
+		echo ""
 		(sudo dd if=/dev/zero of=/dev/sdaa &) > /dev/null 2>&1
 		while [ "$(pidof dd)" != "" ]
 		do
@@ -145,11 +149,13 @@ if [ -b /dev/sdaa ]; then
 	sudo xxhsum -c /etc/${XXHSUM_FILE}.xxhsums &> /dev/null
 	if [ "$?" != "0" ]; then
 		sudo umount /dev/sdaa1
-		echo "===================================="
-		echo "ERROR: /dev/sdaa is BAD"
+		echo ""
+		echo "========================================="
+		echo "ERROR: /dev/sdaa HAS XXHSUM MISMATCH(ES)"
 		echo "Making /dev/sdaa flash rapidly..."
 		echo "Pull drive out of USB hub!"
-		echo "===================================="
+		echo "========================================="
+		echo ""
 		(sudo dd if=/dev/zero of=/dev/sdaa &) > /dev/null 2>&1
 		while [ "$(pidof dd)" != "" ]
 		do
