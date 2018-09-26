@@ -1,5 +1,7 @@
 #!/bin/bash
 
+WAIT_FOR_DD=5
+
 if [ "${1}" != "7880" ] && [ "${1}" != "8500" ] && [ "${1}" != "8609" ] && [ "${1}" != "8610" ] && [ "${1}" != "8599" ]; then
 	echo "ERROR: Invalid arguments"
 	echo "Example: ${0} 7880"
@@ -54,28 +56,16 @@ fi
 
 # lightblue8599
 if [ "${1}" == "8599" ]; then
-	XXHSUM_FILE="blue8610"
+	XXHSUM_FILE="lightblue8610"
 fi
 
 for i in {b..z}; do
-	if [ -b /dev/sd${i} ]; then
-		if [ ! -b /dev/sd${i}1 ]; then
-			echo ""
-			echo "========================================================================="
-			echo "ERROR: /dev/sd${i} DOESN'T HAVE A PROPERLY FORMATTED PRIMRARY PARTITION"
-			echo "Making /dev/sd${i} flash rapidly..."
-			echo "Pull drive out of USB hub!"
-			echo "========================================================================="
-			echo ""
-			(sudo dd if=/dev/zero of=/dev/sd${i} &) > /dev/null 2>&1
-			while [ "$(pidof dd)" != "" ]
-			do
-				sleep 1
-			done
-			break
-		fi
+	EXIT=false
+	if [ -b /dev/sd${i}1 ]; then
 		sudo mount /dev/sd${i}1 /mnt
-		if [ "$?" != "0" ]; then
+		
+		if [ "$?" != "0" ] && [ "$EXIT" == "false" ]; then
+			EXIT=true
 			echo ""
 			echo "================================================================="
 			echo "ERROR: /dev/sd${i}1 COULDN'T BE MOUNTED!!"
@@ -84,14 +74,19 @@ for i in {b..z}; do
 			echo "================================================================="
 			echo ""
 			(sudo dd if=/dev/zero of=/dev/sd${i} &) > /dev/null 2>&1
+			sleep ${WAIT_FOR_DD}
 			while [ "$(pidof dd)" != "" ]
 			do
 				sleep 1
 			done
-			break
 		fi
-		sudo xxhsum -c /etc/${XXHSUM_FILE}.xxhsums &> /dev/null
-		if [ "$?" != "0" ]; then
+		
+		if [ "$EXIT" == "false" ]; then
+			sudo xxhsum -c /etc/${XXHSUM_FILE}.xxhsums &> /dev/null
+		fi
+			
+		if [ "$?" != "0" ] && [ "$EXIT" == "false" ]; then
+			EXIT=true
 			sudo umount /dev/sd${i}1
 			echo ""
 			echo "==========================================="
@@ -101,34 +96,20 @@ for i in {b..z}; do
 			echo "==========================================="
 			echo ""
 			(sudo dd if=/dev/zero of=/dev/sd${i} &) > /dev/null 2>&1
+			sleep ${WAIT_FOR_DD}
 			while [ "$(pidof dd)" != "" ]
 			do
 				sleep 1
 			done
-			break
 		fi
-		sudo umount /dev/sd${i}1
+		
+		if [ "$EXIT" == "false" ]; then
+			sudo umount /dev/sd${i}1
+		fi
 	fi
 done
 
-if [ -b /dev/sdaa ]; then
-	if [ ! -b /dev/sdaa1 ]; then
-		echo ""
-		echo "========================================================================="
-		echo "ERROR: /dev/sdaa DOESN'T HAVE A PROPERLY FORMATTED PRIMRARY PARTITION"
-		echo "Making /dev/sdaa flash rapidly..."
-		echo "Pull drive out of USB hub!"
-		echo "========================================================================="
-		echo ""
-		(sudo dd if=/dev/zero of=/dev/sdaa &) > /dev/null 2>&1
-		while [ "$(pidof dd)" != "" ]
-		do
-			sleep 1
-		done
-		exit 1
-	fi
-	
-	sudo mount /dev/sdaa1 /mnt
+if [ -b /dev/sdaa1 ]; then
 	
 	if [ "$?" != "0" ]; then
 		echo ""
@@ -139,6 +120,7 @@ if [ -b /dev/sdaa ]; then
 		echo "================================================================="
 		echo ""
 		(sudo dd if=/dev/zero of=/dev/sdaa &) > /dev/null 2>&1
+		sleep ${WAIT_FOR_DD}
 		while [ "$(pidof dd)" != "" ]
 		do
 			sleep 1
@@ -157,6 +139,7 @@ if [ -b /dev/sdaa ]; then
 		echo "========================================="
 		echo ""
 		(sudo dd if=/dev/zero of=/dev/sdaa &) > /dev/null 2>&1
+		sleep ${WAIT_FOR_DD}
 		while [ "$(pidof dd)" != "" ]
 		do
 			sleep 1
