@@ -53,7 +53,7 @@ if [ "${1}" == "7880" ]; then
 	echo "======================="
 	echo ""
 	sync
-	sudo blkid
+	sudo blkid | grep -v 'CLONER' | grep -v 'squashfs'
 	exit 0
 fi
 
@@ -73,7 +73,7 @@ if [ "${1}" == "8500" ]; then
 	echo "======================="
 	echo ""
 	sync
-	sudo blkid
+	sudo blkid | grep -v 'CLONER' | grep -v 'squashfs'
 	exit 0
 fi
 
@@ -93,7 +93,7 @@ if [ "${1}" == "8609" ]; then
 	echo "======================="
 	echo ""
 	sync
-	sudo blkid
+	sudo blkid | grep -v 'CLONER' | grep -v 'squashfs'
 	exit 0
 fi
 
@@ -113,7 +113,7 @@ if [ "${1}" == "8610" ]; then
 	echo "======================="
 	echo ""
 	sync
-	sudo blkid
+	sudo blkid | grep -v 'CLONER' | grep -v 'squashfs'
 	exit 0
 fi
 
@@ -133,6 +133,6 @@ if [ "${1}" == "8599" ]; then
 	echo "======================="
 	echo ""
 	sync
-	sudo blkid
+	sudo blkid | grep -v 'CLONER' | grep -v 'squashfs'
 	exit 0
 fi

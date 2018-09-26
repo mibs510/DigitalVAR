@@ -16,9 +16,15 @@ if [ "x${IMG}x" = "xx" ]; then
 	IMG=biotechne_103-0039_v01
 fi
 
+if [ "$(mount | grep '/home/partimag')" == "" ]; then
+	HDD=$(lsblk | grep 20130722001867F | cut -d' ' -f1)
+	if [ -b /dev/${HDD}1 ]; then
+		sudo mount /dev/${HDD}1 /home/partimag
+	fi
+fi
+
 if [ ! -d "/home/partimag/${IMG}" ]; then
 	echo "ERROR: /home/partimg/${IMG} does not exist!!"
-	echo "       Did you mount the HDD onto /home/partimag containing ${IMG}?"
 	exit 1
 fi
 
