@@ -1,5 +1,6 @@
 #!/bin/bash
 
+DEBUG=false
 SKIP_XXHSUM=false
 SKIP_PULLOUTS=false
 
@@ -68,8 +69,11 @@ if [ "${1}" == "8599" ]; then
 	XXHSUM_FILE="lightblue8599"
 fi
 
+if [ "${DEBUG}" == "true" ]; then
+	set -x
+fi
 
-if [ "${SKIP_XXHSUM}" == "true" ]; then
+if [ "${SKIP_XXHSUM}" == "false" ]; then
 	for i in {b..z}; do
 		EXIT=false
 		if [ -b /dev/sd${i}1 ]; then
@@ -159,7 +163,7 @@ if [ "${SKIP_XXHSUM}" == "true" ]; then
 	fi
 fi
 
-if [ "${SKIP_PULLOUTS" == "true" ]; then
+if [ "${SKIP_PULLOUTS" == "false" ]; then
 	# INITIAL_MAP
 	ls /dev/sd* | grep -vw "sda" | grep -vw "sda1" > /tmp/first
 
@@ -188,4 +192,8 @@ if [ "${SKIP_PULLOUTS" == "true" ]; then
 	
 		ls /dev/sd* | grep -vw "sda" | grep -vw "sda1" > /tmp/first
 	done
+fi
+
+if [ "${DEBUG}" == "true" ]; then
+	set +x
 fi
