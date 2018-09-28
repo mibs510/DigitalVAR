@@ -149,3 +149,19 @@ if [ -b /dev/sdaa1 ]; then
 	sudo umount /dev/sdaa1
 fi
 
+# INITIAL_MAP
+ls /dev/sd* | grep -vw "sda" | grep -vw "sda1" > /tmp/initial
+
+
+while [ "$(cat /tmp/current)" != "" ]
+do
+	ls /dev/sd* | grep -vw "sda" | grep -vw "sda1" > /tmp/current
+	CURRENT_MAP=$(cat /tmp/current)
+	DIFFERENCE="$(diff /tmp/initial /tmp/current)"
+
+	if [ "${DIFFERENCE}" != "" ]; then
+	
+		DIFFERENCE=$(echo ${DIFFERENCE} | grep "<" | cut -d' ' -f2)
+	fi
+	
+done
