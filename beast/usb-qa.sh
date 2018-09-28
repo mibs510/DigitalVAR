@@ -1,5 +1,8 @@
 #!/bin/bash
 
+SKIP_XXHSUM=false
+SKIP_PULLOUTS=false
+
 if [ "${1}" != "7880" ] && [ "${1}" != "8500" ] && [ "${1}" != "8609" ] && [ "${1}" != "8610" ] && [ "${1}" != "8599" ]; then
 	echo "ERROR: Invalid arguments"
 	echo "Example: ${0} 7880"
@@ -62,124 +65,127 @@ fi
 
 # lightblue8599
 if [ "${1}" == "8599" ]; then
-	XXHSUM_FILE="lightblue8610"
+	XXHSUM_FILE="lightblue8599"
 fi
 
-for i in {b..z}; do
-	EXIT=false
-	if [ -b /dev/sd${i}1 ]; then
-		sudo mount /dev/sd${i}1 /mnt
+
+if [ "${SKIP_XXHSUM}" == "true" ]; then
+	for i in {b..z}; do
+		EXIT=false
+		if [ -b /dev/sd${i}1 ]; then
+			sudo mount /dev/sd${i}1 /mnt
 		
-		if [ "$?" != "0" ] && [ "$EXIT" == "false" ]; then
-			EXIT=true
-			echo ""
-			echo "================================================================="
-			echo "ERROR: /dev/sd${i}1 COULDN'T BE MOUNTED!!"
-			echo "Making /dev/sd${i} flash rapidly..."
-			echo "Pull drive out of USB hub!"
-			echo "================================================================="
-			echo ""
-			(sudo dd if=/dev/zero of=/dev/sd${i} &) > /dev/null 2>&1
-			sleep ${WAIT_FOR_DD}
-			while [ "$(pidof dd)" != "" ]
-			do
-				sleep 1
-			done
-		fi
+			if [ "$?" != "0" ] && [ "$EXIT" == "false" ]; then
+				EXIT=true
+				echo ""
+				echo "================================================================="
+				echo "ERROR: /dev/sd${i}1 COULDN'T BE MOUNTED!!"
+				echo "Making /dev/sd${i} flash rapidly..."
+				echo "Pull drive out of USB hub!"
+				echo "================================================================="
+				echo ""
+				(sudo dd if=/dev/zero of=/dev/sd${i} &) > /dev/null 2>&1
+				sleep ${WAIT_FOR_DD}
+				while [ "$(pidof dd)" != "" ]
+				do
+					sleep 1
+				done
+			fi
 		
-		if [ "$EXIT" == "false" ]; then
-			sudo xxhsum -c /etc/${XXHSUM_FILE}.xxhsums &> /dev/null
-		fi
+			if [ "$EXIT" == "false" ]; then
+				sudo xxhsum -c /etc/${XXHSUM_FILE}.xxhsums &> /dev/null
+			fi
 			
-		if [ "$?" != "0" ] && [ "$EXIT" == "false" ]; then
-			EXIT=true
-			sudo umount /dev/sd${i}1
+			if [ "$?" != "0" ] && [ "$EXIT" == "false" ]; then
+				EXIT=true
+				sudo umount /dev/sd${i}1
+				echo ""
+				echo "==========================================="
+				echo "ERROR: /dev/sd${i} HAS XXHSUM MISMATCH(ES)"
+				echo "Making /dev/sd${i} flash rapidly..."
+				echo "Pull drive out of USB hub!"
+				echo "==========================================="
+				echo ""
+				(sudo dd if=/dev/zero of=/dev/sd${i} &) > /dev/null 2>&1
+				sleep ${WAIT_FOR_DD}
+				while [ "$(pidof dd)" != "" ]
+				do
+					sleep 1
+				done
+			fi
+		
+			if [ "$EXIT" == "false" ]; then
+				sudo umount /dev/sd${i}1
+			fi
+		fi
+	done
+
+	if [ -b /dev/sdaa1 ]; then
+	
+		if [ "$?" != "0" ]; then
 			echo ""
-			echo "==========================================="
-			echo "ERROR: /dev/sd${i} HAS XXHSUM MISMATCH(ES)"
-			echo "Making /dev/sd${i} flash rapidly..."
+			echo "================================================================="
+			echo "ERROR: /dev/sdaa1 COULDN'T BE MOUNTED!!"
+			echo "Making /dev/sdaa flash rapidly..."
 			echo "Pull drive out of USB hub!"
-			echo "==========================================="
+			echo "================================================================="
 			echo ""
-			(sudo dd if=/dev/zero of=/dev/sd${i} &) > /dev/null 2>&1
+			(sudo dd if=/dev/zero of=/dev/sdaa &) > /dev/null 2>&1
 			sleep ${WAIT_FOR_DD}
 			while [ "$(pidof dd)" != "" ]
 			do
 				sleep 1
 			done
 		fi
-		
-		if [ "$EXIT" == "false" ]; then
-			sudo umount /dev/sd${i}1
+	
+		sudo xxhsum -c /etc/${XXHSUM_FILE}.xxhsums &> /dev/null
+		if [ "$?" != "0" ]; then
+			sudo umount /dev/sdaa1
+			echo ""
+			echo "========================================="
+			echo "ERROR: /dev/sdaa HAS XXHSUM MISMATCH(ES)"
+			echo "Making /dev/sdaa flash rapidly..."
+			echo "Pull drive out of USB hub!"
+			echo "========================================="
+			echo ""
+			(sudo dd if=/dev/zero of=/dev/sdaa &) > /dev/null 2>&1
+			sleep ${WAIT_FOR_DD}
+			while [ "$(pidof dd)" != "" ]
+			do
+				sleep 1
+			done
 		fi
-	fi
-done
-
-if [ -b /dev/sdaa1 ]; then
-	
-	if [ "$?" != "0" ]; then
-		echo ""
-		echo "================================================================="
-		echo "ERROR: /dev/sdaa1 COULDN'T BE MOUNTED!!"
-		echo "Making /dev/sdaa flash rapidly..."
-		echo "Pull drive out of USB hub!"
-		echo "================================================================="
-		echo ""
-		(sudo dd if=/dev/zero of=/dev/sdaa &) > /dev/null 2>&1
-		sleep ${WAIT_FOR_DD}
-		while [ "$(pidof dd)" != "" ]
-		do
-			sleep 1
-		done
-		exit 1
-	fi
-	
-	sudo xxhsum -c /etc/${XXHSUM_FILE}.xxhsums &> /dev/null
-	if [ "$?" != "0" ]; then
 		sudo umount /dev/sdaa1
-		echo ""
-		echo "========================================="
-		echo "ERROR: /dev/sdaa HAS XXHSUM MISMATCH(ES)"
-		echo "Making /dev/sdaa flash rapidly..."
-		echo "Pull drive out of USB hub!"
-		echo "========================================="
-		echo ""
-		(sudo dd if=/dev/zero of=/dev/sdaa &) > /dev/null 2>&1
-		sleep ${WAIT_FOR_DD}
-		while [ "$(pidof dd)" != "" ]
-		do
-			sleep 1
-		done
-		exit 1
 	fi
-	sudo umount /dev/sdaa1
 fi
 
-# INITIAL_MAP
-ls /dev/sd* | grep -vw "sda" | grep -vw "sda1" > /tmp/first
-
-while [ "$(cat /tmp/current)" != "" ]
-do
-	
-	ls /dev/sd* | grep -vw "sda" | grep -vw "sda1" > /tmp/second
-	DIFFERENCE="$(diff /tmp/first /tmp/second)"
-
-	if [ "${DIFFERENCE}" != "" ]; then
-		
-		i=$((i+1))
-		BAD_DRIVE=$(echo ${DIFFERENCE} | grep "<" | cut -d' ' -f2)
-		GOOD_DRIVE=$(echo ${DIFFERENCE} | grep "1")
-		
-		if [ "${GOOD_DRIVE}" != "" ]; then
-			echo "${GREEN}"
-			echo " ${i}. THROW THIS DRIVE INTO THE GOOD PILE! (${GOOD_DRIVE})"
-			echo "${NC}"
-		else
-			echo "${RED}"
-			echo "THROW THIS DRIVE INTO THE BAD PILE! ${BAD_DRIVE}"
-			echo "${NC}"
-		fi
-	fi
-	
+if [ "${SKIP_PULLOUTS" == "true" ]; then
+	# INITIAL_MAP
 	ls /dev/sd* | grep -vw "sda" | grep -vw "sda1" > /tmp/first
-done
+
+	while [ "$(cat /tmp/current)" != "" ]
+	do
+		
+		ls /dev/sd* | grep -vw "sda" | grep -vw "sda1" > /tmp/second
+		DIFFERENCE="$(diff /tmp/first /tmp/second)"
+
+		if [ "${DIFFERENCE}" != "" ]; then
+		
+			i=$((i+1))
+			BAD_DRIVE=$(echo ${DIFFERENCE} | grep "<" | cut -d' ' -f2)
+			GOOD_DRIVE=$(echo ${DIFFERENCE} | grep "1")
+		
+			if [ "${GOOD_DRIVE}" != "" ]; then
+				echo "${GREEN}"
+				echo " ${i}. THROW THIS DRIVE INTO THE GOOD PILE! (${GOOD_DRIVE})"
+				echo "${NC}"
+			else
+				echo "${RED}"
+				echo "THROW THIS DRIVE INTO THE BAD PILE! ${BAD_DRIVE}"
+				echo "${NC}"
+			fi
+		fi
+	
+		ls /dev/sd* | grep -vw "sda" | grep -vw "sda1" > /tmp/first
+	done
+fi
