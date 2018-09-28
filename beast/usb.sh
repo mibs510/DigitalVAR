@@ -18,7 +18,7 @@ for i in {b..z}; do
 done
 
 if [ -b /dev/sdaa ]; then
-	USB_LIST=$USB_LIST"sdaa "
+	USB_LIST=$USB_LIST"sdaa"
 fi
 
 if [ "${USB_LIST}" == "" ]; then
