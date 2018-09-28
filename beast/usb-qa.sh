@@ -1,7 +1,5 @@
 #!/bin/bash
 
-WAIT_FOR_DD=5
-
 if [ "${1}" != "7880" ] && [ "${1}" != "8500" ] && [ "${1}" != "8609" ] && [ "${1}" != "8610" ] && [ "${1}" != "8599" ]; then
 	echo "ERROR: Invalid arguments"
 	echo "Example: ${0} 7880"
@@ -11,7 +9,15 @@ if [ "${1}" != "7880" ] && [ "${1}" != "8500" ] && [ "${1}" != "8609" ] && [ "${
 	exit 1
 fi
 
+WAIT_FOR_DD=5
+i=0
+
 USB_LIST=""
+
+RED=`tput setaf 1`
+GREEN=`tput setaf 2`
+NC=`tput sgr0`
+
 
 for i in {b..z}; do
 	if [ -b /dev/sd${i} ]; then
@@ -150,18 +156,30 @@ if [ -b /dev/sdaa1 ]; then
 fi
 
 # INITIAL_MAP
-ls /dev/sd* | grep -vw "sda" | grep -vw "sda1" > /tmp/initial
-
+ls /dev/sd* | grep -vw "sda" | grep -vw "sda1" > /tmp/first
 
 while [ "$(cat /tmp/current)" != "" ]
 do
-	ls /dev/sd* | grep -vw "sda" | grep -vw "sda1" > /tmp/current
-	CURRENT_MAP=$(cat /tmp/current)
-	DIFFERENCE="$(diff /tmp/initial /tmp/current)"
+	
+	ls /dev/sd* | grep -vw "sda" | grep -vw "sda1" > /tmp/second
+	DIFFERENCE="$(diff /tmp/first /tmp/second)"
 
 	if [ "${DIFFERENCE}" != "" ]; then
-	
-		DIFFERENCE=$(echo ${DIFFERENCE} | grep "<" | cut -d' ' -f2)
+		
+		i=$((i+1))
+		BAD_DRIVE=$(echo ${DIFFERENCE} | grep "<" | cut -d' ' -f2)
+		GOOD_DRIVE=$(echo ${DIFFERENCE} | grep "1")
+		
+		if [ "${GOOD_DRIVE}" != "" ]; then
+			echo "${GREEN}"
+			echo " ${i}. THROW THIS DRIVE INTO THE GOOD PILE! (${GOOD_DRIVE})"
+			echo "${NC}"
+		else
+			echo "${RED}"
+			echo "THROW THIS DRIVE INTO THE BAD PILE! ${BAD_DRIVE}"
+			echo "${NC}"
+		fi
 	fi
 	
+	ls /dev/sd* | grep -vw "sda" | grep -vw "sda1" > /tmp/first
 done
