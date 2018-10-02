@@ -51,14 +51,18 @@ You'll have to rename it (filesystem.squashfs) and uncompress it inside
 `sudo unsquashfs filesystem.squashfs`
 
 ### Packages
-I only had to install curl (which is included for offline installs)
+* Installed: inotify-tools, curl
+* Uninstalled: 
+
 You could reproduce this by chrooting:
 
 `./rebuild.sh beast-chroot`
 
-and then installing said package:
+and then installing said package(s):
 
-`apt update && apt install curl`
+`apt update && apt install curl inotify-tools`
+
+#### DO NOT UPDATE PACKAGES (apt upgrade)
 
 ### beast/rc.local
 The purpose of [rc.local](beast/rc.local) was to provide a 
@@ -109,8 +113,8 @@ Make sure to rename it to filesystem.squashfs and that it resides in the
 `sudo unsquashfs filesystem.squashfs`
 
 ### Packages
-* Installed packages: syncthing
-* Uninstall packages: vim-common, vim-runtime, vim-tiny
+* Installed: syncthing
+* Uninstall: vim-common, vim-runtime, vim-tiny
 
 ### server/desktop-background
 Symlink to reflect new default wallpapers from svgs to pngs

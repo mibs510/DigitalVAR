@@ -161,37 +161,56 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 		fi
 		sudo umount /dev/sdaa1
 	fi
+	echo ""
+	echo "============================================"
+	echo "Done xxhsumming files inside the USB drives."
+	echo "============================================"
+	echo ""
 fi
 
-if [ "${SKIP_PULLOUTS" == "false" ]; then
-	# INITIAL_MAP
-	ls /dev/sd* | grep -vw "sda" | grep -vw "sda1" > /tmp/first
+if [ "${SKIP_PULLOUTS}" == "false" ]; then
 
-	while [ "$(cat /tmp/current)" != "" ]
-	do
-		
-		ls /dev/sd* | grep -vw "sda" | grep -vw "sda1" > /tmp/second
-		DIFFERENCE="$(diff /tmp/first /tmp/second)"
-
-		if [ "${DIFFERENCE}" != "" ]; then
-		
+	echo ""
+	echo "==========================================================="
+	echo " Lets start pulling out."
+	echo " Watching /dev as you remove each USB drive individually..."
+	echo "==========================================================="
+	echo ""
+	
+	inotifywait -m /dev -e delete |
+		while read path action file; do
+			# Are we done pulling out everyone?
+			if [ "$(ls /tmp/sd* 2>/dev/null | grep -vw "sda" | grep -vw "sda1" | wc -l)" == "0" ]; then
+				echo "We're finished!"
+				return
+			fi
+			
+			# Possible ${file} input: sg1
+			# Seen in Ubuntu 18.04		
+			if [ "$(echo ${file} | grep "sd")" == "" ]; then
+				return
+			fi
+			
+			# Input: sdb or sdb1
+			# Output: sdb
+			CURRENT_DRIVE=$(echo ${file} | sed 's/1//g')
+			
 			i=$((i+1))
-			BAD_DRIVE=$(echo ${DIFFERENCE} | grep "<" | cut -d' ' -f2)
-			GOOD_DRIVE=$(echo ${DIFFERENCE} | grep "1")
-		
-			if [ "${GOOD_DRIVE}" != "" ]; then
+			
+			if [ "$(echo ${file} | grep "1")" != "" ]; then
 				echo "${GREEN}"
-				echo " ${i}. THROW THIS DRIVE INTO THE GOOD PILE! (${GOOD_DRIVE})"
-				echo "${NC}"
-			else
-				echo "${RED}"
-				echo "THROW THIS DRIVE INTO THE BAD PILE! ${BAD_DRIVE}"
+				echo " ${i}. THROW THIS DRIVE INTO THE GOOD PILE! (${path}/${file}1)"
 				echo "${NC}"
 			fi
-		fi
-	
-		ls /dev/sd* | grep -vw "sda" | grep -vw "sda1" > /tmp/first
-	done
+			
+			if [ "$(echo ${file} | grep "1")" == "" ] && [ "${LAST_DRIVE}" != "${CURRENT_DRIVE}" ]; then
+				echo "${RED}"
+				echo " ${i}. THROW THIS DRIVE INTO THE BAD PILE! (${path}/${file})"
+				echo "${NC}"
+			fi
+			
+			LAST_DRIVE=$(echo ${file} | sed 's/1//g')
+		done
 fi
 
 if [ "${DEBUG}" == "true" ]; then
