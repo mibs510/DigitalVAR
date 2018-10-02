@@ -27,6 +27,7 @@ if [ "${USB_LIST}" == "" ]; then
 fi
 
 echo "I will image the following drives: $USB_LIST"
+echo "MAKE SURE NO OTHER USB DEVICES ARE CONNECTED! (e.g. Toshiba/WD Element HDD)"
 echo ""
 echo "Is this correct?"
 echo "Press Ctrl+C to exit"
