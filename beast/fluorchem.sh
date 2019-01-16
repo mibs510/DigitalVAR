@@ -59,11 +59,11 @@ for i in "${@}"; do
 	echo ""
 	echo ""
 	echo "=================================================================================================================================="
-	echo "EXECUTING: pv {$IMG} > /dev/sd${i} && sudo xxhsum /dev/sd${i} &>> /tmp/xxhsum.log &"
+	echo "EXECUTING: pv /home/partimag/${IMG} > /dev/sd${i} && sudo xxhsum /dev/sd${i} &>> /tmp/xxhsum.log &"
 	echo "=================================================================================================================================="
 	echo ""
 	echo ""
-	sudo pv {$IMG} > /dev/sd${i} && sudo xxhsum /dev/sd${i} &>> /tmp/xxhsum.log &
+	sudo pv /home/partimag/${IMG} > /dev/sd${i} && sudo xxhsum /dev/sd${i} &>> /tmp/xxhsum.log &
 done
 
 echo ""
@@ -73,4 +73,8 @@ echo " ${IMG} has a sum of ade06eeaf7bcad46"
 echo " LOGS OF IMAGED DRIVES ARE LOCATED IN /tmp/xxhsum.log"
 echo "=================================================================="
 echo ""
+echo ""
+echo "Press Ctrl+C to exit"
+read -p "Press Enter to view /tmp/xxhsum.log"
+less /tmp/xxhsum.log
 
