@@ -17,7 +17,7 @@ if [ "x${IMG}x" = "xx" ]; then
 fi
 
 if [ "$(mount | grep '/home/partimag')" == "" ]; then
-	HDD=$(lsblk -o name,serial | grep 07013 | cut -d' ' -f1)
+	HDD=$(lsblk -o name,serial | grep 575857 | cut -d' ' -f1)
 	if [ -b /dev/${HDD}1 ]; then
 		sudo mount /dev/${HDD}1 /home/partimag
 	fi
