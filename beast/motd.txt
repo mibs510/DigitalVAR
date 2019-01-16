@@ -20,13 +20,13 @@
 | * You must be in the directory where IMG is located       |                                                          |
 | * Used for: 012-914                                       |                                                          |
 |-----------------------------------------------------------|----------------------------------------------------------|
-| * jesse.sh [target] [target] [target] [target] ...        |                                                          |
-| * Example: jesse.sh a b c d e f g h i j k l               |                                                          |
-| * Example: IMG=company_part#_version jesse.sh a b c d     |                                                          |
-| * IMG=biotechne_103-0039_v01 by default                   |                                                          |
-| * IMG must be located in /home/partimag                   |                                                          |
-| * Toshiba HDD automatically mounted                       |                                                          |
-| * Used for: 103-0039                                      |                                                          |
+| * jesse.sh [target] [target] [target] [target] ...        | * fluorchem.sh [target] [target] [target] [target] ...   |
+| * Example: jesse.sh a b c d e f g h i j k l               | * Example: fluorchem.sh a b c d e f g h i j k l          |
+| * Example: IMG=company_part#_version jesse.sh a b c d     | * Example: IMG=some_image.img fluorchem.sh a b c d       |
+| * IMG=biotechne_103-0039_v01 by default                   | * IMG=fluorchem-mfg-master-2017-11-27 by default         |
+| * IMG must be located in /home/partimag                   | * IMG must be located in /home/partimag                  |
+| * WD Elements HDD automatically mounted                   | * WD Elements HDD automatically mounted                  |
+| * Used for: 103-0039                                      | * Used for: 012-914         **** STILL IN BETA ****      |
 |-----------------------------------------------------------|----------------------------------------------------------|
 | * onthefly.sh [master/from] [target] [target] [target] ...|                                                          | 
 | * Example: onthefly.sh a b c d e f g h i j k l            |                                                          |
