@@ -9,6 +9,15 @@ if [ $# -lt 2 ]; then
 	exit 1
 fi
 
+
+if [ ! -b /dev/sd${1} ]; then
+	echo ""
+	echo ""
+	echo "ERROR: /dev/sd${1} DOES NOT EXIST!"
+	echo ""
+	echo ""
+fi
+
 echo ""
 echo ""
 echo "======================================="
