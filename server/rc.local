@@ -13,9 +13,16 @@
 
 # set -x
 
-if [ -b /dev/disk/by-id/ata-ST4000NM0033-9ZM170_Z1Z9F3FJ-part1 ]; then
+ETH1_IFACE="eth1"
+ETH1_MAC=$(cat /sys/class/net/$ETH1_IFACE/address)
+SERVER1_MAC="00:1e:67:cf:ee:8f"
+SERVER2_MAC="00:1e:67:e0:9d:6f"
+
+if [ "$ETH1_MAC" == "$SERVER1_MAC" ]; then
 	# Server #1
-	mount /dev/disk/by-id/ata-ST4000NM0033-9ZM170_Z1Z9F3FJ-part1 /home/partimag
+	if [ -b /dev/disk/by-id/ata-ST4000NM0033-9ZM170_Z1Z9F3FJ-part1 ]; then
+		mount /dev/disk/by-id/ata-ST4000NM0033-9ZM170_Z1Z9F3FJ-part1 /home/partimag
+	fi
 	ifupdownsucks.sh &
 	startafterifupdownsucks.sh &
 	mkdir -p /home/user/.config/gtk-3.0
@@ -23,9 +30,11 @@ if [ -b /dev/disk/by-id/ata-ST4000NM0033-9ZM170_Z1Z9F3FJ-part1 ]; then
 	cp /opt/bookmarks /home/user/.config/gtk-3.0
 	chown -R user:user /home/user
 	exit 0
-elif [ -b /dev/disk/by-id/ata-ST10000VN0004-1ZD101_ZA20ABZY-part1 ]; then
+elif [ "$ETH1_MAC" == "$SERVER2_MAC" ]; then
 	# Server #2
-	mount /dev/disk/by-id/ata-ST10000VN0004-1ZD101_ZA20ABZY-part1 /home/partimag
+	if [ -b /dev/disk/by-id/ata-ST10000VN0004-1ZD101_ZA20ABZY-part1 ]; then
+		mount /dev/disk/by-id/ata-ST10000VN0004-1ZD101_ZA20ABZY-part1 /home/partimag
+	fi
 	ifupdownsucks.sh &
 	startafterifupdownsucks.sh &
 	mkdir -p /home/user/.config/gtk-3.0

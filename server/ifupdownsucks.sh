@@ -26,12 +26,10 @@ while true; do
 			ETH1_IP=$(/sbin/ifconfig "$ETH1_IFACE" | grep 'inet ' | cut -d' ' -f10)
 			if [ "$ETH1_IP" == "" ]; then
 				echo "$(date +"%m/%d/%y@%r") -- $ETH1_IFACE doesn't have an IP address" >> $LOG_FILE
+				echo "$(date +"%m/%d/%y@%r") -- Starting dhclient on $ETH1_IFACE" >> $LOG_FILE
+				dhclient eth1
 			else
 				echo "$(date +"%m/%d/%y@%r") -- IP Address: $ETH1_IP" >> $LOG_FILE
-			fi
-			if [ "$ETH1_IP" != "$SERVER1_IP" ]; then
-				echo "$(date +"%m/%d/%y@%r") -- Setting $ETH1_IFACE with an IP address of $SERVER1_IP" >> $LOG_FILE
-				ifconfig $ETH1_IFACE $SERVER1_IP netmask $SERVERX_SUBNET up
 			fi
 		else
 			echo "$(date +"%m/%d/%y@%r") -- $ETH1_IFACE is down/disconnected" >> $LOG_FILE
@@ -44,12 +42,10 @@ while true; do
 			ETH1_IP=$(/sbin/ifconfig "$ETH1_IFACE" | grep 'inet ' | cut -d' ' -f10)
 			if [ "$ETH1_IP" == "" ]; then
 				echo "$(date +"%m/%d/%y@%r") -- $ETH1_IFACE doesn't have an IP address" >> $LOG_FILE
+				echo "$(date +"%m/%d/%y@%r") -- Starting dhclient on $ETH1_IFACE" >> $LOG_FILE
+				dhclient eth1
 			else
 				echo "$(date +"%m/%d/%y@%r") -- IP Address: $ETH1_IP" >> $LOG_FILE
-			fi
-			if [ "$ETH1_IP" != "$SERVER2_IP" ]; then
-				echo "$(date +"%m/%d/%y@%r") -- Setting $ETH1_IFACE with an IP address of $SERVER2_IP" >> $LOG_FILE
-				ifconfig $ETH1_IFACE $SERVER2_IP netmask $SERVERX_SUBNET up
 			fi
 		else
 			echo "$(date +"%m/%d/%y@%r") -- $ETH1_IFACE is down/disconnected" >> $LOG_FILE
