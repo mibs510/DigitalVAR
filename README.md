@@ -121,7 +121,7 @@ Symlink to reflect new default wallpapers from svgs to pngs
 
 ### server/drbl-functions
 Too long of a file. Hopefully I remebered to mention all lines edited. If not, sorry.
-* Lines edited: 2516
+* Lines edited: 2516, 3539-3541, 3789-3791
 * Can't remember if any other line was edited.
 
 ### drbl-sl
@@ -130,7 +130,7 @@ Remove unwanted text (Clonezilla Live 0.0.0-0 runs on RAM) from PXE menu when im
 
 ### server/drbl-live
 Please don't tell me to press Enter to continue.
-* Lines editied: 154
+* Lines editied: 153-155, 173-175, 304-305, 318, & 335-336
 
 ### server/drbl-live-conf-x
 All other firstboot* and Forcevideo-drbl-live don't matter, I figured.
@@ -158,7 +158,7 @@ eth0:1, and dhcp are brought up otherwise `ocs-live-netcfg`
 that faces the PXE clients.
 
 ### server/ocs-functions
-* Line(s) edited: 4865-4866, more `Press Enter` nonsense
+* Line(s) edited: 4865-4866, 6596-6598, 6651-6653, 6932-6934, 7609-7911, no more `Press Enter` nonsense
 
 ### server/ocs-live-blacklist.conf
 This is used to blacklist kernel modules from loading. Usually these 

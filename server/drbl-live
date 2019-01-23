@@ -150,8 +150,9 @@ start_drbl_live() {
   echo $msg_now_continue_to_run_drblpush
   echo $msg_this_might_take_several_minutes
   if [ "$ocs_batch_mode" != "on" ]; then
-    echo -n $msg_press_enter_to_continue
-#   read
+    #echo -n $msg_press_enter_to_continue
+    echo ""
+    #read
   fi
 
   # Make a tag in client's root to mark this is drbl-live system. Since this is live system, we do not have to clean it later.
@@ -169,8 +170,9 @@ start_drbl_live() {
     [ "$BOOTUP" = "color" ] && $SETCOLOR_FAILURE
     echo "File \"$LIVE_MEDIA/DRBL-Live-Version\" or \"$LIVE_MEDIA/live/DRBL-Live-Version\" _NOT_ found!"
     [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
-    echo -n $msg_press_enter_to_continue
-    read
+    #echo -n $msg_press_enter_to_continue
+    echo ""
+    #read
   fi
   
   # Before we run drblpush, we have to remove the services we put only for DRBL live server when creating drbl live. This will avoide those to be copied to SSI template tarball. Since these services are one-time use only for server during booting.
@@ -299,7 +301,8 @@ start_drbl_live() {
     [ "$BOOTUP" = "color" ] && $SETCOLOR_WARNING
     echo "$msg_all_set_you_can_turn_on_clients"
     [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
-    echo -n $msg_press_enter_to_continue
+    #echo -n $msg_press_enter_to_continue
+    echo ""
     # This is a weird problem about tftpd-hpa when it is restared in 'drbl-all-service start' in the above. It's:
     # -------
     # /etc/init.d/tftpd-hpa restart
@@ -312,7 +315,7 @@ start_drbl_live() {
     # press key... ./td: line 4: read: read error: 0: Resource temporarily unavailable
     # -------
     # Therefore we use < /dev/stdin to avoid tihs.
-    read dummy_var < /dev/stdin
+    #read dummy_var < /dev/stdin
   fi
 } # end of start_drbl_live
 #
@@ -329,8 +332,8 @@ stop_drbl_live() {
   #
   echo "$msg_delimiter_star_line"
   echo "$msg_done!"
-  echo -n $msg_press_enter_to_continue
-  read
+  #echo -n $msg_press_enter_to_continue
+  #read
 } # end of stop_drbl_live
 
 

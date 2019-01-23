@@ -6593,8 +6593,9 @@ feed_LVM_multicast() {
      [ "$BOOTUP" = "color" ] && $SETCOLOR_FAILURE
      echo "$imagedir/$target_dir/${fn}* was not found! The restored OS might be uncompleted!"
      [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
-     echo -n "$msg_press_enter_to_continue..."
-     read
+     #echo -n "$msg_press_enter_to_continue..."
+     echo ""
+     #read
      continue
    fi
    udp_send_part_img $target_dir $fn $lv
@@ -6647,8 +6648,9 @@ feed_LVM_bittorrent() {
      [ "$BOOTUP" = "color" ] && $SETCOLOR_FAILURE
      echo "$ocsroot_btzone/$tgt_dir/$fn was not found! The restored OS might be uncompleted!"
      [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
-     echo -n "$msg_press_enter_to_continue..."
-     read
+     #echo -n "$msg_press_enter_to_continue..."
+     echo ""
+     #read
      continue
    fi
    [ -n "$n_clients" ] && track_max_client_opt="-m $n_clients"
@@ -6927,8 +6929,9 @@ start_ocs_service() {
     echo "$msg_more_NIC_connect_each_other"
     [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
     if [ "$ocs_batch_mode" != "on" ]; then
-      echo -n "$msg_press_enter_to_continue..."
-      read
+      #echo -n "$msg_press_enter_to_continue..."
+      echo ""
+      #read
     fi
   fi
 
@@ -7603,8 +7606,9 @@ create_temp_image_for_different_target_dev_name_if_necessary() {
     echo "$msg_restored_OS_change_fstab_grub_conf"
     [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
     if [ "$ocs_batch_mode" != "on" ]; then
-      echo -n "$msg_press_enter_to_continue..."
-      read
+      #echo -n "$msg_press_enter_to_continue..."
+      echo ""
+      #read
     fi
     if [ -d "$ocsroot/${target_dir}-tmp-cnvted" -a \
          -n "${target_dir}-tmp-cnvted" ]; then
