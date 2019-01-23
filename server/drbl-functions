@@ -3536,8 +3536,9 @@ get_latest_pkg_in_drbl_repository() {
     echo "Warning!"
     echo "Unable to find the latest kernel version in $drbl_mirror_url/dists/$i/main/binary-amd64/Packages.xz. Use the pre-defined one."
     [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
-    echo -n "$msg_press_enter_to_continue"
-    read 
+    #echo -n "$msg_press_enter_to_continue"
+    echo ""
+    #read 
     eval release_kernel_ver="\$${i}_release_kernel_ver_def"
   fi
   [ -d "$ktmp" -a -n "$(echo $ktmp | grep "live_pver")" ] && rm -rf $ktmp
@@ -3785,8 +3786,9 @@ task_ecryptfs_mount_point() {
       # decrypted. Therefore we have to use another method to check.
       if [ "$rc" -ne 0 ]; then
         # Pause so that user can read the error message
-        echo -n "$msg_press_enter_to_continue..."
-        read
+        #echo -n "$msg_press_enter_to_continue..."
+        echo ""
+        #read
         $DIA --backtitle "$msg_nchc_free_software_labs" --title "$msg_nchc_clonezilla" \
         --yesno "$msg_failed_to_encrypt_img\n$msg_do_u_want_to_do_it_again" 0 0
         ans_="$?"
