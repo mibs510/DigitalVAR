@@ -113,7 +113,7 @@ Make sure to rename it to filesystem.squashfs and that it resides in the
 `sudo unsquashfs filesystem.squashfs`
 
 ### Packages
-* Installed: syncthing
+* Installed: syncthing, gsmartcontrol
 * Uninstall: vim-common, vim-runtime, vim-tiny
 
 ### server/desktop-background

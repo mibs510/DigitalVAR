@@ -56,7 +56,7 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	sudo cp server/drblwp.png server/squashfs-root/tftpboot/nbi_img
 	sudo cp server/interfaces server/squashfs-root/etc/network
 	sudo cp server/{rc.local,hosts} server/squashfs-root/etc
-	sudo cp server/{Super_Thunar.desktop,Clonezilla-server.desktop,syncthing.desktop} server/squashfs-root/usr/share/drbl/setup/files/misc/desktop-icons/drbl-live
+	sudo cp server/{Super_Thunar.desktop,Clonezilla-server.desktop,syncthing.desktop,gsmartcontrol.desktop} server/squashfs-root/usr/share/drbl/setup/files/misc/desktop-icons/drbl-live
 	sudo cp server/syncthing.png server/squashfs-root/usr/share/icons/hicolor/64x64/apps
 	sudo cp server/firstboot.default-DBN.drbl server/squashfs-root/usr/share/drbl/setup/files/DBN
 	sudo cp server/desktop-wallpaper/* server/squashfs-root/usr/share/desktop-base/softwaves-theme/wallpaper/contents/images

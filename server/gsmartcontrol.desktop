@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=GSmartControl
+Type=Application
+Exec=gsmartcontrol
+TryExec=
+Icon=/usr/share/icons/hicolor/64x64/apps/gsmartcontrol.png
+X-GNOME-DocPath=
+Terminal=false
+Name[en_US]=gsmartcontrol.desktop
