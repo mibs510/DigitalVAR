@@ -21,9 +21,9 @@ SERVER2_MAC="00:1e:67:e0:9d:6f"
 if [ "$ETH1_MAC" == "$SERVER1_MAC" ]; then
 	# Server #1
 	
-	# Mount old 4TB HDD
-	if [ -b /dev/disk/by-id/scsi-36848f690e5cb690023dbb981150bf0de-part1 ]; then
-		mount /dev/disk/by-id/scsi-36848f690e5cb690023dbb981150bf0de-part1 /home/partimag
+	# Mount new 12TB HDD
+	if [ -b /dev/disk/by-id/ata-ST12000NM0007-2A1101_ZJV18GMV-part1 ]; then
+		mount /dev/disk/by-id/ata-ST12000NM0007-2A1101_ZJV18GMV-part1 /home/partimag
 	fi
 	
 	ifupdownsucks.sh &
