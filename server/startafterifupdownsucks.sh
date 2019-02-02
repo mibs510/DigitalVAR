@@ -13,7 +13,7 @@ done
 
 # Now we may start:
 sudo systemctl start ssh
-# sudo systemctl start syncthing@root.service
+sudo systemctl start syncthing@root.service
 
 exit 0
 # set +x
