@@ -9,15 +9,16 @@ if [ "${1}" != "7880" ] && [ "${1}" != "8500" ] && [ "${1}" != "8609" ] && [ "${
 	exit 1
 fi
 
+PARTIMAG=$(lsblk -o name,serial | grep 07013A | cut -d' ' -f1)
 USB_LIST=""
 
-for i in {b..z}; do
-	if [ -b /dev/sd${i} ]; then
+for i in {a..z}; do
+	if [ -b /dev/sd${i} ] && [ "sd${i}" != "PARTIMAG" ]; then
 		USB_LIST=$USB_LIST"sd$i "
 	fi
 done
 
-if [ -b /dev/sdaa ]; then
+if [ -b /dev/sdaa ] && [ "sdaa" != "PARTIMAG" ]; then
 	USB_LIST=$USB_LIST"sdaa"
 fi
 
@@ -35,7 +36,7 @@ read -p "Press Enter to continue"
 
 if [ "$(df -P /home/partimag | tail -1 | cut -d' ' -f1)" != "/dev/sda1" ]; then
 	echo "Mounting /dev/sda1 onto /home/partimag"
-	sudo mount /dev/sda1 /home/partimag
+	sudo mount /dev/${PARTIMAG} /home/partimag
 fi
 
 # green7880
