@@ -2,7 +2,7 @@
 
 DEBUG=false
 SKIP_XXHSUM=false
-SKIP_PULLOUTS=false
+SKIP_PULLOUTS=true
 
 if [ "${1}" != "7880" ] && [ "${1}" != "8500" ] && [ "${1}" != "8609" ] && [ "${1}" != "8610" ] && [ "${1}" != "8599" ]; then
 	echo "ERROR: Invalid arguments"
@@ -13,24 +13,26 @@ if [ "${1}" != "7880" ] && [ "${1}" != "8500" ] && [ "${1}" != "8609" ] && [ "${
 	exit 1
 fi
 
-WAIT_FOR_DD=5
-i=0
 
 USB_LIST=""
+declare -a BAD_BOYS
 
 RED=`tput setaf 1`
 GREEN=`tput setaf 2`
 NC=`tput sgr0`
 
 
-for i in {b..z}; do
-	if [ -b /dev/sd${i} ]; then
+PARTIMAG=$(lsblk -o name,serial | grep 07013A | cut -d' ' -f1)
+USB_LIST=""
+
+for i in {a..z}; do
+	if [ -b /dev/sd${i} ] && [ "sd${i}" != "${PARTIMAG}" ]; then
 		USB_LIST=$USB_LIST"sd$i "
 	fi
 done
 
-if [ -b /dev/sdaa ]; then
-	USB_LIST=$USB_LIST"sdaa "
+if [ -b /dev/sdaa ] && [ "sdaa" != "${PARTIMAG}" ]; then
+	USB_LIST=$USB_LIST"sdaa"
 fi
 
 if [ "${USB_LIST}" == "" ]; then
@@ -74,9 +76,9 @@ if [ "${DEBUG}" == "true" ]; then
 fi
 
 if [ "${SKIP_XXHSUM}" == "false" ]; then
-	for i in {b..z}; do
+	for i in {a..z}; do
 		EXIT=false
-		if [ -b /dev/sd${i}1 ]; then
+		if [ -b /dev/sd${i}1 ] && [ "sd${i}" != "${PARTIMAG}" ]; then
 			sudo mount /dev/sd${i}1 /mnt
 		
 			if [ "$?" != "0" ] && [ "$EXIT" == "false" ]; then
@@ -84,16 +86,10 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 				echo ""
 				echo "================================================================="
 				echo "ERROR: /dev/sd${i}1 COULDN'T BE MOUNTED!!"
-				echo "Making /dev/sd${i} flash rapidly..."
-				echo "Pull drive out of USB hub!"
+				echo "Adding /dev/sd${i} onto the bad list..."
 				echo "================================================================="
 				echo ""
-				(sudo dd if=/dev/zero of=/dev/sd${i} &) > /dev/null 2>&1
-				sleep ${WAIT_FOR_DD}
-				while [ "$(pidof dd)" != "" ]
-				do
-					sleep 1
-				done
+				BAD_BOYS+=(sd{i})
 			fi
 		
 			if [ "$EXIT" == "false" ]; then
@@ -106,40 +102,37 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 				echo ""
 				echo "==========================================="
 				echo "ERROR: /dev/sd${i} HAS XXHSUM MISMATCH(ES)"
-				echo "Making /dev/sd${i} flash rapidly..."
-				echo "Pull drive out of USB hub!"
-				echo "==========================================="
+				echo "Adding /dev/sd${i} onto the bad list..."
+				echo "================================================================="
 				echo ""
-				(sudo dd if=/dev/zero of=/dev/sd${i} &) > /dev/null 2>&1
-				sleep ${WAIT_FOR_DD}
-				while [ "$(pidof dd)" != "" ]
-				do
-					sleep 1
-				done
+				BAD_BOYS+=(sd{i})
 			fi
 		
 			if [ "$EXIT" == "false" ]; then
 				sudo umount /dev/sd${i}1
 			fi
 		fi
+		if [ ! -b /dev/sd${i}1 ]; then
+			echo ""
+			echo "================================================================="
+			echo "ERROR: /dev/sd${i} DOES NOT HAVE ANY PARTITIONS"
+			echo "Adding /dev/sd${i} onto the bad list..."
+			echo "================================================================="
+			echo ""
+			BAD_BOYS+=(sd{i})
+		fi
 	done
 
-	if [ -b /dev/sdaa1 ]; then
+	if [ -b /dev/sdaa1 ] && [ "sd${i}" != "${PARTIMAG}" ]; then
 	
 		if [ "$?" != "0" ]; then
 			echo ""
 			echo "================================================================="
 			echo "ERROR: /dev/sdaa1 COULDN'T BE MOUNTED!!"
-			echo "Making /dev/sdaa flash rapidly..."
-			echo "Pull drive out of USB hub!"
+			echo "Adding /dev/sd${i} onto the bad list..."
 			echo "================================================================="
 			echo ""
-			(sudo dd if=/dev/zero of=/dev/sdaa &) > /dev/null 2>&1
-			sleep ${WAIT_FOR_DD}
-			while [ "$(pidof dd)" != "" ]
-			do
-				sleep 1
-			done
+			BAD_BOYS+=(sd{i})
 		fi
 	
 		sudo xxhsum -c /etc/${XXHSUM_FILE}.xxhsums &> /dev/null
@@ -148,16 +141,10 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 			echo ""
 			echo "========================================="
 			echo "ERROR: /dev/sdaa HAS XXHSUM MISMATCH(ES)"
-			echo "Making /dev/sdaa flash rapidly..."
-			echo "Pull drive out of USB hub!"
+			echo "Adding /dev/sd${i} onto the bad list..."
 			echo "========================================="
 			echo ""
-			(sudo dd if=/dev/zero of=/dev/sdaa &) > /dev/null 2>&1
-			sleep ${WAIT_FOR_DD}
-			while [ "$(pidof dd)" != "" ]
-			do
-				sleep 1
-			done
+			BAD_BOYS+=(sdaa)
 		fi
 		sudo umount /dev/sdaa1
 	fi
@@ -168,11 +155,22 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 	echo ""
 fi
 
+if [ "${#BAD_BOYS[@]}" != "0" ]; then
+	echo ""
+	echo "========================================================"
+	echo "The following list of drives were determined to be bad:"
+	echo "========================================================"
+	echo ""
+
+	for i in "${BAD_BOYS[@]}"; do
+		echo "${i}"
+	done
+fi
+
 if [ "${SKIP_PULLOUTS}" == "false" ]; then
 
 	echo ""
 	echo "==========================================================="
-	echo " Lets start pulling out."
 	echo " Watching /dev as you remove each USB drive individually..."
 	echo "==========================================================="
 	echo ""
@@ -180,7 +178,7 @@ if [ "${SKIP_PULLOUTS}" == "false" ]; then
 	inotifywait -m /dev -e delete |
 		while read path action file; do
 			# Are we done pulling out everyone?
-			if [ "$(ls /tmp/sd* 2>/dev/null | grep -vw "sda" | grep -vw "sda1" | wc -l)" == "0" ]; then
+			if [ "$(ls /dev/sd* 2>/dev/null | grep -vw "${PARTIMAG}" | grep -vw "${PARTIMAG}1" | wc -l)" == "0" ]; then
 				echo "We're finished!"
 				return
 			fi
