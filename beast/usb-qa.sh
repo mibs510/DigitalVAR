@@ -180,7 +180,7 @@ fi
 if [ "${#BAD_BOYS[@]}" != "0" ]; then
 	echo ""
 	echo "========================================================"
-	echo "The following list of drives are determined to be bad:"
+	echo "The following list of drives are determined to be ${RED}BAD${NC}:"
 	echo "========================================================"
 	echo ""
 
