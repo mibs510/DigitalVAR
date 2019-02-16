@@ -116,7 +116,7 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 				sudo umount /dev/sd${i}1
 			fi
 		fi
-		if [ ! -b /dev/sd${i}1 ]; then
+		if [ ! -b /dev/sd${i}1 ] && [ "sd${i}" != "${PARTIMAG}" ]; then
 			echo ""
 			echo "================================================================="
 			echo "ERROR: /dev/sd${i} DOES NOT HAVE ANY PARTITIONS"
@@ -128,6 +128,7 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 	done
 
 	if [ -b /dev/sdaa1 ] && [ "sd${i}" != "${PARTIMAG}" ]; then
+		EXIT=false
 		echo "mount: /dev/sdaa"
 		sudo mount /dev/sdaa1 /mnt
 		if [ "$?" != "0" ]; then
@@ -138,24 +139,37 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 			echo "================================================================="
 			echo ""
 			BAD_BOYS+=(sd${i})
-			return
+			EXIT=true
 		fi
 		
-		echo "xxhsum: /dev/sdaa"
-		sudo xxhsum -c /etc/${XXHSUM_FILE}.xxhsums &> /dev/null
-		if [ "$?" != "0" ]; then
+		if [ "$EXIT" == "false" ]; then
+			echo "xxhsum: /dev/sdaa"
+			sudo xxhsum -c /etc/${XXHSUM_FILE}.xxhsums &> /dev/null
+		fi
+		
+		if [ "$?" != "0" ] && [ "$EXIT" == "false" ]; then
+			echo "unmount: /dev/sdaa"
 			sudo umount /dev/sdaa1
 			echo ""
 			echo "========================================="
 			echo "ERROR: /dev/sdaa HAS XXHSUM MISMATCH(ES)"
-			echo "Adding /dev/sd${i} onto the bad list..."
+			echo "Adding /dev/sdaa onto the bad list..."
 			echo "========================================="
 			echo ""
 			BAD_BOYS+=(sdaa)
 		fi
-		echo "unmount: /dev/sdaa"
-		sudo umount /dev/sdaa1
 	fi
+	
+	if [ ! -b /dev/sdaa1 ] && [ "sd${i}" != "${PARTIMAG}" ]; then
+		echo ""
+		echo "================================================================="
+		echo "ERROR: /dev/sd${i} DOES NOT HAVE ANY PARTITIONS"
+		echo "Adding /dev/sd${i} onto the bad list..."
+		echo "================================================================="
+		echo ""
+		BAD_BOYS+=(sd${i})
+	fi
+	
 	echo ""
 	echo "============================================"
 	echo "Done xxhsumming files inside the USB drives."
