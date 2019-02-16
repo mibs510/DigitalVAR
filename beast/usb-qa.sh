@@ -5,7 +5,7 @@ SKIP_XXHSUM=false
 SKIP_PULLOUTS=false
 
 if [ "${1}" != "7880" ] && [ "${1}" != "8500" ] && [ "${1}" != "8609" ] && [ "${1}" != "8610" ] && [ "${1}" != "8599" ]; then
-	echo "ERROR: Invalid arguments"
+	echo "${RED}ERROR${NC}: Invalid arguments"
 	echo "Example: ${0} 7880"
 	echo "         ${0} [PART NUMBER]"
 	echo ""
@@ -36,7 +36,7 @@ if [ -b /dev/sdaa ] && [ "sdaa" != "${PARTIMAG}" ]; then
 fi
 
 if [ "${USB_LIST}" == "" ]; then
-	echo "ERROR: No USB drives found to QA?"
+	echo "${RED}ERROR${NC}: No USB drives found to QA?"
 	exit 1
 fi
 
