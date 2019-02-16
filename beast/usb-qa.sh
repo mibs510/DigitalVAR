@@ -2,7 +2,7 @@
 
 DEBUG=false
 SKIP_XXHSUM=false
-SKIP_PULLOUTS=true
+SKIP_PULLOUTS=false
 
 if [ "${1}" != "7880" ] && [ "${1}" != "8500" ] && [ "${1}" != "8609" ] && [ "${1}" != "8610" ] && [ "${1}" != "8599" ]; then
 	echo "ERROR: Invalid arguments"
@@ -201,41 +201,45 @@ if [ "${SKIP_PULLOUTS}" == "false" ]; then
 	
 	inotifywait -m /dev -e delete |
 		while read path action file; do
-			# Are we done pulling out everyone?
-			if [ "$(ls /dev/sd* 2>/dev/null | grep -vw "${PARTIMAG}" | grep -vw "${PARTIMAG}1" | wc -l)" == "0" ]; then
-				echo "We're finished!"
-				exit 0
-			fi
+			IGNORE=false
 			
 			# Possible ${file} input: sg1
 			# Seen in Ubuntu 18.04		
 			if [ "$(echo ${file} | grep "sd")" == "" ]; then
-				return
+				IGNORE=true
 			fi
 			
 			# Input: sdb or sdb1
-			# Exit/ignore: sd*1
+			# Ignore: sd*1
 			if [[ ${file} == sd*1 ]]; then
-				return
+				IGNORE=true
 			fi
 			
-			BAD=false
+			if [ "${IGNORE}" == "false" ]; then
+				BAD=false
 			
-			for i in "${BAD_BOYS[@]}"; do
-				if [ "${file}" == "${i}" ]; then
-					echo "${RED}"
-					echo "${j}. BAD USB DRIVE!!!"
+				for i in "${BAD_BOYS[@]}"; do
+					if [ "${file}" == "${i}" ]; then
+						echo "${RED}"
+						echo "${j}. BAD USB DRIVE!!!"
+						echo "${NC}"
+						BAD=true
+						j=$((j+1))
+					fi
+				done
+			
+				if [ "${BAD}" == "false" ]; then
+					echo "${GREEN}"
+					echo "${j}. GOOD USB DRIVE!!!"
 					echo "${NC}"
-					BAD=true
-					j=$((j+1))
+					j=$((j+1))			
 				fi
-			done
+			fi
 			
-			if [ "${BAD}" == "false" ]; then
-				echo "${GREEN}"
-				echo "${j}. GOOD USB DRIVE!!!"
-				echo "${NC}"
-				j=$((j+1))			
+			# Are we done pulling out everyone?
+			if [ "$(ls /dev/sd* 2>/dev/null | grep -vw "${PARTIMAG}" | grep -vw "${PARTIMAG}1" | wc -l)" == "0" ]; then
+				echo "We're finished!"
+				exit 0
 			fi
 		done
 fi
