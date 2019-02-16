@@ -79,6 +79,7 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 	for i in {a..z}; do
 		EXIT=false
 		if [ -b /dev/sd${i}1 ] && [ "sd${i}" != "${PARTIMAG}" ]; then
+			echo "mount: /dev/sd${i}"
 			sudo mount /dev/sd${i}1 /mnt
 		
 			if [ "$?" != "0" ] && [ "$EXIT" == "false" ]; then
@@ -89,15 +90,17 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 				echo "Adding /dev/sd${i} onto the bad list..."
 				echo "================================================================="
 				echo ""
-				BAD_BOYS+=(sd{i})
+				BAD_BOYS+=(sd${i})
 			fi
 		
 			if [ "$EXIT" == "false" ]; then
+				echo "xxhsum: /dev/sd${i}"
 				sudo xxhsum -c /etc/${XXHSUM_FILE}.xxhsums &> /dev/null
 			fi
 			
 			if [ "$?" != "0" ] && [ "$EXIT" == "false" ]; then
 				EXIT=true
+				echo "unmount: /dev/sd${i}"
 				sudo umount /dev/sd${i}1
 				echo ""
 				echo "==========================================="
@@ -105,10 +108,11 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 				echo "Adding /dev/sd${i} onto the bad list..."
 				echo "================================================================="
 				echo ""
-				BAD_BOYS+=(sd{i})
+				BAD_BOYS+=(sd${i})
 			fi
 		
 			if [ "$EXIT" == "false" ]; then
+				echo "unmount: /dev/sd${i}"
 				sudo umount /dev/sd${i}1
 			fi
 		fi
@@ -119,12 +123,13 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 			echo "Adding /dev/sd${i} onto the bad list..."
 			echo "================================================================="
 			echo ""
-			BAD_BOYS+=(sd{i})
+			BAD_BOYS+=(sd${i})
 		fi
 	done
 
 	if [ -b /dev/sdaa1 ] && [ "sd${i}" != "${PARTIMAG}" ]; then
-	
+		echo "mount: /dev/sdaa"
+		sudo mount /dev/sdaa1 /mnt
 		if [ "$?" != "0" ]; then
 			echo ""
 			echo "================================================================="
@@ -132,9 +137,11 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 			echo "Adding /dev/sd${i} onto the bad list..."
 			echo "================================================================="
 			echo ""
-			BAD_BOYS+=(sd{i})
+			BAD_BOYS+=(sd${i})
+			return
 		fi
-	
+		
+		echo "xxhsum: /dev/sdaa"
 		sudo xxhsum -c /etc/${XXHSUM_FILE}.xxhsums &> /dev/null
 		if [ "$?" != "0" ]; then
 			sudo umount /dev/sdaa1
@@ -146,6 +153,7 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 			echo ""
 			BAD_BOYS+=(sdaa)
 		fi
+		echo "unmount: /dev/sdaa"
 		sudo umount /dev/sdaa1
 	fi
 	echo ""
