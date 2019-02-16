@@ -127,7 +127,7 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 		fi
 	done
 
-	if [ -b /dev/sdaa1 ] && [ "sd${i}" != "${PARTIMAG}" ]; then
+	if [ -b /dev/sdaa1 ] && [ "sdaa" != "${PARTIMAG}" ]; then
 		EXIT=false
 		echo "mount: /dev/sdaa"
 		sudo mount /dev/sdaa1 /mnt
@@ -160,7 +160,7 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 		fi
 	fi
 	
-	if [ ! -b /dev/sdaa1 ] && [ "sd${i}" != "${PARTIMAG}" ]; then
+	if [ ! -b /dev/sdaa1 ] && [ "sdaa" != "${PARTIMAG}" ]; then
 		echo ""
 		echo "================================================================="
 		echo "ERROR: /dev/sd${i} DOES NOT HAVE ANY PARTITIONS"
