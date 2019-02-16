@@ -13,7 +13,7 @@ if [ "${1}" != "7880" ] && [ "${1}" != "8500" ] && [ "${1}" != "8609" ] && [ "${
 	exit 1
 fi
 
-
+j=0
 USB_LIST=""
 declare -a BAD_BOYS
 
@@ -180,13 +180,15 @@ fi
 if [ "${#BAD_BOYS[@]}" != "0" ]; then
 	echo ""
 	echo "========================================================"
-	echo "The following list of drives were determined to be bad:"
+	echo "The following list of drives are determined to be bad:"
 	echo "========================================================"
 	echo ""
 
 	for i in "${BAD_BOYS[@]}"; do
-		echo "${i}"
+		echo "* ${i}"
 	done
+	echo ""
+	echo ""
 fi
 
 if [ "${SKIP_PULLOUTS}" == "false" ]; then
@@ -202,7 +204,7 @@ if [ "${SKIP_PULLOUTS}" == "false" ]; then
 			# Are we done pulling out everyone?
 			if [ "$(ls /dev/sd* 2>/dev/null | grep -vw "${PARTIMAG}" | grep -vw "${PARTIMAG}1" | wc -l)" == "0" ]; then
 				echo "We're finished!"
-				return
+				exit 0
 			fi
 			
 			# Possible ${file} input: sg1
@@ -212,24 +214,29 @@ if [ "${SKIP_PULLOUTS}" == "false" ]; then
 			fi
 			
 			# Input: sdb or sdb1
-			# Output: sdb
-			CURRENT_DRIVE=$(echo ${file} | sed 's/1//g')
+			# Exit/ignore: sd*1
+			if [[ ${file} == sd*1 ]]; then
+				return
+			fi
 			
-			i=$((i+1))
+			BAD=false
 			
-			if [ "$(echo ${file} | grep "1")" != "" ]; then
+			for i in "${BAD_BOYS[@]}"; do
+				if [ "${file}" == "${i}" ]; then
+					echo "${RED}"
+					echo "${j}. BAD USB DRIVE!!!"
+					echo "${NC}"
+					BAD=true
+					j=$((j+1))
+				fi
+			done
+			
+			if [ "${BAD}" == "false" ]; then
 				echo "${GREEN}"
-				echo " ${i}. THROW THIS DRIVE INTO THE GOOD PILE! (${path}/${file}1)"
+				echo "${j}. GOOD USB DRIVE!!!"
 				echo "${NC}"
+				j=$((j+1))			
 			fi
-			
-			if [ "$(echo ${file} | grep "1")" == "" ] && [ "${LAST_DRIVE}" != "${CURRENT_DRIVE}" ]; then
-				echo "${RED}"
-				echo " ${i}. THROW THIS DRIVE INTO THE BAD PILE! (${path}/${file})"
-				echo "${NC}"
-			fi
-			
-			LAST_DRIVE=$(echo ${file} | sed 's/1//g')
 		done
 fi
 
