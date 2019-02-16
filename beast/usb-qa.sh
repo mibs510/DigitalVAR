@@ -116,7 +116,7 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 				sudo umount /dev/sd${i}1
 			fi
 		fi
-		if [ ! -b /dev/sd${i}1 ] && [ "sd${i}" != "${PARTIMAG}" ]; then
+		if [ -b /dev/sd${i} ] && [ ! -b /dev/sd${i}1 ] && [ "sd${i}" != "${PARTIMAG}" ]; then
 			echo ""
 			echo "================================================================="
 			echo "ERROR: /dev/sd${i} DOES NOT HAVE ANY PARTITIONS"
@@ -160,7 +160,7 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 		fi
 	fi
 	
-	if [ ! -b /dev/sdaa1 ] && [ "sdaa" != "${PARTIMAG}" ]; then
+	if [  -b /dev/sdaa ] && [ ! -b /dev/sdaa1 ] && [ "sdaa" != "${PARTIMAG}" ]; then
 		echo ""
 		echo "================================================================="
 		echo "ERROR: /dev/sd${i} DOES NOT HAVE ANY PARTITIONS"
