@@ -205,7 +205,7 @@ if [ "${SKIP_PULLOUTS}" == "false" ]; then
 			
 			# Possible ${file} input: sg1
 			# Seen in Ubuntu 18.04		
-			if [[ ${file} == sg* ]]; then
+			if [ "$(echo ${file} | grep "sd")" == "" ]; then
 				IGNORE=true
 			fi
 			
