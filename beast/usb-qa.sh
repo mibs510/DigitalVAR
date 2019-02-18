@@ -236,25 +236,7 @@ if [ "${SKIP_PULLOUTS}" == "false" ]; then
 				fi
 			fi
 			
-			# Are we done pulling out everyone?
-			if [ "$(ls /dev/sd* 2>/dev/null | grep -vw "${PARTIMAG}" | grep -vw "${PARTIMAG}1" | wc -l)" == "1" ]; then
-				LAST_DRIVE=$(ls /dev/sd* 2>/dev/null | grep -vw "${PARTIMAG}" | grep -vw "${PARTIMAG}1 | sed 's/\/dev\///g' | grep -v 1")
-				
-				for i in "${BAD_BOYS[@]}"; do
-					if [ "${LAST_DRIVE}" == "${i}" ]; then
-						echo "${RED}=== LAST DRIVE ==="
-						echo "${j}. BAD USB DRIVE!!!"
-						echo "$======================={NC}"
-						exit 0; exit 0
-					fi
-				done
-				
-				echo "${GREEN}=== LAST DRIVE ==="
-				echo "${j}. GOOD USB DRIVE!!!"
-				echo "==========================${NC}"
-				
-				exit 0; exit 0
-			fi
+
 		done
 fi
 
