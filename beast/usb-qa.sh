@@ -75,6 +75,12 @@ if [ "${DEBUG}" == "true" ]; then
 	set -x
 fi
 
+if [ ! -f /etc/${XXHSUM_FILE}.xxhsums ]; then
+	echo "ERROR: /etc/${XXHSUM_FILE}.xxhsums DOES NOT EXIST!"
+	echo "This part number may not be supported at the time"
+	exit 1
+fi
+
 if [ "${SKIP_XXHSUM}" == "false" ]; then
 	for i in {a..z}; do
 		EXIT=false
@@ -196,6 +202,7 @@ if [ "${SKIP_PULLOUTS}" == "false" ]; then
 	echo ""
 	echo "==========================================================="
 	echo " Watching /dev as you remove each USB drive individually..."
+	echo " Press Ctrl + C when you're finished to exit"
 	echo "==========================================================="
 	echo ""
 	
