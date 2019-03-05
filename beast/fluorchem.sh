@@ -23,7 +23,7 @@ if [ "$(mount | grep '/home/partimag')" == "" ]; then
 	fi
 fi
 
-if [ ! -d "/home/partimag/${IMG}" ]; then
+if [ ! -f "/home/partimag/${IMG}" ]; then
 	echo "ERROR: /home/partimg/${IMG} does not exist!!"
 	exit 1
 fi
@@ -44,7 +44,7 @@ echo "=================================================================="
 echo ""
 echo ""
 
-for i in "${@}:2"; do
+for i in "${@:1}"; do
 	lsblk -o name,serial | grep sd${i}
 
 done
@@ -55,15 +55,17 @@ echo "Press Ctrl+C to exit"
 read -p "Press Enter to continue"
 
 
-for i in "${@}"; do
+for i in "${@:1}"; do
 	echo ""
 	echo ""
 	echo "=================================================================================================================================="
-	echo "EXECUTING: pv /home/partimag/${IMG} > /dev/sd${i} && sudo xxhsum /dev/sd${i} &>> /tmp/xxhsum.log &"
+	echo "EXECUTING: sudo pv /home/partimag/${IMG} > /dev/sd${i} && sudo xxhsum /dev/sd${i} &>> /tmp/xxhsum.log &"
 	echo "=================================================================================================================================="
 	echo ""
 	echo ""
-	sudo pv /home/partimag/${IMG} > /dev/sd${i} && sudo xxhsum /dev/sd${i} &>> /tmp/xxhsum.log &
+	sudo sh <<< "dd if=/home/partimag/${IMG} | pv | dd of=/dev/sd${i}"
+	echo "xxhsum: /dev/sd${i} in the background"
+	sudo xxhsum /dev/sd${i} &>> /tmp/xxhsum.log &
 done
 
 echo ""
