@@ -47,8 +47,7 @@ for i in "${@:2}"; do
 	echo "============================================"
 	echo "/dev/sd${i} completed: "
 	cat /tmp/sd${i}.txt | grep "error"
-	echo "============================================"
-done
+done | less
 
 echo ""
 echo ""
