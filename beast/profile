@@ -29,5 +29,3 @@ if [ -d /etc/profile.d ]; then
   unset i
 fi
 export PATH=$PATH:/sbin:/usr/sbin:/usr/share/drbl/sbin:/usr/share/drbl/bin:
-
-cat /etc/motd.txt

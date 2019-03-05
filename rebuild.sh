@@ -11,6 +11,7 @@ if [ "${1}" == "--beast" ] || [ "${1}" == "beast" ]; then
 	sudo cp beast/sources.list beast/squashfs-root/etc/apt
 	sudo cp beast/drbl-repository.list beast/squashfs-root/etc/apt/sources.list.d
 	sudo cp beast/interfaces beast/squashfs-root/etc/network
+	sudo cp beast/S03prep-drbl-clonezilla beast/squashfs-root/etc/ocs/ocs-live.d
 	sudo rm -rf beast/filesystem.squashfs && sudo mksquashfs beast/squashfs-root beast/filesystem.squashfs -b 1024k -comp xz -Xbcj x86 -e boot && \
 	echo "NOTE: Copy filesystem.squashfs to CLONER/live"
 	exit 0
