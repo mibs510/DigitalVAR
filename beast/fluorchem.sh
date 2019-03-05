@@ -58,9 +58,9 @@ read -p "Press Enter to continue"
 for i in "${@:1}"; do
 	echo ""
 	echo ""
-	echo "=================================================================================================================================="
-	echo "EXECUTING: sudo pv /home/partimag/${IMG} > /dev/sd${i} && sudo xxhsum /dev/sd${i} &>> /tmp/xxhsum.log &"
-	echo "=================================================================================================================================="
+	echo "================================================================================"
+	echo "EXECUTING: sudo sh <<< \"dd if=/home/partimag/${IMG} | pv | dd of=/dev/sd${i}\""
+	echo "================================================================================"
 	echo ""
 	echo ""
 	sudo sh <<< "dd if=/home/partimag/${IMG} | pv | dd of=/dev/sd${i}"
@@ -71,12 +71,14 @@ done
 echo ""
 echo ""
 echo "=================================================================="
-echo " ${IMG} has a sum of ade06eeaf7bcad46"
+if [ "${IMG}" == "fluorchem-mfg-master-2017-11-27" ]; then
+	echo " ${IMG} has a sum of ade06eeaf7bcad46"
+fi
 echo " LOGS OF IMAGED DRIVES ARE LOCATED IN /tmp/xxhsum.log"
 echo "=================================================================="
 echo ""
 echo ""
 echo "Press Ctrl+C to exit"
 read -p "Press Enter to view /tmp/xxhsum.log"
-less /tmp/xxhsum.log
+sed -e "s/\r//g" /tmp/xxhsum.log | less
 
