@@ -58,7 +58,7 @@ for i in "${@}"; do
 	echo "/dev/sd${i} completed: "
 	cat /tmp/sd${i}.txt | grep "Finished!"
 	echo "============================================"
-done
+done | less
 
 echo ""
 echo ""
