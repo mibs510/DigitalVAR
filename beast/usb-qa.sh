@@ -177,9 +177,9 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 	fi
 	
 	echo ""
-	echo "============================================"
-	echo "Done xxhsumming files inside the USB drives."
-	echo "============================================"
+	echo "========================================="
+	echo "Done xxhsumming files inside USB drives."
+	echo "========================================="
 	echo ""
 fi
 
