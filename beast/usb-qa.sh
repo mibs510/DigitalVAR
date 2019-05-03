@@ -112,7 +112,7 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 				echo "==========================================="
 				echo "ERROR: /dev/sd${i} HAS XXHSUM MISMATCH(ES)"
 				echo "Adding /dev/sd${i} onto the bad list..."
-				echo "================================================================="
+				echo "==========================================="
 				echo ""
 				BAD_BOYS+=(sd${i})
 			fi

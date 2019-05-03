@@ -11,6 +11,9 @@ fi
 
 PARTIMAG=$(lsblk -o name,serial | grep 07013A | cut -d' ' -f1)
 USB_LIST=""
+RED=`tput setaf 1`
+GREEN=`tput setaf 2`
+NC=`tput sgr0`
 
 for i in {a..z}; do
 	if [ -b /dev/sd${i} ] && [ "sd${i}" != "${PARTIMAG}" ]; then
@@ -28,7 +31,7 @@ if [ "${USB_LIST}" == "" ]; then
 fi
 
 echo "I will image the following drives: $USB_LIST"
-echo "MAKE SURE NO OTHER USB DEVICES ARE CONNECTED! (e.g. Toshiba/WD Element HDD)"
+echo "${RED}MAKE SURE NO OTHER USB DEVICES ARE CONNECTED! (e.g. Toshiba/WD Element HDD)${NC}"
 echo ""
 echo "Is this correct?"
 echo "Press Ctrl+C to exit"
