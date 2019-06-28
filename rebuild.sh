@@ -38,9 +38,9 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	# Propigate kernel modules throughout everywhere
 	echo " * Propigating kernel modules everywhere..."
 	sudo rm -rf server/squashfs-root/tftpboot/node_root/lib/modules/*
-	sudo cp -a server/initrd-root/lib/modules/4.18.7 server/squashfs-root/tftpboot/node_root/lib/modules
+	sudo cp -a server/initrd-root/lib/modules/* server/squashfs-root/tftpboot/node_root/lib/modules
 	sudo rm -rf server/squashfs-root/usr/lib/modules/*
-	sudo cp -a server/initrd-root/lib/modules/4.18.7 server/squashfs-root/usr/lib/modules
+	sudo cp -a server/initrd-root/lib/modules/* server/squashfs-root/usr/lib/modules
 	#
 	
 	echo " * Copying everything from 'server/' folder to where they belong..."
@@ -100,7 +100,7 @@ if [ "${1}" == "--test-initrd" ] || [ "${1}" == "test-initrd" ]; then
     -monitor stdio \
     -soundhw ac97 \
     -machine accel=kvm \
-    -m 1024 \
+    -m 2048 \
     -boot once=c,menu=on \
     -net nic,vlan=0 \
     -net user,vlan=0 \
