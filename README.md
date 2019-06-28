@@ -51,7 +51,7 @@ You'll have to rename it (filesystem.squashfs) and uncompress it inside
 `sudo unsquashfs filesystem.squashfs`
 
 ### Packages
-* Installed: inotify-tools, curl
+* Installed: inotify-tools, curl, sshpass
 * Uninstalled: 
 
 You could reproduce this by chrooting:
@@ -231,8 +231,8 @@ modules. All three locations must have the same exact modules.
 * `INSTALL_MOD_PATH="install" make modules_install`
 * `cp arch/x86/boot/bzImage /path/to/DigitalVAR/server/vmlinuz`
 * Delete old modules: `rm -rf /path/to/DigitalVAR/server/initrd-root/lib/modules/*`
-* Delete unneeded symlinks: `rm -rf install/modules/{build,source}`
-* Copy new modules: `cp -r install/lib/modules/* /path/to/DigitalVAR/server/initrd-root/modules`
+* Delete unneeded symlinks: `rm -rf install/lib/modules/*/{build,source}`
+* Copy new modules: `cp -r install/lib/modules/* /path/to/DigitalVAR/server/initrd-root/lib/modules`
 * Go back to this repo: `cd /path/to/DigitalVAR`
 * Rebuild initial ramdisk `./rebuild.sh initrd`
 * Test initial ramdisk (Optional, kernel should not panic, will dump you into busybox bash if successful):

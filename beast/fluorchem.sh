@@ -12,8 +12,11 @@ if [ $# -lt 1 ]; then
 	exit 1
 fi
 
+LOG_FILE=/tmp/xxhsum_$(date +%m_%d_%y).log
+
 if [ "x${IMG}x" = "xx" ]; then
 	IMG=fluorchem-mfg-master-2017-11-27
+	LOG_FILE=/tmp/012-914_xxhsum_$(date +%m_%d_%y).log
 fi
 
 if [ "$(mount | grep '/home/partimag')" == "" ]; then
@@ -38,7 +41,7 @@ echo ""
 echo ""
 
 for i in "${@:1}"; do
-	lsblk -o name,serial | grep sd${i}
+	lsblk -o name,serial | grep -w sd${i}
 
 done
 
@@ -58,8 +61,17 @@ for i in "${@:1}"; do
 	echo ""
 	sudo sh <<< "dd if=/home/partimag/${IMG} | pv | dd of=/dev/sd${i}"
 	echo "xxhsum: /dev/sd${i} in the background"
-	sudo xxhsum /dev/sd${i} &>> /tmp/xxhsum.log &
+	sudo xxhsum /dev/sd${i} &>> ${LOG_FILE} &
 done
+
+echo "" >> ${LOG_FILE}
+echo "" >> ${LOG_FILE}
+
+for i in "${@:1}"; do
+	lsblk -o name,serial | grep -w sd${i} >> ${LOG_FILE}
+done
+
+sudo sshpass -p "live" scp ${LOG_FILE} user@server1:/home/partimag/logs
 
 echo ""
 echo ""
@@ -67,11 +79,12 @@ echo "=================================================================="
 if [ "${IMG}" == "fluorchem-mfg-master-2017-11-27" ]; then
 	echo " ${IMG} has a sum of ade06eeaf7bcad46"
 fi
-echo " LOGS OF IMAGED DRIVES ARE LOCATED IN /tmp/xxhsum.log"
+echo " LOGS OF IMAGED DRIVES ARE LOCATED IN ${LOG_FILE}"
+echo " A COPY HAS BENT SCP'D ONTO server1"
 echo "=================================================================="
 echo ""
 echo ""
 echo "Press Ctrl+C to exit"
-read -p "Press Enter to view /tmp/xxhsum.log"
-sed -e "s/\r//g" /tmp/xxhsum.log | less
+read -p "Press Enter to view ${LOG_FILE}"
+sed -e "s/\r//g" ${LOG_FILE} | less
 
