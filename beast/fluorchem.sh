@@ -12,11 +12,11 @@ if [ $# -lt 1 ]; then
 	exit 1
 fi
 
-LOG_FILE=/tmp/xxhsum_$(date +%m_%d_%y).log
+LOG_FILE=/tmp/xxhsum_$(date +%m_%d_%y_%H%M%S).log
 
 if [ "x${IMG}x" = "xx" ]; then
 	IMG=fluorchem-mfg-master-2017-11-27
-	LOG_FILE=/tmp/012-914_xxhsum_$(date +%m_%d_%y).log
+	LOG_FILE=/tmp/012-914_xxhsum_$(date +%m_%d_%y_%H%M%S).log
 fi
 
 if [ "$(mount | grep '/home/partimag')" == "" ]; then
