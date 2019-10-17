@@ -12,8 +12,9 @@ if [ "${1}" == "--beast" ] || [ "${1}" == "beast" ]; then
 	sudo cp beast/drbl-repository.list beast/squashfs-root/etc/apt/sources.list.d
 	sudo cp beast/interfaces beast/squashfs-root/etc/network
 	sudo cp beast/S03prep-drbl-clonezilla beast/squashfs-root/etc/ocs/ocs-live.d
+	sudo cp beast/{id_rsa,id_rsa.pub} beast/squashfs-root/opt
 	sudo rm -rf beast/filesystem.squashfs && sudo mksquashfs beast/squashfs-root beast/filesystem.squashfs -b 1024k -comp xz -Xbcj x86 -e boot && \
-	echo "NOTE: Copy filesystem.squashfs to CLONER/live"
+	echo "NOTE: Copy beast/filesystem.squashfs to CLONER/live"
 	exit 0
 fi
 
@@ -44,6 +45,7 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	#
 	
 	echo " * Copying everything from 'server/' folder to where they belong..."
+	sudo cp server/authorized_keys server/squashfs-root/opt
 	sudo cp server/ocs-live-blacklist.conf server/initrd-root/etc/modprobe.d
 	sudo cp server/ocs-live-blacklist.conf server/squashfs-root/etc/modprobe.d
 	sudo cp server/syncthing.service server/squashfs-root/usr/lib/systemd/user
@@ -73,7 +75,7 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	
 	echo " * Rebuilding filesystem.squashfs..."
 	sudo rm -rf server/filesystem.squashfs && sudo mksquashfs server/squashfs-root server/filesystem.squashfs -b 1024k -comp xz -Xbcj x86 -e boot && \
-	echo "NOTE: Copy vmlinuz, initrd.img, and filesystem.squashfs to CLONER SE/live"
+	echo "NOTE: Copy server/vmlinuz, server/initrd.img, and server/filesystem.squashfs to CLONER SE/live"
 	exit 0
 fi
 

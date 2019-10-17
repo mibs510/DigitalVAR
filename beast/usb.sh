@@ -1,20 +1,58 @@
 #!/bin/bash
 
-if [ "${1}" != "7880" ] && [ "${1}" != "8500" ] && [ "${1}" != "8609" ] && [ "${1}" != "8610" ] && [ "${1}" != "8599" ]; then
-	echo "ERROR: Invalid arguments"
-	echo "Example: ${0} 7880"
-	echo "         ${0} [PART NUMBER]"
-	echo ""
-	echo "PART NUMBER:  7880, 8500, 8599, 8609, 8610"
-	exit 1
-fi
-
 PARTIMAG=$(lsblk -o name,serial | grep 07013A | cut -d' ' -f1)
 USB_LIST=""
 RED=`tput setaf 1`
 GREEN=`tput setaf 2`
 NC=`tput sgr0`
 
+
+# Mount "partimag" (/dev/sdb2) from patriot flash drive
+if [ "$(df -P /home/partimag | tail -1 | cut -d' ' -f1)" != "/dev/${PARTIMAG}2" ]; then
+	echo "Mounting /dev/${PARTIMAG}2 onto /home/partimag"
+	sudo mount /dev/${PARTIMAG}2 /home/partimag
+fi
+
+# Grab a potential list of "images" by excluding files
+LIST_OF_IMGS=$(ls -l /home/partimag | grep ^d | awk '{print $9}' > /tmp/list_of_images.txt)
+
+# Exit if no director(y/ies) found
+if [ "$(ls -hal /tmp/list_of_images.txt | awk '{print $5}')" == "0" ]; then
+	echo "${RED}ERROR: NO IMAGES AVAILABLE IN /home/partimag!${NC}"
+	exit 1
+fi
+
+# Put list of valid clonezilla images into an array
+i=0
+while read line
+do
+	if [ -f "/home/partimag/${line}/Info-dmi.txt" ]; then
+		AVAILABLE_IMGS[$i]="$line"
+		i=$((i+1))
+	fi
+done < /tmp/list_of_images.txt
+
+TOTAL_AVAILABLE_IMGS=${i}
+i=0
+
+# List valid images
+echo "================================================"
+echo " Choose an image available from the list below: "
+echo "================================================"
+for i in $(seq 0 ${TOTAL_AVAILABLE_IMGS}); do 
+	echo "${i} = AVAILABLE_IMGS[${i}]"
+done
+echo ""
+read -p "Enter the image #> " number
+
+if [ ${number} < 0 ] || [ ${number} > ${TOTAL_AVAILABLE_IMGS} ]; then
+	echo "${RED}ERROR: Invalid image number!${NC}"
+	exit 1
+fi
+
+CLONEZILLA_IMAGE=${AVAILABLE_IMGS[${number}]}
+
+# Look for all available drives to image. This only excludes the patriot flash drives, so be careful!
 for i in {a..z}; do
 	if [ -b /dev/sd${i} ] && [ "sd${i}" != "${PARTIMAG}" ]; then
 		USB_LIST=$USB_LIST"sd$i "
@@ -26,7 +64,7 @@ if [ -b /dev/sdaa ] && [ "sdaa" != "${PARTIMAG}" ]; then
 fi
 
 if [ "${USB_LIST}" == "" ]; then
-	echo "ERROR: No USB drives found to image?"
+	echo "${RED}ERROR: No USB drives found to image?${NC}"
 	exit 1
 fi
 
@@ -37,107 +75,18 @@ echo "Is this correct?"
 echo "Press Ctrl+C to exit"
 read -p "Press Enter to continue"
 
-if [ "$(df -P /home/partimag | tail -1 | cut -d' ' -f1)" != "/dev/${PARTIMAG}1" ]; then
-	echo "Mounting /dev/${PARTIMAG}1 onto /home/partimag"
-	sudo mount /dev/${PARTIMAG}1 /home/partimag
-fi
+echo "==================================================================================================================================================================================================================="
+echo "EXECUTING: sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' ${CLONEZILLA_IMAGE} ${USB_LIST}"
+echo "==================================================================================================================================================================================================================="
+echo ""
+echo ""
+sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' ${CLONEZILLA_IMAGE} ${USB_LIST}
+echo ""
+echo "======================="
+echo " UUID SHOULD ALL MATCH"
+echo "======================="
+echo ""
+sync
+sudo blkid | grep -v 'CLONER' | grep -v 'squashfs'
 
-# green7880
-if [ "${1}" == "7880" ]; then
-	echo ""
-	echo ""
-	echo "==================================================================================================================================================================================================================="
-	echo "EXECUTING: sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' green7880 ${USB_LIST}"
-	echo "==================================================================================================================================================================================================================="
-	echo ""
-	echo ""
-	sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' green7880 ${USB_LIST}
-	echo ""
-	echo "======================="
-	echo " UUID SHOULD ALL MATCH"
-	echo "======================="
-	echo ""
-	sync
-	sudo blkid | grep -v 'CLONER' | grep -v 'squashfs'
-	exit 0
-fi
-
-# yellow8500
-if [ "${1}" == "8500" ]; then
-	echo ""
-	echo ""
-	echo "==================================================================================================================================================================================================================="
-	echo "EXECUTING: sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' yellow8500 ${USB_LIST}"
-	echo "==================================================================================================================================================================================================================="
-	echo ""
-	echo ""
-	sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' yellow8500 ${USB_LIST}
-	echo ""
-	echo "======================="
-	echo " UUID SHOULD ALL MATCH"
-	echo "======================="
-	echo ""
-	sync
-	sudo blkid | grep -v 'CLONER' | grep -v 'squashfs'
-	exit 0
-fi
-
-# red8609
-if [ "${1}" == "8609" ]; then
-	echo ""
-	echo ""
-	echo "==================================================================================================================================================================================================================="
-	echo "EXECUTING: sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' red8609 ${USB_LIST}"
-	echo "==================================================================================================================================================================================================================="
-	echo ""
-	echo ""
-	sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' red8609 ${USB_LIST}
-	echo ""
-	echo "======================="
-	echo " UUID SHOULD ALL MATCH"
-	echo "======================="
-	echo ""
-	sync
-	sudo blkid | grep -v 'CLONER' | grep -v 'squashfs'
-	exit 0
-fi
-
-# blue8610
-if [ "${1}" == "8610" ]; then
-	echo ""
-	echo ""
-	echo "==================================================================================================================================================================================================================="
-	echo "EXECUTING: sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' blue8610 ${USB_LIST}"
-	echo "==================================================================================================================================================================================================================="
-	echo ""
-	echo ""
-	sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' blue8610 ${USB_LIST}
-	echo ""
-	echo "======================="
-	echo " UUID SHOULD ALL MATCH"
-	echo "======================="
-	echo ""
-	sync
-	sudo blkid | grep -v 'CLONER' | grep -v 'squashfs'
-	exit 0
-fi
-
-# lightblue8599
-if [ "${1}" == "8599" ]; then
-	echo ""
-	echo ""
-	echo "==================================================================================================================================================================================================================="
-	echo "EXECUTING: sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' lightblue8599 ${USB_LIST}"
-	echo "==================================================================================================================================================================================================================="
-	echo ""
-	echo ""
-	sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' lightblue8599 ${USB_LIST}
-	echo ""
-	echo "======================="
-	echo " UUID SHOULD ALL MATCH"
-	echo "======================="
-	echo ""
-	sync
-	sudo blkid | grep -v 'CLONER' | grep -v 'squashfs'
-	exit 0
-fi
+exit 0

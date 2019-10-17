@@ -11,6 +11,13 @@
 #
 # By default this script does nothing.
 
+mkdir -p /home/user/.ssh
+cp /opt/id_rsa.pub /home/user/.ssh
+cp /opt/id_rsa /home/user/.ssh
+chmod -R 700 /home/user/.ssh
+chown -R user:user /home/user
+sudo systemctl start ssh
+
 GITHUB_URL="https://raw.githubusercontent.com/mibs510/DigitalVAR/master/beast"
 
 # Should we update?

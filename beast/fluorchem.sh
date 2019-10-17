@@ -13,6 +13,9 @@ if [ $# -lt 1 ]; then
 fi
 
 LOG_FILE=/tmp/xxhsum_$(date +%m_%d_%y_%H%M%S).log
+SED_LOG_FILE=/tmp/xxhsum_$(date +%m_%d_%y_%H%M%S).sed
+PDF_LOG_FILE=/tmp/xxhsum_$(date +%m_%d_%y_%H%M%S).pdf
+LOCKED_PDF_LOG_FILE=/tmp/xxhsum_$(date +%m_%d_%y_%H%M%S)_locked.pdf
 
 if [ "x${IMG}x" = "xx" ]; then
 	IMG=fluorchem-mfg-master-2017-11-27
@@ -64,6 +67,11 @@ for i in "${@:1}"; do
 	sudo xxhsum /dev/sd${i} &>> ${LOG_FILE} &
 done
 
+while [ "$(pidof xxhsum)" != "" ]
+do
+	sleep 10
+done
+
 echo "" >> ${LOG_FILE}
 echo "" >> ${LOG_FILE}
 
@@ -71,7 +79,22 @@ for i in "${@:1}"; do
 	lsblk -o name,serial | grep -w sd${i} >> ${LOG_FILE}
 done
 
-sudo sshpass -p "live" scp ${LOG_FILE} user@server1:/home/partimag/logs
+# sudo scp ${LOG_FILE} user@server1:/home/partimag/logs
+
+# Convert txt file to DOS compatible CR/NL
+todos ${LOG_FILE}
+
+# Convert ^M to \n
+sed -e "s/\r/\n/g" ${LOG_FILE} > ${SED_LOG_FILE}
+
+# Create pdf from txt file
+sudo pandoc ${SED_LOG_FILE} -o ${PDF_LOG_FILE}
+
+# Lock pdf to prevent tampering
+sudo pdftk ${PDF_LOG_FILE} output ${LOCKED_PDF_LOG_FILE} owner_pw "$(openssl rand -base64 32)" allow printing
+
+# Transfer it to clonezilla server
+sudo scp ${LOCKED_PDF_LOG_FILE} user@server1:/home/partimag/logs
 
 echo ""
 echo ""
