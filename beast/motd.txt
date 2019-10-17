@@ -13,11 +13,11 @@
 | * When asked, IMG=/dev/sda or /path/to/image.img          | * Used for: 0110-7880,8500,8599,8609,8610                |
 | * Used for: N/A                                           |                                                          |
 |-----------------------------------------------------------|----------------------------------------------------------|
-| * fluorchem [target] [target] [target] [target] ...       |                                                          |
-| * Example: fluorchem a b c d e f g h i j k l              |                                                          |
-| * Where IMG=fluorchem-mfg-master-2017-11-27               |                                                          |
-| * You must be in the directory where IMG is located       |                                                          |
-| * Used for: 012-914                                       |                                                          |
+|                                                           |                                                          |
+|                                                           |                                                          |
+|                                                           |                                                          |
+|                                                           |                                                          |
+|                                                           |                                                          |
 |-----------------------------------------------------------|----------------------------------------------------------|
 | * jesse.sh [target] [target] [target] [target] ...        | * fluorchem.sh [target] [target] [target] [target] ...   |
 | * Example: jesse.sh a b c d e f g h i j k l               | * Example: fluorchem.sh a b c d e f g h i j k l          |
@@ -25,7 +25,7 @@
 | * IMG=biotechne_103-0039_v01 by default                   | * IMG=fluorchem-mfg-master-2017-11-27 by default         |
 | * IMG must be located in /home/partimag                   | * IMG must be located in /home/partimag                  |
 | * WD Elements HDD automatically mounted                   | * WD Elements HDD automatically mounted                  |
-| * Used for: 103-0039                                      | * Used for: 012-914         **** STILL IN BETA ****      |
+| * Used for: 103-0039                                      | * Used for: 012-914                                      |
 |-----------------------------------------------------------|----------------------------------------------------------|
 | * onthefly.sh [master/from] [target] [target] [target] ...|                                                          | 
 | * Example: onthefly.sh a b c d e f g h i j k l            |                                                          |

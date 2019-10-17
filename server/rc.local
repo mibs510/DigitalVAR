@@ -13,6 +13,10 @@
 
 # set -x
 
+if [ ! -f /sys/class/net/eth1/address ]; then
+	exit 0
+fi
+
 ETH1_IFACE="eth1"
 ETH1_MAC=$(cat /sys/class/net/$ETH1_IFACE/address)
 SERVER1_MAC="00:1e:67:cf:ee:8f"
@@ -29,8 +33,11 @@ if [ "$ETH1_MAC" == "$SERVER1_MAC" ]; then
 	ifupdownsucks.sh &
 	startafterifupdownsucks.sh &
 	mkdir -p /home/user/.config/gtk-3.0
+	mkdir -p /home/user/.ssh
 	cp /opt/{thunar.xml,thunar-volman.xml} /home/user/.config/xfce4/xfconf/xfce-perchannel-xml
 	cp /opt/bookmarks /home/user/.config/gtk-3.0
+	cp /opt/authorized_keys /home/user/.ssh
+	chmod -R 700 /home/user/.ssh
 	chown -R user:user /home/user
 	exit 0
 elif [ "$ETH1_MAC" == "$SERVER2_MAC" ]; then
@@ -44,8 +51,11 @@ elif [ "$ETH1_MAC" == "$SERVER2_MAC" ]; then
 	ifupdownsucks.sh &
 	startafterifupdownsucks.sh &
 	mkdir -p /home/user/.config/gtk-3.0
+	mkdir -p /home/user/.ssh
 	cp /opt/{thunar.xml,thunar-volman.xml} /home/user/.config/xfce4/xfconf/xfce-perchannel-xml
 	cp /opt/bookmarks /home/user/.config/gtk-3.0
+	cp /opt/authorized_keys /home/user/.ssh
+	chmod -R 700 /home/user/.ssh
 	chown -R user:user /home/user
 	exit 0
 fi

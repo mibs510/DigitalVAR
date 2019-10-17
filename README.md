@@ -51,7 +51,7 @@ You'll have to rename it (filesystem.squashfs) and uncompress it inside
 `sudo unsquashfs filesystem.squashfs`
 
 ### Packages
-* Installed: inotify-tools, curl, sshpass
+* Installed: inotify-tools, curl, sshpass, pandoc, pdftk
 * Uninstalled: 
 
 You could reproduce this by chrooting:
@@ -113,7 +113,7 @@ Make sure to rename it to filesystem.squashfs and that it resides in the
 `sudo unsquashfs filesystem.squashfs`
 
 ### Packages
-* Installed: syncthing, gsmartcontrol
+* Installed: syncthing, gsmartcontrol, nut-client
 * Uninstall: vim-common, vim-runtime, vim-tiny
 
 ### server/desktop-background
