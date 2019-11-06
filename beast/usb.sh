@@ -6,8 +6,19 @@ RED=`tput setaf 1`
 GREEN=`tput setaf 2`
 NC=`tput sgr0`
 
+# Check to see if patriot USB is connected
+if [ "${PARTIMAG}" == "" ]; then
+	echo "${RED}ERROR: Patriot USB is not connected to beast!${NC}"
+	exit 1
+fi
 
-# Mount "partimag" (/dev/sdb2) from patriot flash drive
+# Check to see if Western Digital Elements HDD is connected
+if [ "$(lsblk -o name,serial | grep 575857 | cut -d' ' -f1)" != "" ]; then
+	echo "${RED}ERROR: WD Elements drive is connected!${NC}"
+	exit 1
+fi
+
+# Mount "partimag" (/dev/sdb2) from patriot flash drive onto /home/partimag
 if [ "$(df -P /home/partimag | tail -1 | cut -d' ' -f1)" != "/dev/${PARTIMAG}2" ]; then
 	echo "Mounting /dev/${PARTIMAG}2 onto /home/partimag"
 	sudo mount /dev/${PARTIMAG}2 /home/partimag
@@ -26,21 +37,23 @@ fi
 i=0
 while read line
 do
+	# Not all folders contain clonezilla images
 	if [ -f "/home/partimag/${line}/Info-dmi.txt" ]; then
 		AVAILABLE_IMGS[$i]="$line"
 		i=$((i+1))
 	fi
 done < /tmp/list_of_images.txt
 
-TOTAL_AVAILABLE_IMGS=${i}
+TOTAL_AVAILABLE_IMGS=$(expr ${i} - 1)
 i=0
 
 # List valid images
 echo "================================================"
 echo " Choose an image available from the list below: "
 echo "================================================"
+echo ""
 for i in $(seq 0 ${TOTAL_AVAILABLE_IMGS}); do 
-	echo "${i} = AVAILABLE_IMGS[${i}]"
+	echo "${i} = ${AVAILABLE_IMGS[$i]}"
 done
 echo ""
 read -p "Enter the image #> " number
@@ -51,6 +64,11 @@ if [ ${number} < 0 ] || [ ${number} > ${TOTAL_AVAILABLE_IMGS} ]; then
 fi
 
 CLONEZILLA_IMAGE=${AVAILABLE_IMGS[${number}]}
+
+if [ ! -d /home/partimag/${CLONEZILLA_IMAGE} ]; then
+	echo "${RED}ERROR: Image not found in /home/partimag!${NC}"
+	exit 1
+fi
 
 # Look for all available drives to image. This only excludes the patriot flash drives, so be careful!
 for i in {a..z}; do

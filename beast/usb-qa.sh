@@ -4,26 +4,32 @@ DEBUG=false
 SKIP_XXHSUM=false
 SKIP_PULLOUTS=false
 
-if [ "${1}" != "7880" ] && [ "${1}" != "8500" ] && [ "${1}" != "8609" ] && [ "${1}" != "8610" ] && [ "${1}" != "8599" ]; then
-	echo "${RED}ERROR${NC}: Invalid arguments"
-	echo "Example: ${0} 7880"
-	echo "         ${0} [PART NUMBER]"
-	echo ""
-	echo "PART NUMBER:  7880, 8500, 8599, 8609, 8610"
-	exit 1
-fi
-
-j=1
+PARTIMAG=$(lsblk -o name,serial | grep 07013A | cut -d' ' -f1)
 USB_LIST=""
-declare -a BAD_BOYS
-
 RED=`tput setaf 1`
 GREEN=`tput setaf 2`
 NC=`tput sgr0`
 
+j=1
+declare -a BAD_BOYS
 
-PARTIMAG=$(lsblk -o name,serial | grep 07013A | cut -d' ' -f1)
-USB_LIST=""
+# Check to see if patriot USB is connected
+if [ "${PARTIMAG}" == "" ]; then
+	echo "${RED}ERROR: Patriot USB is not connected to beast!${NC}"
+	exit 1
+fi
+
+# Check to see if Western Digital Elements HDD is connected
+if [ "$(lsblk -o name,serial | grep 575857 | cut -d' ' -f1)" != "" ]; then
+	echo "${RED}ERROR: WD Elements drive is connected!${NC}"
+	exit 1
+fi
+
+# Mount "partimag" (/dev/sdb2) from patriot flash drive onto /home/partimag
+if [ "$(df -P /home/partimag | tail -1 | cut -d' ' -f1)" != "/dev/${PARTIMAG}2" ]; then
+	echo "Mounting /dev/${PARTIMAG}2 onto /home/partimag"
+	sudo mount /dev/${PARTIMAG}2 /home/partimag
+fi
 
 for i in {a..z}; do
 	if [ -b /dev/sd${i} ] && [ "sd${i}" != "${PARTIMAG}" ]; then
