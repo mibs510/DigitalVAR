@@ -25,7 +25,7 @@ if [ "$(df -P /home/partimag | tail -1 | cut -d' ' -f1)" != "/dev/${PARTIMAG}2" 
 fi
 
 # Grab a potential list of "images" by excluding files
-LIST_OF_IMGS=$(ls -l /home/partimag | grep ^d | awk '{print $9}' > /tmp/list_of_images.txt)
+ls -l /home/partimag | grep ^d | awk '{print $9}' > /tmp/list_of_images.txt
 
 # Exit if no director(y/ies) found
 if [ "$(ls -hal /tmp/list_of_images.txt | awk '{print $5}')" == "0" ]; then
