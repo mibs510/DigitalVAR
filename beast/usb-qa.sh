@@ -46,44 +46,52 @@ if [ "${USB_LIST}" == "" ]; then
 	exit 1
 fi
 
-#echo "I will check the following drives: $USB_LIST"
-#echo ""
-#echo "Is this correct?"
-#echo "Press Ctrl+C to exit"
-#read -p "Press Enter to continue"
+# Grab a potential list of "images" by excluding files
+ls /home/partimag | grep .xxhsums > /tmp/list_of_xxhsums.txt
 
-# green7880
-if [ "${1}" == "7880" ]; then
-	XXHSUM_FILE="green7880"
+# Exit if no .xxhsums files found
+if [ "$(ls -hal /tmp/list_of_xxhsums.txt | awk '{print $5}')" == "0" ]; then
+	echo "${RED}ERROR: NO .xxhsums FOUND IN /home/partimag!${NC}"
+	exit 1
 fi
 
-# yellow8500
-if [ "${1}" == "8500" ]; then
-	XXHSUM_FILE="yellow8500"
+# Put list of valid .xxhsums files into an array
+i=0
+while read line
+do
+	AVAILABLE_XXHSUMS[$i]="$line"
+	i=$((i+1))
+done < /tmp/list_of_xxhsums.txt
+
+TOTAL_AVAILABLE_XXHSUMS=$(expr ${i} - 1)
+i=0
+
+# List .xxhsums files
+echo "=================================================="
+echo " Choose a hash file available from the list below: "
+echo "=================================================="
+echo ""
+for i in $(seq 0 ${TOTAL_AVAILABLE_XXHSUMS}); do 
+	echo "${i} = ${AVAILABLE_XXHSUMS[$i]}"
+done
+echo ""
+read -p "Enter the image #> " number
+
+if [ ${number} -lt 0 ] || [ ${number} -gt ${TOTAL_AVAILABLE_XXHSUMS} ]; then
+	echo "${RED}ERROR: Invalid hash file number!${NC}"
+	exit 1
 fi
 
-# red8609
-if [ "${1}" == "8609" ]; then
-	XXHSUM_FILE="red8609"
-fi
+XXHSUM_FILE=${AVAILABLE_XXHSUMS[${number}]}
 
-# blue8610
-if [ "${1}" == "8610" ]; then
-	XXHSUM_FILE="blue8610"
-fi
-
-# lightblue8599
-if [ "${1}" == "8599" ]; then
-	XXHSUM_FILE="lightblue8599"
-fi
 
 if [ "${DEBUG}" == "true" ]; then
 	set -x
 fi
 
-if [ ! -f /etc/${XXHSUM_FILE}.xxhsums ]; then
-	echo "ERROR: /etc/${XXHSUM_FILE}.xxhsums DOES NOT EXIST!"
-	echo "This part number may not be supported at the time"
+if [ ! -f /home/partimag/${XXHSUM_FILE} ]; then
+	echo "${RED}ERROR: /home/partimag/${XXHSUM_FILE} DOES NOT EXIST!"
+	echo "This part number may not be supported at the time.${NC}"
 	exit 1
 fi
 
@@ -96,12 +104,12 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 		
 			if [ "$?" != "0" ] && [ "$EXIT" == "false" ]; then
 				EXIT=true
-				echo ""
+				echo "${RED}"
 				echo "================================================================="
 				echo "ERROR: /dev/sd${i}1 COULDN'T BE MOUNTED!!"
 				echo "Adding /dev/sd${i} onto the bad list..."
 				echo "================================================================="
-				echo ""
+				echo "${NC}"
 				BAD_BOYS+=(sd${i})
 			fi
 		
@@ -114,12 +122,12 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 				EXIT=true
 				echo "unmount: /dev/sd${i}"
 				sudo umount /dev/sd${i}1
-				echo ""
+				echo "${RED}"
 				echo "==========================================="
 				echo "ERROR: /dev/sd${i} HAS XXHSUM MISMATCH(ES)"
 				echo "Adding /dev/sd${i} onto the bad list..."
 				echo "==========================================="
-				echo ""
+				echo "${NC}"
 				BAD_BOYS+=(sd${i})
 			fi
 		
@@ -129,12 +137,12 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 			fi
 		fi
 		if [ -b /dev/sd${i} ] && [ ! -b /dev/sd${i}1 ] && [ "sd${i}" != "${PARTIMAG}" ]; then
-			echo ""
+			echo "${RED}"
 			echo "================================================================="
 			echo "ERROR: /dev/sd${i} DOES NOT HAVE ANY PARTITIONS"
 			echo "Adding /dev/sd${i} onto the bad list..."
 			echo "================================================================="
-			echo ""
+			echo "${NC}"
 			BAD_BOYS+=(sd${i})
 		fi
 	done
@@ -144,12 +152,12 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 		echo "mount: /dev/sdaa"
 		sudo mount /dev/sdaa1 /mnt
 		if [ "$?" != "0" ]; then
-			echo ""
+			echo "${RED}"
 			echo "================================================================="
 			echo "ERROR: /dev/sdaa1 COULDN'T BE MOUNTED!!"
 			echo "Adding /dev/sd${i} onto the bad list..."
 			echo "================================================================="
-			echo ""
+			echo "${NC}"
 			BAD_BOYS+=(sd${i})
 			EXIT=true
 		fi
@@ -162,23 +170,23 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 		if [ "$?" != "0" ] && [ "$EXIT" == "false" ]; then
 			echo "unmount: /dev/sdaa"
 			sudo umount /dev/sdaa1
-			echo ""
+			echo "${RED}"
 			echo "========================================="
 			echo "ERROR: /dev/sdaa HAS XXHSUM MISMATCH(ES)"
 			echo "Adding /dev/sdaa onto the bad list..."
 			echo "========================================="
-			echo ""
+			echo "${NC}"
 			BAD_BOYS+=(sdaa)
 		fi
 	fi
 	
 	if [  -b /dev/sdaa ] && [ ! -b /dev/sdaa1 ] && [ "sdaa" != "${PARTIMAG}" ]; then
-		echo ""
+		echo "${RED}"
 		echo "================================================================="
 		echo "ERROR: /dev/sd${i} DOES NOT HAVE ANY PARTITIONS"
 		echo "Adding /dev/sd${i} onto the bad list..."
 		echo "================================================================="
-		echo ""
+		echo "${NC}"
 		BAD_BOYS+=(sd${i})
 	fi
 	
