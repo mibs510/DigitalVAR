@@ -58,7 +58,7 @@ done
 echo ""
 read -p "Enter the image #> " number
 
-if [ ${number} < 0 ] || [ ${number} > ${TOTAL_AVAILABLE_IMGS} ]; then
+if [ ${number} -lt 0 ] || [ ${number} -gt ${TOTAL_AVAILABLE_IMGS} ]; then
 	echo "${RED}ERROR: Invalid image number!${NC}"
 	exit 1
 fi
