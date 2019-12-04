@@ -51,7 +51,9 @@ You'll have to rename it (filesystem.squashfs) and uncompress it inside
 `sudo unsquashfs filesystem.squashfs`
 
 ### Packages
-* Installed: inotify-tools, curl, sshpass, pandoc, pdftk
+* Installed: inotify-tools, curl, sshpass, pandoc, pdftk, imagemagick,
+			 texlive-latex-base, texlive-fonts-recommended,
+			 texlive-fonts-extra, lmodern
 * Uninstalled: 
 
 You could reproduce this by chrooting:

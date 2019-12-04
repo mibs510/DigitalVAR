@@ -57,6 +57,7 @@ for i in $(seq 0 ${TOTAL_AVAILABLE_IMGS}); do
 done
 echo ""
 read -p "Enter the image #> " number
+echo ""
 
 if [ ${number} -lt 0 ] || [ ${number} -gt ${TOTAL_AVAILABLE_IMGS} ]; then
 	echo "${RED}ERROR: Invalid image number!${NC}"
