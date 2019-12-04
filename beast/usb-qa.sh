@@ -76,6 +76,7 @@ for i in $(seq 0 ${TOTAL_AVAILABLE_XXHSUMS}); do
 done
 echo ""
 read -p "Enter the image #> " number
+echo ""
 
 if [ ${number} -lt 0 ] || [ ${number} -gt ${TOTAL_AVAILABLE_XXHSUMS} ]; then
 	echo "${RED}ERROR: Invalid hash file number!${NC}"
@@ -115,7 +116,7 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 		
 			if [ "$EXIT" == "false" ]; then
 				echo "xxhsum: /dev/sd${i}"
-				sudo xxhsum -c /etc/${XXHSUM_FILE}.xxhsums &> /dev/null
+				sudo xxhsum -c /home/partimag/${XXHSUM_FILE} &> /dev/null
 			fi
 			
 			if [ "$?" != "0" ] && [ "$EXIT" == "false" ]; then
@@ -164,7 +165,7 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 		
 		if [ "$EXIT" == "false" ]; then
 			echo "xxhsum: /dev/sdaa"
-			sudo xxhsum -c /etc/${XXHSUM_FILE}.xxhsums &> /dev/null
+			sudo xxhsum -c /home/partimag/${XXHSUM_FILE} &> /dev/null
 		fi
 		
 		if [ "$?" != "0" ] && [ "$EXIT" == "false" ]; then
