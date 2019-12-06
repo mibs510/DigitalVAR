@@ -90,6 +90,8 @@ fi
 echo "I will image the following drives: $USB_LIST"
 echo "${RED}MAKE SURE NO OTHER USB DEVICES ARE CONNECTED! (e.g. Toshiba/WD Element HDD)${NC}"
 echo ""
+echo "Image name: ${CLONEZILLA_IMAGE}"
+echo ""
 echo "Is this correct?"
 echo "Press Ctrl+C to exit"
 read -p "Press Enter to continue"
