@@ -1,13 +1,18 @@
-#!/bin/sh
+#!/bin/bash
 
-if [ "x${1}X" == "xx" ] || [ "x${2}x" == "xx" ]; then
-	echo "ERROR: Not enough valid arguments"
+if [ "${1}" == "" ] || [ "${2}" == "" ]; then
+	echo "ERROR: Not enough valid arguments!"
 	echo "      Example: ${0} x y"
 	echo "      x = MO # y = Status"
+	echo "      ${0} 1337 Done!"
 	exit 1
 fi
 
+clear
 
+echo ""
+echo ""
+echo ""
 echo "                       ██████╗ ██╗ ██████╗ ██╗████████╗ █████╗ ██╗    ██╗   ██╗ █████╗ ██████╗ "
 echo "                       ██╔══██╗██║██╔════╝ ██║╚══██╔══╝██╔══██╗██║    ██║   ██║██╔══██╗██╔══██╗"
 echo "                       ██║  ██║██║██║  ███╗██║   ██║   ███████║██║    ██║   ██║███████║██████╔╝"
