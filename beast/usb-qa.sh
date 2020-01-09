@@ -99,7 +99,7 @@ fi
 if [ "${SKIP_XXHSUM}" == "false" ]; then
 	for i in {a..z}; do
 		EXIT=false
-		if [ -e /dev/sd${i}1 ] && [ "sd${i}" != "${PARTIMAG}" ]; then
+		if [ -b /dev/sd${i}1 ] && [ "sd${i}" != "${PARTIMAG}" ]; then
 			echo "mount: /dev/sd${i}"
 			sudo mount /dev/sd${i}1 /mnt
 		
@@ -137,7 +137,7 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 				sudo umount /dev/sd${i}1
 			fi
 		fi
-		if [ ! -e /dev/sd${i}1 ] && [ "sd${i}" != "${PARTIMAG}" ]; then
+		if [ -b /dev/sd${i} ] && [ ! -b /dev/sd${i}1 ] && [ "sd${i}" != "${PARTIMAG}" ]; then
 			echo "${RED}"
 			echo "================================================================="
 			echo "ERROR: /dev/sd${i} DOES NOT HAVE ANY PARTITIONS"
