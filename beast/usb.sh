@@ -4,6 +4,7 @@ PARTIMAG=$(lsblk -o name,serial | grep 07013A | cut -d' ' -f1)
 USB_LIST=""
 RED=`tput setaf 1`
 GREEN=`tput setaf 2`
+CYAN=`tput setaf 14`
 NC=`tput sgr0`
 
 # Check to see if patriot USB is connected
@@ -75,11 +76,13 @@ fi
 for i in {a..z}; do
 	if [ -b /dev/sd${i} ] && [ "sd${i}" != "${PARTIMAG}" ]; then
 		USB_LIST=$USB_LIST"sd$i "
+		NUMBER_OF_DRIVES=$((NUMBER_OF_DRIVES+1))
 	fi
 done
 
 if [ -b /dev/sdaa ] && [ "sdaa" != "${PARTIMAG}" ]; then
 	USB_LIST=$USB_LIST"sdaa"
+	NUMBER_OF_DRIVES=$((NUMBER_OF_DRIVES+1))	
 fi
 
 if [ "${USB_LIST}" == "" ]; then
@@ -90,7 +93,8 @@ fi
 echo "I will image the following drives: $USB_LIST"
 echo "${RED}MAKE SURE NO OTHER USB DEVICES ARE CONNECTED! (e.g. Toshiba/WD Element HDD)${NC}"
 echo ""
-echo "Image name: ${CLONEZILLA_IMAGE}"
+echo "Image name: ${CYAN}${CLONEZILLA_IMAGE}${NC}"
+echo "Total # of drives: ${CYAN}${NUMBER_OF_DRIVES}${NC}"
 echo ""
 echo "Is this correct?"
 echo "Press Ctrl+C to exit"
