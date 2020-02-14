@@ -11,7 +11,7 @@
 | * bigbox [target] [target] [target] [target] ...          | * usb-qa.sh [PART NUMBER]                                |
 | * Example: bigbox a b c d e f g h i j k l                 | * Example: usb-qa.sh 7880                                |
 | * When asked, IMG=/dev/sda or /path/to/image.img          | * Used for: 0110-7880,8500,8599,8609,8610                |
-| * Used for: N/A                                           |                                                          |
+| * Used for: 041-602                                       |                                                          |
 |-----------------------------------------------------------|----------------------------------------------------------|
 |                                                           |                                                          |
 |                                                           |                                                          |

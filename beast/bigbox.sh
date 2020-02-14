@@ -7,7 +7,7 @@ if [ $# -lt 1 ]; then
 	echo "${0} [target] [target] [target] [target] ..."
 	echo "Example: ${0} a b c d e f g h i j k l"
 	echo "Example: IMG=company_part#_version ${0} a b c d"
-	echo "IMG=fluorchem-mfg-master-2017-11-27 by default"
+	echo "IMG=biotechne_041-602 by default"
 	echo "IMG must be located in /home/partimag"
 	exit 1
 fi
@@ -92,7 +92,7 @@ clear
 
 cat ${SED_LOG_FILE}
 
-# Take screenshot# Take screenshot
+# Take screenshot
 fbgrab ${PNG_FILE}
 
 # Create pdf from txt file
@@ -118,4 +118,5 @@ echo ""
 echo "Press Ctrl+C to exit"
 read -p "Press Enter to view ${LOG_FILE}"
 sed -e "s/\r//g" ${LOG_FILE} | less
+
 
