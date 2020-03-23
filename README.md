@@ -53,7 +53,7 @@ You'll have to rename it (filesystem.squashfs) and uncompress it inside
 ### Packages
 * Installed: inotify-tools, curl, sshpass, pandoc, pdftk, imagemagick,
 			 texlive-latex-base, texlive-fonts-recommended,
-			 texlive-fonts-extra, lmodern
+			 texlive-fonts-extra, lmodern, ftp-upload
 * Uninstalled: 
 
 You could reproduce this by chrooting:
