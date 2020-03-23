@@ -92,7 +92,7 @@ clear
 
 cat ${SED_LOG_FILE}
 
-# Take screenshot
+#Take screenshot
 fbgrab ${PNG_FILE}
 
 # Create pdf from txt file
@@ -102,7 +102,7 @@ fbgrab ${PNG_FILE}
 # sudo pdftk ${PDF_LOG_FILE} output ${LOCKED_PDF_LOG_FILE} owner_pw "$(openssl rand -base64 32)" allow printing
 
 # Transfer it to clonezilla server
-sudo scp ${PNG_FILE} user@server1:/home/partimag/logs
+sudo scp -o "StrictHostKeyChecking=no" ${PNG_FILE} user@server1:/home/partimag/logs
 
 echo ""
 echo ""

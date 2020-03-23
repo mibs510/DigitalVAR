@@ -15,7 +15,7 @@ fi
 LOG_FILE=/tmp/xxhsum_$(date +%m_%d_%y_%H%M%S).log
 SED_LOG_FILE=/tmp/xxhsum_$(date +%m_%d_%y_%H%M%S).sed
 PDF_LOG_FILE=/tmp/xxhsum_$(date +%m_%d_%y_%H%M%S).pdf
-PNG_FILE=/tmp/xxhsum_$(date +%m_%d_%y_%H%M%S).png
+PNG_FILE=/tmp/012-914_xxhsum_$(date +%m_%d_%y_%H%M%S).png
 LOCKED_PDF_LOG_FILE=/tmp/xxhsum_$(date +%m_%d_%y_%H%M%S)_locked.pdf
 
 if [ "x${IMG}x" = "xx" ]; then
@@ -86,14 +86,14 @@ done
 # todos ${LOG_FILE}
 
 # Convert ^M to \n
-sed -e "s/\r/\n/g" ${LOG_FILE} > ${SED_LOG_FILE}
+sudo sed -e "s/\r/\n/g" ${LOG_FILE} > ${SED_LOG_FILE}
 
 clear
 
-cat ${SED_LOG_FILE}
+sudo cat ${SED_LOG_FILE}
 
 # Take screenshot# Take screenshot
-fbgrab ${PNG_FILE}
+sudo fbgrab ${PNG_FILE}
 
 # Create pdf from txt file
 # sudo pandoc ${SED_LOG_FILE} -o ${PDF_LOG_FILE}
@@ -102,7 +102,7 @@ fbgrab ${PNG_FILE}
 # sudo pdftk ${PDF_LOG_FILE} output ${LOCKED_PDF_LOG_FILE} owner_pw "$(openssl rand -base64 32)" allow printing
 
 # Transfer it to clonezilla server
-sudo scp ${PNG_FILE} user@server1:/home/partimag/logs
+sudo ftp-upload -h win10server -u logs ${PNG_FILE}
 
 echo ""
 echo ""
