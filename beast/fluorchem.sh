@@ -92,6 +92,8 @@ clear
 
 sudo cat ${SED_LOG_FILE}
 
+sleep 5
+
 # Take screenshot# Take screenshot
 sudo fbgrab ${PNG_FILE}
 
