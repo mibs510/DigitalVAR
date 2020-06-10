@@ -147,6 +147,8 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 			BAD_BOYS+=(sd${i})
 		fi
 	done
+	
+	umount /mnt &> /dev/null
 
 	if [ -b /dev/sdaa1 ] && [ "sdaa" != "${PARTIMAG}" ]; then
 		EXIT=false
@@ -197,6 +199,8 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 	echo "========================================="
 	echo ""
 fi
+
+umount /mnt &> /dev/null
 
 if [ "${#BAD_BOYS[@]}" != "0" ]; then
 	echo ""
