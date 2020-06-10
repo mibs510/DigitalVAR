@@ -80,44 +80,25 @@ for i in "${@:1}"; do
 	lsblk -o name,serial | grep -w sd${i} >> ${LOG_FILE}
 done
 
-# sudo scp ${LOG_FILE} user@server1:/home/partimag/logs
-
-# Convert txt file to DOS compatible CR/NL
-# todos ${LOG_FILE}
-
-# Convert ^M to \n
-sudo sed -e "s/\r/\n/g" ${LOG_FILE} > ${SED_LOG_FILE}
-
-clear
-
-sudo cat ${SED_LOG_FILE}
-
-sleep 5
-
-# Take screenshot# Take screenshot
-sudo fbgrab ${PNG_FILE}
-
-# Create pdf from txt file
-# sudo pandoc ${SED_LOG_FILE} -o ${PDF_LOG_FILE}
-
-# Lock pdf to prevent tampering
-# sudo pdftk ${PDF_LOG_FILE} output ${LOCKED_PDF_LOG_FILE} owner_pw "$(openssl rand -base64 32)" allow printing
-
-# Transfer it to clonezilla server
-sudo ftp-upload -h win10server -u logs ${PNG_FILE}
-
 echo ""
 echo ""
 echo "=================================================================="
 if [ "${IMG}" == "fluorchem-mfg-master-2017-11-27" ]; then
 	echo " ${IMG} has a sum of ade06eeaf7bcad46"
 fi
-echo " LOGS OF IMAGED DRIVES ARE LOCATED IN ${LOG_FILE}"
-echo " A COPY HAS BENT SCP'D ONTO server1"
+echo " PROOF OF IMAGED DRIVES WILL BE UPLOADED"
 echo "=================================================================="
 echo ""
 echo ""
-echo "Press Ctrl+C to exit"
-read -p "Press Enter to view ${LOG_FILE}"
+read -p "Press Enter to upload proof & view ${LOG_FILE}"
+## Proof
+clear
+sudo cat ${LOG_FILE}
+# Take screenshot# Take screenshot
+sudo fbgrab ${PNG_FILE}
+# Transfer it to clonezilla server
+sudo ftp-upload -h win10server -u logs ${PNG_FILE}
+## View log file
+clear
 sed -e "s/\r//g" ${LOG_FILE} | less
 

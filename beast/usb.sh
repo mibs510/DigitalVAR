@@ -105,7 +105,7 @@ echo "EXECUTING: sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds 
 echo "==================================================================================================================================================================================================================="
 echo ""
 echo ""
-sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' ${CLONEZILLA_IMAGE} ${USB_LIST}
+sudo ocs-restore-mdisks -batch -p '-g auto -e1 auto -e2 -c -r -icds -iefi -j2 -k1 -scr -p true' ${CLONEZILLA_IMAGE} ${USB_LIST}
 echo ""
 echo "======================="
 echo " UUID SHOULD ALL MATCH"
