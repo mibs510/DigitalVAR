@@ -113,5 +113,7 @@ echo "======================="
 echo ""
 sync
 sudo blkid | grep -v 'CLONER' | grep -v 'squashfs'
-
+echo ""
+echo "Image name: ${CYAN}${CLONEZILLA_IMAGE}${NC}"
+echo "Total # of drives: ${CYAN}${NUMBER_OF_DRIVES}${NC}"
 exit 0

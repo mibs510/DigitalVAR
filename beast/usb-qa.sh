@@ -34,11 +34,13 @@ fi
 for i in {a..z}; do
 	if [ -b /dev/sd${i} ] && [ "sd${i}" != "${PARTIMAG}" ]; then
 		USB_LIST=$USB_LIST"sd$i "
+		NUMBER_OF_DRIVES=$((NUMBER_OF_DRIVES+1))
 	fi
 done
 
 if [ -b /dev/sdaa ] && [ "sdaa" != "${PARTIMAG}" ]; then
 	USB_LIST=$USB_LIST"sdaa"
+	NUMBER_OF_DRIVES=$((NUMBER_OF_DRIVES+1))
 fi
 
 if [ "${USB_LIST}" == "" ]; then
@@ -216,8 +218,20 @@ if [ "${#BAD_BOYS[@]}" != "0" ]; then
 	echo ""
 fi
 
-if [ "${SKIP_PULLOUTS}" == "false" ]; then
+if [ "${#BAD_BOYS[@]}" == "0" ]; then
+	echo ""
+	echo "========================================================"
+	echo "${GREEN}All drives passed checksum QA!${NC}:"
+	echo "========================================================"
+	echo ""
+	echo ""
+fi
 
+if [ "${SKIP_PULLOUTS}" == "false" ]; then
+	
+	echo "Checksum filename: ${XXHSUM_FILE}"
+	echo "Total # of drives: ${NUMBER_OF_DRIVES}"
+	echo ""
 	echo ""
 	echo "==========================================================="
 	echo " Watching /dev as you remove each USB drive individually..."
