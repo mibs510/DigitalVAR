@@ -39,6 +39,7 @@ if [ "$ETH1_MAC" == "$SERVER1_MAC" ]; then
 	cp /opt/authorized_keys /home/user/.ssh
 	chmod -R 700 /home/user/.ssh
 	chown -R user:user /home/user
+	chown -R user:user /home/partimag
 	exit 0
 elif [ "$ETH1_MAC" == "$SERVER2_MAC" ]; then
 	# Server #2
@@ -57,6 +58,7 @@ elif [ "$ETH1_MAC" == "$SERVER2_MAC" ]; then
 	cp /opt/authorized_keys /home/user/.ssh
 	chmod -R 700 /home/user/.ssh
 	chown -R user:user /home/user
+	chown -R user:user /home/partimag
 	exit 0
 fi
 
