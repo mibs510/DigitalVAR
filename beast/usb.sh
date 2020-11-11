@@ -27,8 +27,8 @@ fi
 
 # Mount "partimag" (/dev/sdb2) from patriot flash drive onto /home/partimag
 if [ "$(df -P /home/partimag | tail -1 | cut -d' ' -f1)" != "/dev/${PARTIMAG}2" ]; then
-	echo "Mounting /dev/${PARTIMAG}2 onto /home/partimag"
-	sudo mount /dev/${PARTIMAG}2 /home/partimag
+	echo "Mounting /dev/${PARTIMAG}1 onto /home/partimag"
+	sudo mount /dev/${PARTIMAG}1 /home/partimag
 fi
 
 # Grab a potential list of "images" by excluding files
