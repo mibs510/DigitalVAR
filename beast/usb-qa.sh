@@ -15,7 +15,7 @@ declare -a BAD_BOYS
 
 # Check to see if patriot USB is connected
 if [ "${PARTIMAG}" == "" ]; then
-	echo "${RED}ERROR: Patriot USB is not connected to beast!${NC}"
+	echo "${RED}ERROR: SAMSUNG SSD is not connected to beast!${NC}"
 	exit 1
 fi
 

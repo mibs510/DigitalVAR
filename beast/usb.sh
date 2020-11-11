@@ -9,7 +9,7 @@ NC=`tput sgr0`
 
 # Check to see if patriot USB is connected
 if [ "${PARTIMAG}" == "" ]; then
-	echo "${RED}ERROR: Patriot USB is not connected to beast!${NC}"
+	echo "${RED}ERROR: SAMSUNG SSD is not connected to beast!${NC}"
 	exit 1
 fi
 
@@ -110,10 +110,6 @@ echo "Press Ctrl+C to exit"
 read -p "Press Enter to continue"
 
 echo "==================================================================================================================================================================================================================="
-
-
-
-
 echo "EXECUTING: sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' ${CLONEZILLA_IMAGE} ${USB_LIST}"
 echo "==================================================================================================================================================================================================================="
 echo ""
