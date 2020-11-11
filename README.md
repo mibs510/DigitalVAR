@@ -1,3 +1,6 @@
+# DigitalVAR
+---
+
 This repository's main purpose is to hold and document modifications done
 to Clonezilla (Live/SE). These modifications were specifically targeted
 for our production needs. The motivation behind such changes were done

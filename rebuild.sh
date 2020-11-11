@@ -104,7 +104,7 @@ if [ "${1}" == "--test-initrd" ] || [ "${1}" == "test-initrd" ]; then
     -monitor stdio \
     -soundhw ac97 \
     -machine accel=kvm \
-    -m 1024 \
+    -m 2048 \
     -boot once=c,menu=on \
     -net nic,vlan=0 \
     -net user,vlan=0 \
