@@ -4,7 +4,7 @@ DEBUG=false
 SKIP_XXHSUM=false
 SKIP_PULLOUTS=false
 
-PARTIMAG=$(lsblk -o name,serial | grep 07013A | cut -d' ' -f1)
+PARTIMAG=$(lsblk -o name,serial | grep S5VWNG0 | cut -d' ' -f1)
 USB_LIST=""
 RED=`tput setaf 1`
 GREEN=`tput setaf 2`
@@ -22,6 +22,12 @@ fi
 # Check to see if Western Digital Elements HDD is connected
 if [ "$(lsblk -o name,serial | grep 575857 | cut -d' ' -f1)" != "" ]; then
 	echo "${RED}ERROR: WD Elements drive is connected!${NC}"
+	exit 1
+fi
+
+# Check to see if CLONER USB is connected
+if [ "$(lsblk -o name,serial | grep 07013A | cut -d' ' -f1)" != "" ]; then
+	echo "${RED}ERROR: CLONER USB is connected!${NC}"
 	exit 1
 fi
 

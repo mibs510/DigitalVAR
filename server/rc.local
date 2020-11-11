@@ -34,7 +34,7 @@ if [ "$ETH1_MAC" == "$SERVER1_MAC" ]; then
 	startafterifupdownsucks.sh &
 	mkdir -p /home/user/.config/gtk-3.0
 	mkdir -p /home/user/.ssh
-	cp /opt/{thunar.xml,thunar-volman.xml} /home/user/.config/xfce4/xfconf/xfce-perchannel-xml
+	cp /opt/{thunar.xml,thunar-volman.xml,xfce4-desktop.xml} /home/user/.config/xfce4/xfconf/xfce-perchannel-xml
 	cp /opt/bookmarks /home/user/.config/gtk-3.0
 	cp /opt/authorized_keys /home/user/.ssh
 	chmod -R 700 /home/user/.ssh
@@ -69,6 +69,13 @@ fi
 # a mount point for the PXE clients.
 
 # set +x
+
+# Common commands applicable to any system
+mkdir -p /home/user/.config/gtk-3.0
+mkdir -p /home/user/.ssh
+cp /opt/{thunar.xml,thunar-volman.xml,xfce4-desktop.xml} /home/user/.config/xfce4/xfconf/xfce-perchannel-xml
+cp /opt/bookmarks /home/user/.config/gtk-3.0
+chown -R user:user /home/user
 
 
 exit 0

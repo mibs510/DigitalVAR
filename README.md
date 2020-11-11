@@ -138,6 +138,9 @@ Please don't tell me to press Enter to continue.
 All other firstboot* and Forcevideo-drbl-live don't matter, I figured.
 * Lines edited: 32-32, automatically start the GUI, no need to ask us.
 
+### server/drbl-ocs.conf
+Changed `HALT_REBOOT_OPT=""` to `HALT_REBOOT_OPT="-f -n"` to force poweroff/reboot immediately without syncing via systemd.
+
 ### server/gnome-background.xml
 File updated to reflect new custom wallpapers from originally svgs to pngs
 as seen in [desktop-wallpaper/](server/desktop-wallpaper).
@@ -234,6 +237,7 @@ modules. All three locations must have the same exact modules.
 * `cp arch/x86/boot/bzImage /path/to/DigitalVAR/server/vmlinuz`
 * Delete old modules: `rm -rf /path/to/DigitalVAR/server/initrd-root/lib/modules/*`
 * Delete unneeded symlinks: `rm -rf install/lib/modules/*/{build,source}`
+* Strip debugging symbols from kernel modules: `find install/ -iname "*.ko" -exec strip --strip-debug {} \;`
 * Copy new modules: `cp -r install/lib/modules/* /path/to/DigitalVAR/server/initrd-root/lib/modules`
 * Go back to this repo: `cd /path/to/DigitalVAR`
 * Rebuild initial ramdisk `./rebuild.sh initrd`

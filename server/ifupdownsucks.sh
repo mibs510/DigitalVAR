@@ -18,6 +18,10 @@ touch $LOG_FILE
 
 # set -x
 while true; do
+	# chown when needed
+	if [ "$(ls -hal /home/partimag | awk '{print $3,$4,$9}' | grep -vw 'root root ..' | grep -v 'user user' | tr -d '\n' | tr -d [:space:])" != "" ]; then
+		chown -R user:user /home/partimag
+	fi
 	ETH1_OPERSTATE=$(cat /sys/class/net/$ETH1_IFACE/operstate)
 	if [ "$ETH1_MAC" == "$SERVER1_MAC" ] && [ "$(pidof dhcpd)" != "" ]; then
 		echo "$(date +"%m/%d/%y@%r") -- This is server #1" >> $LOG_FILE

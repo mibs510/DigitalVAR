@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PARTIMAG=$(lsblk -o name,serial | grep 07013A | cut -d' ' -f1)
+PARTIMAG=$(lsblk -o name,serial | grep S5VWNG0 | cut -d' ' -f1)
 USB_LIST=""
 RED=`tput setaf 1`
 GREEN=`tput setaf 2`
@@ -16,6 +16,12 @@ fi
 # Check to see if Western Digital Elements HDD is connected
 if [ "$(lsblk -o name,serial | grep 575857 | cut -d' ' -f1)" != "" ]; then
 	echo "${RED}ERROR: WD Elements drive is connected!${NC}"
+	exit 1
+fi
+
+# Check to see if CLONER USB is connected
+if [ "$(lsblk -o name,serial | grep 07013A | cut -d' ' -f1)" != "" ]; then
+	echo "${RED}ERROR: CLONER USB is connected!${NC}"
 	exit 1
 fi
 
@@ -72,7 +78,7 @@ if [ ! -d /home/partimag/${CLONEZILLA_IMAGE} ]; then
 	exit 1
 fi
 
-# Look for all available drives to image. This only excludes the patriot flash drives, so be careful!
+# Look for all available drives to image. This only excludes  partimag, so be careful!
 for i in {a..z}; do
 	if [ -b /dev/sd${i} ] && [ "sd${i}" != "${PARTIMAG}" ]; then
 		USB_LIST=$USB_LIST"sd$i "
@@ -80,10 +86,13 @@ for i in {a..z}; do
 	fi
 done
 
-if [ -b /dev/sdaa ] && [ "sdaa" != "${PARTIMAG}" ]; then
-	USB_LIST=$USB_LIST"sdaa"
-	NUMBER_OF_DRIVES=$((NUMBER_OF_DRIVES+1))	
-fi
+for i in {a..z}; do
+	if [ -b /dev/sd${i} ] && [ "sda${i}" != "${PARTIMAG}" ]; then
+		USB_LIST=$USB_LIST"sda$i "
+		NUMBER_OF_DRIVES=$((NUMBER_OF_DRIVES+1))
+	fi
+done
+
 
 if [ "${USB_LIST}" == "" ]; then
 	echo "${RED}ERROR: No USB drives found to image?${NC}"
@@ -101,6 +110,10 @@ echo "Press Ctrl+C to exit"
 read -p "Press Enter to continue"
 
 echo "==================================================================================================================================================================================================================="
+
+
+
+
 echo "EXECUTING: sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' ${CLONEZILLA_IMAGE} ${USB_LIST}"
 echo "==================================================================================================================================================================================================================="
 echo ""

@@ -50,7 +50,7 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	sudo cp server/ocs-live-blacklist.conf server/squashfs-root/etc/modprobe.d
 	sudo cp server/syncthing.service server/squashfs-root/usr/lib/systemd/user
 	sudo cp server/{syncthing@.service,syncthing-resume.service} server/squashfs-root/lib/systemd/system
-	sudo cp server/{thunar-volman.xml,thunar.xml,bookmarks} server/squashfs-root/opt
+	sudo cp server/{thunar-volman.xml,thunar.xml,bookmarks,xfce4-desktop.xml} server/squashfs-root/opt
 	sudo cp server/{drbl-functions,ocs-functions} server/squashfs-root/usr/share/drbl/sbin
 	sudo cp server/{ocs-live-netcfg,ifupdownsucks.sh,startafterifupdownsucks.sh,drbl-live,drbl-sl} server/squashfs-root/usr/sbin
 	sudo cp server/drbl-live-conf-X server/squashfs-root/usr/share/drbl/sbin/drbl-live-conf-X
@@ -64,6 +64,8 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	sudo cp server/firstboot.default-DBN.drbl server/squashfs-root/usr/share/drbl/setup/files/DBN
 	sudo cp server/desktop-wallpaper/* server/squashfs-root/usr/share/desktop-base/softwaves-theme/wallpaper/contents/images
 	sudo cp -a server/desktop-background server/squashfs-root/etc/alternatives/desktop-background
+	sudo cp server/drbl-ocs.conf server/squashfs-root/tftpboot/node_root/etc/drbl
+	sudo cp server/drbl-ocs.conf server/squashfs-root/etc/drbl
 	
 	echo " * Chmoding executables..."
 	sudo chmod +x server/squashfs-root/usr/share/drbl/setup/files/misc/desktop-icons/drbl-live/{Super_Thunar.desktop,Clonezilla-server.desktop,syncthing.desktop}
@@ -102,7 +104,7 @@ if [ "${1}" == "--test-initrd" ] || [ "${1}" == "test-initrd" ]; then
     -monitor stdio \
     -soundhw ac97 \
     -machine accel=kvm \
-    -m 2048 \
+    -m 1024 \
     -boot once=c,menu=on \
     -net nic,vlan=0 \
     -net user,vlan=0 \
