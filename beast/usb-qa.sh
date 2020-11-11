@@ -31,10 +31,10 @@ if [ "$(lsblk -o name,serial | grep 07013A | cut -d' ' -f1)" != "" ]; then
 	exit 1
 fi
 
-# Mount "partimag" (/dev/sdb2) from patriot flash drive onto /home/partimag
-if [ "$(df -P /home/partimag | tail -1 | cut -d' ' -f1)" != "/dev/${PARTIMAG}2" ]; then
-	echo "Mounting /dev/${PARTIMAG}2 onto /home/partimag"
-	sudo mount /dev/${PARTIMAG}2 /home/partimag
+# Mount "partimag" SAMSUN SSD onto /home/partimag
+if [ "$(df -P /home/partimag | tail -1 | cut -d' ' -f1)" != "/dev/${PARTIMAG}1" ]; then
+	echo "Mounting /dev/${PARTIMAG}1 onto /home/partimag"
+	sudo mount /dev/${PARTIMAG}1 /home/partimag
 fi
 
 for i in {a..z}; do
@@ -44,10 +44,12 @@ for i in {a..z}; do
 	fi
 done
 
-if [ -b /dev/sdaa ] && [ "sdaa" != "${PARTIMAG}" ]; then
-	USB_LIST=$USB_LIST"sdaa"
-	NUMBER_OF_DRIVES=$((NUMBER_OF_DRIVES+1))
-fi
+for i in {a..z}; do
+	if [ -b /dev/sda${i} ] && [ "sda${i}" != "${PARTIMAG}" ]; then
+		USB_LIST=$USB_LIST"sda$i "
+		NUMBER_OF_DRIVES=$((NUMBER_OF_DRIVES+1))
+	fi
+done
 
 if [ "${USB_LIST}" == "" ]; then
 	echo "${RED}ERROR${NC}: No USB drives found to QA?"
@@ -158,48 +160,56 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 	
 	umount /mnt &> /dev/null
 
-	if [ -b /dev/sdaa1 ] && [ "sdaa" != "${PARTIMAG}" ]; then
+	for i in {a..z}; do
 		EXIT=false
-		echo "mount: /dev/sdaa"
-		sudo mount /dev/sdaa1 /mnt
-		if [ "$?" != "0" ]; then
+		if [ -b /dev/sda${i}1 ] && [ "sda${i}" != "${PARTIMAG}" ]; then
+			echo "mount: /dev/sda${i}"
+			sudo mount /dev/sda${i}1 /mnt
+		
+			if [ "$?" != "0" ] && [ "$EXIT" == "false" ]; then
+				EXIT=true
+				echo "${RED}"
+				echo "================================================================="
+				echo "ERROR: /dev/sda${i}1 COULDN'T BE MOUNTED!!"
+				echo "Adding /dev/sda${i} onto the bad list..."
+				echo "================================================================="
+				echo "${NC}"
+				BAD_BOYS+=(sda${i})
+			fi
+		
+			if [ "$EXIT" == "false" ]; then
+				echo "xxhsum: /dev/sda${i}"
+				sudo xxhsum -c /home/partimag/${XXHSUM_FILE} &> /dev/null
+			fi
+			
+			if [ "$?" != "0" ] && [ "$EXIT" == "false" ]; then
+				EXIT=true
+				echo "unmount: /dev/sda${i}"
+				sudo umount /dev/sda${i}1
+				echo "${RED}"
+				echo "==========================================="
+				echo "ERROR: /dev/sda${i} HAS XXHSUM MISMATCH(ES)"
+				echo "Adding /dev/sda${i} onto the bad list..."
+				echo "==========================================="
+				echo "${NC}"
+				BAD_BOYS+=(sda${i})
+			fi
+		
+			if [ "$EXIT" == "false" ]; then
+				echo "unmount: /dev/sda${i}"
+				sudo umount /dev/sda${i}1
+			fi
+		fi
+		if [ -b /dev/sda${i} ] && [ ! -b /dev/sda${i}1 ] && [ "sda${i}" != "${PARTIMAG}" ]; then
 			echo "${RED}"
 			echo "================================================================="
-			echo "ERROR: /dev/sdaa1 COULDN'T BE MOUNTED!!"
-			echo "Adding /dev/sd${i} onto the bad list..."
+			echo "ERROR: /dev/sda${i} DOES NOT HAVE ANY PARTITIONS"
+			echo "Adding /dev/sda${i} onto the bad list..."
 			echo "================================================================="
 			echo "${NC}"
-			BAD_BOYS+=(sd${i})
-			EXIT=true
+			BAD_BOYS+=(sda${i})
 		fi
-		
-		if [ "$EXIT" == "false" ]; then
-			echo "xxhsum: /dev/sdaa"
-			sudo xxhsum -c /home/partimag/${XXHSUM_FILE} &> /dev/null
-		fi
-		
-		if [ "$?" != "0" ] && [ "$EXIT" == "false" ]; then
-			echo "unmount: /dev/sdaa"
-			sudo umount /dev/sdaa1
-			echo "${RED}"
-			echo "========================================="
-			echo "ERROR: /dev/sdaa HAS XXHSUM MISMATCH(ES)"
-			echo "Adding /dev/sdaa onto the bad list..."
-			echo "========================================="
-			echo "${NC}"
-			BAD_BOYS+=(sdaa)
-		fi
-	fi
-	
-	if [  -b /dev/sdaa ] && [ ! -b /dev/sdaa1 ] && [ "sdaa" != "${PARTIMAG}" ]; then
-		echo "${RED}"
-		echo "================================================================="
-		echo "ERROR: /dev/sd${i} DOES NOT HAVE ANY PARTITIONS"
-		echo "Adding /dev/sd${i} onto the bad list..."
-		echo "================================================================="
-		echo "${NC}"
-		BAD_BOYS+=(sd${i})
-	fi
+	done
 	
 	echo ""
 	echo "========================================="

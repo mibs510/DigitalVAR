@@ -110,11 +110,11 @@ echo "Press Ctrl+C to exit"
 read -p "Press Enter to continue"
 
 echo "==================================================================================================================================================================================================================="
-echo "EXECUTING: sudo osc-restore-mdisks -batch -p '-batch -p true' ${CLONEZILLA_IMAGE} ${USB_LIST}"
+echo "EXECUTING: sudo ocs-restore-mdisks -batch -p '-batch -p true' ${CLONEZILLA_IMAGE} ${USB_LIST}"
 echo "==================================================================================================================================================================================================================="
 echo ""
 echo ""
-sudo osc-restore-mdisks -batch -p '-batch -p true' ${CLONEZILLA_IMAGE} ${USB_LIST}
+sudo ocs-restore-mdisks -batch -p '-batch -p true' ${CLONEZILLA_IMAGE} ${USB_LIST}
 echo ""
 echo "======================="
 echo " UUID SHOULD ALL MATCH"
