@@ -1,11 +1,18 @@
 #!/bin/bash
 
+trap ctrl_c INT
+
 PARTIMAG=$(lsblk -o name,serial | grep S5VWNG0 | cut -d' ' -f1)
 USB_LIST=""
 RED=`tput setaf 1`
 GREEN=`tput setaf 2`
 CYAN=`tput setaf 14`
 NC=`tput sgr0`
+
+function ctrl_c(){
+	echo "INFO: Trapped Ctrl-C"
+	exit 1
+}
 
 # Check to see if patriot USB is connected
 if [ "${PARTIMAG}" == "" ]; then
@@ -32,7 +39,9 @@ if [ "$(df -P /home/partimag | tail -1 | cut -d' ' -f1)" != "/dev/${PARTIMAG}1" 
 fi
 
 # Grab a potential list of "images" by excluding files
-ls -l /home/partimag | grep ^d | awk '{print $9}' > /tmp/list_of_images.txt
+cd /home/partimag
+ls -l *.img | awk '{print $9}' > /tmp/list_of_images.txt
+cd ${OLDPWD}
 
 # Exit if no director(y/ies) found
 if [ "$(ls -hal /tmp/list_of_images.txt | awk '{print $5}')" == "0" ]; then
@@ -44,11 +53,8 @@ fi
 i=0
 while read line
 do
-	# Not all folders contain clonezilla images
-	if [ -f "/home/partimag/${line}/Info-dmi.txt" ]; then
-		AVAILABLE_IMGS[$i]="$line"
-		i=$((i+1))
-	fi
+	AVAILABLE_IMGS[$i]="$line"
+	i=$((i+1))
 done < /tmp/list_of_images.txt
 
 TOTAL_AVAILABLE_IMGS=$(expr ${i} - 1)
@@ -78,6 +84,13 @@ if [ ! -d /home/partimag/${CLONEZILLA_IMAGE} ]; then
 	exit 1
 fi
 
+IMG_SIZE=$(ls -hal | ${CLONEZILLA_IMAGE} | awk '{print $5}')
+
+if [ ${IMG_SIZE} == "0" ]; then
+	echo "${RED}ERROR: Image has a size of 0?${NC}"
+	exit 1
+fi
+
 # Look for all available drives to image. This only excludes  partimag, so be careful!
 for i in {a..z}; do
 	if [ -b /dev/sd${i} ] && [ "sd${i}" != "${PARTIMAG}" ]; then
@@ -93,13 +106,20 @@ for i in {a..z}; do
 	fi
 done
 
+for i in {a..z}; do
+	if [ -b /dev/sdb${i} ] && [ "sdb${i}" != "${PARTIMAG}" ]; then
+		USB_LIST=$USB_LIST"sdb$i "
+		NUMBER_OF_DRIVES=$((NUMBER_OF_DRIVES+1))
+	fi
+done
+
 
 if [ "${USB_LIST}" == "" ]; then
 	echo "${RED}ERROR: No USB drives found to image?${NC}"
 	exit 1
 fi
 
-echo "I will image the following drives: $USB_LIST"
+echo "The following drives will be imaged: ${USB_LIST}"
 echo "${RED}MAKE SURE NO OTHER USB DEVICES ARE CONNECTED! (e.g. Toshiba/WD Element HDD)${NC}"
 echo ""
 echo "Image name: ${CYAN}${CLONEZILLA_IMAGE}${NC}"
@@ -109,12 +129,18 @@ echo "Is this correct?"
 echo "Press Ctrl+C to exit"
 read -p "Press Enter to continue"
 
-echo "==================================================================================================================================================================================================================="
-echo "EXECUTING: sudo ocs-restore-mdisks -batch -p '-batch -p true' ${CLONEZILLA_IMAGE} ${USB_LIST}"
-echo "==================================================================================================================================================================================================================="
-echo ""
-echo ""
-sudo ocs-restore-mdisks -batch -p '-icds -batch -p true' ${CLONEZILLA_IMAGE} ${USB_LIST}
+for USB in "${USB_LIST[@]}"
+do
+	echo "==================================================================================================================================================================================================================="
+	echo "EXECUTING: sudo dd if=/home/partimag/${CLONEZILLA_IMAGE} | pv -s ${IMG_SIZE} | dd of=/dev/${USB}"
+	echo "==================================================================================================================================================================================================================="
+	echo ""
+	echo ""
+	sudo dd if=/home/partimag/${CLONEZILLA_IMAGE} | pv -s ${IMG_SIZE} | dd of=/dev/${USB}
+	echo ""
+	echo ""
+done
+
 echo ""
 echo "======================="
 echo " UUID SHOULD ALL MATCH"
