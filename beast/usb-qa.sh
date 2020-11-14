@@ -31,7 +31,7 @@ if [ "$(lsblk -o name,serial | grep 07013A | cut -d' ' -f1)" != "" ]; then
 	exit 1
 fi
 
-# Mount "partimag" SAMSUN SSD onto /home/partimag
+# Mount "partimag" SAMSUNG SSD onto /home/partimag
 if [ "$(df -P /home/partimag | tail -1 | cut -d' ' -f1)" != "/dev/${PARTIMAG}1" ]; then
 	echo "Mounting /dev/${PARTIMAG}1 onto /home/partimag"
 	sudo mount /dev/${PARTIMAG}1 /home/partimag

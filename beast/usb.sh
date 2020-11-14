@@ -87,7 +87,7 @@ for i in {a..z}; do
 done
 
 for i in {a..z}; do
-	if [ -b /dev/sda${i} ] && [ "sdaa${i}" != "${PARTIMAG}" ]; then
+	if [ -b /dev/sda${i} ] && [ "sda${i}" != "${PARTIMAG}" ]; then
 		USB_LIST=$USB_LIST"sda$i "
 		NUMBER_OF_DRIVES=$((NUMBER_OF_DRIVES+1))
 	fi
@@ -114,7 +114,7 @@ echo "EXECUTING: sudo ocs-restore-mdisks -batch -p '-batch -p true' ${CLONEZILLA
 echo "==================================================================================================================================================================================================================="
 echo ""
 echo ""
-sudo ocs-restore-mdisks -batch -p '-batch -p true' ${CLONEZILLA_IMAGE} ${USB_LIST}
+sudo ocs-restore-mdisks -batch -p '-icds -batch -p true' ${CLONEZILLA_IMAGE} ${USB_LIST}
 echo ""
 echo "======================="
 echo " UUID SHOULD ALL MATCH"
