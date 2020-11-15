@@ -3,7 +3,8 @@
 trap ctrl_c INT
 
 PARTIMAG=$(lsblk -o name,serial | grep S5VWNG0 | cut -d' ' -f1)
-USB_LIST=""
+USB_LIST=()
+DRIVES_TO_BE_IMAGED=""
 RED=`tput setaf 1`
 GREEN=`tput setaf 2`
 CYAN=`tput setaf 14`
@@ -79,14 +80,16 @@ fi
 
 CLONEZILLA_IMAGE=${AVAILABLE_IMGS[${number}]}
 
-if [ ! -d /home/partimag/${CLONEZILLA_IMAGE} ]; then
+if [ ! -e /home/partimag/${CLONEZILLA_IMAGE} ]; then
 	echo "${RED}ERROR: Image not found in /home/partimag!${NC}"
 	exit 1
 fi
 
-IMG_SIZE=$(ls -hal | ${CLONEZILLA_IMAGE} | awk '{print $5}')
+cd /home/partimag
+IMG_SIZE=`ls -hal | ${CLONEZILLA_IMAGE} | awk '{print $5}'`
+cd ${OLDPWD}
 
-if [ ${IMG_SIZE} == "0" ]; then
+if [ "${IMG_SIZE}" == "0" ]; then
 	echo "${RED}ERROR: Image has a size of 0?${NC}"
 	exit 1
 fi
@@ -94,32 +97,35 @@ fi
 # Look for all available drives to image. This only excludes  partimag, so be careful!
 for i in {a..z}; do
 	if [ -b /dev/sd${i} ] && [ "sd${i}" != "${PARTIMAG}" ]; then
-		USB_LIST=$USB_LIST"sd$i "
+		DRIVES_TO_BE_IMAGED=$DRIVES_TO_BE_IMAGED"sd$i "
+		USB_LIST+=("sd$i")
 		NUMBER_OF_DRIVES=$((NUMBER_OF_DRIVES+1))
 	fi
 done
 
 for i in {a..z}; do
 	if [ -b /dev/sda${i} ] && [ "sda${i}" != "${PARTIMAG}" ]; then
-		USB_LIST=$USB_LIST"sda$i "
+		DRIVES_TO_BE_IMAGED=$DRIVES_TO_BE_IMAGED"sda$i "
+		USB_LIST+=("sda$i")
 		NUMBER_OF_DRIVES=$((NUMBER_OF_DRIVES+1))
 	fi
 done
 
 for i in {a..z}; do
 	if [ -b /dev/sdb${i} ] && [ "sdb${i}" != "${PARTIMAG}" ]; then
-		USB_LIST=$USB_LIST"sdb$i "
+		DRIVES_TO_BE_IMAGED=$DRIVES_TO_BE_IMAGED"sdb$i "
+		USB_LIST+=("sdb$i")
 		NUMBER_OF_DRIVES=$((NUMBER_OF_DRIVES+1))
 	fi
 done
 
 
-if [ "${USB_LIST}" == "" ]; then
+if [ "${DRIVES_TO_BE_IMAGED}" == "" ]; then
 	echo "${RED}ERROR: No USB drives found to image?${NC}"
 	exit 1
 fi
 
-echo "The following drives will be imaged: ${USB_LIST}"
+echo "The following drives will be imaged: ${DRIVES_TO_BE_IMAGED}"
 echo "${RED}MAKE SURE NO OTHER USB DEVICES ARE CONNECTED! (e.g. Toshiba/WD Element HDD)${NC}"
 echo ""
 echo "Image name: ${CYAN}${CLONEZILLA_IMAGE}${NC}"
@@ -129,14 +135,14 @@ echo "Is this correct?"
 echo "Press Ctrl+C to exit"
 read -p "Press Enter to continue"
 
-for USB in "${USB_LIST[@]}"
+for (( i = 1; i < ${NUMBER_OF_DRIVES}+1; i++));
 do
-	echo "==================================================================================================================================================================================================================="
-	echo "EXECUTING: sudo dd if=/home/partimag/${CLONEZILLA_IMAGE} | pv -s ${IMG_SIZE} | dd of=/dev/${USB}"
-	echo "==================================================================================================================================================================================================================="
+	echo "================================================================================================="
+	echo "| EXECUTING: sudo dd if=/home/partimag/${CLONEZILLA_IMAGE} | pv -s ${IMG_SIZE} | dd of=/dev/${USB_LIST[$i-1]} |"
+	echo "================================================================================================="
 	echo ""
 	echo ""
-	sudo dd if=/home/partimag/${CLONEZILLA_IMAGE} | pv -s ${IMG_SIZE} | dd of=/dev/${USB}
+	sudo dd if=/home/partimag/${CLONEZILLA_IMAGE} | pv -s ${IMG_SIZE} | dd of=/dev/${USB_LIST[$i-1]}
 	echo ""
 	echo ""
 done
