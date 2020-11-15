@@ -86,7 +86,7 @@ if [ ! -e /home/partimag/${CLONEZILLA_IMAGE} ]; then
 fi
 
 cd /home/partimag
-IMG_SIZE=`ls -hal | ${CLONEZILLA_IMAGE} | awk '{print $5}'`
+IMG_SIZE=`ls -hal | grep ${CLONEZILLA_IMAGE} | awk '{print $5}'`
 cd ${OLDPWD}
 
 if [ "${IMG_SIZE}" == "0" ]; then
