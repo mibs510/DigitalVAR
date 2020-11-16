@@ -1,19 +1,11 @@
 #!/bin/bash
 
-trap ctrl_c INT
-
 PARTIMAG=$(lsblk -o name,serial | grep S5VWNG0 | cut -d' ' -f1)
-USB_LIST=()
-DRIVES_TO_BE_IMAGED=""
+USB_LIST=""
 RED=`tput setaf 1`
 GREEN=`tput setaf 2`
 CYAN=`tput setaf 14`
 NC=`tput sgr0`
-
-function ctrl_c(){
-	echo "INFO: Trapped Ctrl-C"
-	exit 1
-}
 
 # Check to see if patriot USB is connected
 if [ "${PARTIMAG}" == "" ]; then
@@ -33,16 +25,14 @@ if [ "$(lsblk -o name,serial | grep 07013A | cut -d' ' -f1)" != "" ]; then
 	exit 1
 fi
 
-# Mount "partimag" from  SAMSUNG SSD onto /home/partimag
-if [ "$(df -P /home/partimag | tail -1 | cut -d' ' -f1)" != "/dev/${PARTIMAG}1" ]; then
-	echo "Mounting /dev/${PARTIMAG}1 onto /home/partimag"
-	sudo mount /dev/${PARTIMAG}1 /home/partimag
+# Mount "partimag" (/dev/sdb2) from patriot flash drive onto /home/partimag
+if [ "$(df -P /home/partimag | tail -1 | cut -d' ' -f1)" != "/dev/${PARTIMAG}2" ]; then
+	echo "Mounting /dev/${PARTIMAG}2 onto /home/partimag"
+	sudo mount /dev/${PARTIMAG}2 /home/partimag
 fi
 
 # Grab a potential list of "images" by excluding files
-cd /home/partimag
-ls -l *.img | awk '{print $9}' > /tmp/list_of_images.txt
-cd ${OLDPWD}
+ls -l /home/partimag | grep ^d | awk '{print $9}' > /tmp/list_of_images.txt
 
 # Exit if no director(y/ies) found
 if [ "$(ls -hal /tmp/list_of_images.txt | awk '{print $5}')" == "0" ]; then
@@ -54,17 +44,22 @@ fi
 i=0
 while read line
 do
-	AVAILABLE_IMGS[$i]="$line"
-	i=$((i+1))
+	# Not all folders contain clonezilla images
+	if [ -f "/home/partimag/${line}/Info-dmi.txt" ]; then
+		AVAILABLE_IMGS[$i]="$line"
+		i=$((i+1))
+	fi
 done < /tmp/list_of_images.txt
 
 TOTAL_AVAILABLE_IMGS=$(expr ${i} - 1)
 i=0
 
 # List valid images
-echo "================================================"
+echo "================================================="
+echo "${RED} Image should be NTFS only! Refer to"
+echo " material specification or other supporting docs!${NC}"
 echo " Choose an image available from the list below: "
-echo "================================================"
+echo "================================================="
 echo ""
 for i in $(seq 0 ${TOTAL_AVAILABLE_IMGS}); do 
 	echo "${i} = ${AVAILABLE_IMGS[$i]}"
@@ -80,33 +75,22 @@ fi
 
 CLONEZILLA_IMAGE=${AVAILABLE_IMGS[${number}]}
 
-if [ ! -e /home/partimag/${CLONEZILLA_IMAGE} ]; then
+if [ ! -d /home/partimag/${CLONEZILLA_IMAGE} ]; then
 	echo "${RED}ERROR: Image not found in /home/partimag!${NC}"
-	exit 1
-fi
-
-cd /home/partimag
-IMG_SIZE=`ls -hal | grep ${CLONEZILLA_IMAGE} | awk '{print $5}'`
-cd ${OLDPWD}
-
-if [ "${IMG_SIZE}" == "0" ]; then
-	echo "${RED}ERROR: Image has a size of 0?${NC}"
 	exit 1
 fi
 
 # Look for all available drives to image. This only excludes  partimag, so be careful!
 for i in {a..z}; do
 	if [ -b /dev/sd${i} ] && [ "sd${i}" != "${PARTIMAG}" ]; then
-		DRIVES_TO_BE_IMAGED=$DRIVES_TO_BE_IMAGED"sd$i "
-		USB_LIST+=("sd$i")
+		USB_LIST=$USB_LIST"sd$i "
 		NUMBER_OF_DRIVES=$((NUMBER_OF_DRIVES+1))
 	fi
 done
 
 for i in {a..z}; do
-	if [ -b /dev/sda${i} ] && [ "sda${i}" != "${PARTIMAG}" ]; then
-		DRIVES_TO_BE_IMAGED=$DRIVES_TO_BE_IMAGED"sda$i "
-		USB_LIST+=("sda$i")
+	if [ -b /dev/sd${i} ] && [ "sda${i}" != "${PARTIMAG}" ]; then
+		USB_LIST=$USB_LIST"sda$i "
 		NUMBER_OF_DRIVES=$((NUMBER_OF_DRIVES+1))
 	fi
 done
@@ -120,12 +104,12 @@ for i in {a..z}; do
 done
 
 
-if [ "${DRIVES_TO_BE_IMAGED}" == "" ]; then
+if [ "${USB_LIST}" == "" ]; then
 	echo "${RED}ERROR: No USB drives found to image?${NC}"
 	exit 1
 fi
 
-echo "The following drives will be imaged: ${DRIVES_TO_BE_IMAGED}"
+echo "I will image the following drives: $USB_LIST"
 echo "${RED}MAKE SURE NO OTHER USB DEVICES ARE CONNECTED! (e.g. Toshiba/WD Element HDD)${NC}"
 echo ""
 echo "Image name: ${CYAN}${CLONEZILLA_IMAGE}${NC}"
@@ -135,25 +119,19 @@ echo "Is this correct?"
 echo "Press Ctrl+C to exit"
 read -p "Press Enter to continue"
 
-for (( i = 1; i < ${NUMBER_OF_DRIVES}+1; i++));
-do
-	echo "=========================================================================================="
-	echo "| EXECUTING: sudo pv -q < /home/partimag/${CLONEZILLA_IMAGE} > /dev/${USB_LIST[$i-1]} &|"
-	echo "=========================================================================================="
-	echo ""
-	echo ""
-	sudo sudo pv -q < /home/partimag/${CLONEZILLA_IMAGE} > /dev/${USB_LIST[$i-1]} &
-	echo ""
-	echo ""
-done
-
+echo "==================================================================================================================================================================================================================="
+echo "EXECUTING: sudo ocs-restore-mdisks -batch -p '-nogui -batch -p true -icds -t -iefi -j2 -j0 -scr' ${CLONEZILLA_IMAGE} ${USB_LIST}"
+echo "==================================================================================================================================================================================================================="
+echo ""
+echo ""
+sudo ocs-restore-mdisks -batch -p '-g auto -e1 auto -e2 -c -r -icds -iefi -j2 -k1 -scr -p true' ${CLONEZILLA_IMAGE} ${USB_LIST}
 echo ""
 echo "======================="
 echo " UUID SHOULD ALL MATCH"
 echo "======================="
 echo ""
 sync
-sudo blkid | grep -v 'CLONER' | grep -v 'partimag' | grep -v 'PARTIMAG' | grep -v 'squashfs'
+sudo blkid | grep -v 'CLONER' | grep -v 'squashfs'
 echo ""
 echo "Image name: ${CYAN}${CLONEZILLA_IMAGE}${NC}"
 echo "Total # of drives: ${CYAN}${NUMBER_OF_DRIVES}${NC}"
