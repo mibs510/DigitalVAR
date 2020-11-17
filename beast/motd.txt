@@ -35,9 +35,9 @@
 | * Example: onthefly-ssd.sh a b c d e f g h i j k l        |                                                          |
 | * Used for: 041-602, 055-114, 103-0057, 110-0005/9        |                                                          |
 |-----------------------------------------------------------|----------------------------------------------------------|
-| * usb.sh [PART NUMBER]                                    |                                                          |
-| * Example: usb.sh 7880                                    |                                                          |
-| * Used for: 0110-7880,8500,8599,8609,8610                 |                                                          |
+| * usb-ntfs.sh                                             | * usb-fat32.sh [target] [target] [target]                |
+| * Example: usb-ntfs.sh                                    | * Example: usb-fat32.sh a c b d aa ab ad ba bs by bz     |
+| * Used for: Any USB PN with NTFS (Refer to mat spec!)     | * Used for: Any PN with FAT32 (Refer to mat spec!)       |
 |----------------------------------------------------------------------------------------------------------------------|
 |======================================================================================================================|
 |                  THESE TOOLS UPDATE UPON EACH REBOOT. TO MANUALLY UPDATE, EXECUTE: `/etc/rc.local`                   |

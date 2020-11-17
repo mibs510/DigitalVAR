@@ -6,7 +6,7 @@ jesse.sh
 motd.txt
 onthefly.sh
 onthefly-ssd.sh
-usb.sh
+usb-fat32.sh
 usb-ntfs.sh
 usb-qa.sh
 lightblue8599.xxhsums

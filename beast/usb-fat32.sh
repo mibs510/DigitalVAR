@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Written by: Connor McMillan (connor@mcmillan.website)
+
 trap ctrl_c INT
 
 PARTIMAG=$(lsblk -o name,serial | grep S5VWNG0 | cut -d' ' -f1)
@@ -10,10 +12,39 @@ GREEN=`tput setaf 2`
 CYAN=`tput setaf 14`
 NC=`tput sgr0`
 
+if [ $# -lt 1 ]; then
+	echo "${RED}ERROR: Not enough arguments.${NC}"
+	echo "${0} [target] [target] [target] [target] ..."
+	echo "/dev/sd[target]"
+	echo "Example: ${0} a b c d e f g h i j k l"
+	echo "Example: ${0} q r s t x z aa ab ac ba bf"
+	exit 1
+fi
+
+if [ $# -gt 5 ]; then
+	echo "WARN: Not recommended to image more than five (5) USB drives in series."
+	echo "Run the script in multiple instances in Alt-F1 through F6!"
+	echo "${0} [target] [target] [target] [target] ..."
+	echo "/dev/sd[target]"
+	echo "Example: ${0} a b c d e f g h i j k l"
+	echo "Example: ${0} q r s t x z aa ab ac ba bf"
+	exit 1
+fi
+
 function ctrl_c(){
 	echo "INFO: Trapped Ctrl-C"
 	exit 1
 }
+
+# Count how many drives we are imaging.
+for TARGET in "${@:1}"; do
+	# Let's check if the user is trying to image the device holding the images.
+	if [ "sd${TARGET}" == "${PARTIMAG}" ]; then
+		echo "${RED}ERROR: WHY ARE YOU TRYING TO IMAGE THE DEVICE THAT HOLDS ALL IMAGES!?!${NC}"
+		exit 1
+	fi
+	NUMBER_OF_DRIVES=$((NUMBER_OF_DRIVES+1))
+done
 
 # Check to see if patriot USB is connected
 if [ "${PARTIMAG}" == "" ]; then
@@ -50,7 +81,7 @@ if [ "$(ls -hal /tmp/list_of_images.txt | awk '{print $5}')" == "0" ]; then
 	exit 1
 fi
 
-# Put list of valid clonezilla images into an array
+# Put list of valid images into an array
 i=0
 while read line
 do
@@ -85,40 +116,6 @@ if [ ! -e /home/partimag/${CLONEZILLA_IMAGE} ]; then
 	exit 1
 fi
 
-cd /home/partimag
-IMG_SIZE=`ls -hal | grep ${CLONEZILLA_IMAGE} | awk '{print $5}'`
-cd ${OLDPWD}
-
-if [ "${IMG_SIZE}" == "0" ]; then
-	echo "${RED}ERROR: Image has a size of 0?${NC}"
-	exit 1
-fi
-
-# Look for all available drives to image. This only excludes  partimag, so be careful!
-for i in {a..z}; do
-	if [ -b /dev/sd${i} ] && [ "sd${i}" != "${PARTIMAG}" ]; then
-		DRIVES_TO_BE_IMAGED=$DRIVES_TO_BE_IMAGED"sd$i "
-		USB_LIST+=("sd$i")
-		NUMBER_OF_DRIVES=$((NUMBER_OF_DRIVES+1))
-	fi
-done
-
-for i in {a..z}; do
-	if [ -b /dev/sda${i} ] && [ "sda${i}" != "${PARTIMAG}" ]; then
-		DRIVES_TO_BE_IMAGED=$DRIVES_TO_BE_IMAGED"sda$i "
-		USB_LIST+=("sda$i")
-		NUMBER_OF_DRIVES=$((NUMBER_OF_DRIVES+1))
-	fi
-done
-
-for i in {a..z}; do
-	if [ -b /dev/sdb${i} ] && [ "sdb${i}" != "${PARTIMAG}" ]; then
-		DRIVES_TO_BE_IMAGED=$DRIVES_TO_BE_IMAGED"sdb$i "
-		USB_LIST+=("sdb$i")
-		NUMBER_OF_DRIVES=$((NUMBER_OF_DRIVES+1))
-	fi
-done
-
 
 if [ "${DRIVES_TO_BE_IMAGED}" == "" ]; then
 	echo "${RED}ERROR: No USB drives found to image?${NC}"
@@ -126,6 +123,9 @@ if [ "${DRIVES_TO_BE_IMAGED}" == "" ]; then
 fi
 
 echo "The following drives will be imaged: ${DRIVES_TO_BE_IMAGED}"
+for TARGET in "${@:1}"; do
+	lsblk -o name,serial | grep -w sd${TARGET}
+done
 echo "${RED}MAKE SURE NO OTHER USB DEVICES ARE CONNECTED! (e.g. Toshiba/WD Element HDD)${NC}"
 echo ""
 echo "Image name: ${CYAN}${CLONEZILLA_IMAGE}${NC}"
@@ -135,14 +135,14 @@ echo "Is this correct?"
 echo "Press Ctrl+C to exit"
 read -p "Press Enter to continue"
 
-for (( i = 1; i < ${NUMBER_OF_DRIVES}+1; i++));
+for TARGET in "${@:1}"; do
 do
 	echo "=========================================================================================="
-	echo "| EXECUTING: sudo pv -q < /home/partimag/${CLONEZILLA_IMAGE} > /dev/${USB_LIST[$i-1]} &|"
+	echo "| EXECUTING: sudo pv -q < /home/partimag/${CLONEZILLA_IMAGE} > /dev/${TARGET}|"
 	echo "=========================================================================================="
 	echo ""
 	echo ""
-	sudo sudo pv -q < /home/partimag/${CLONEZILLA_IMAGE} > /dev/${USB_LIST[$i-1]} &
+	sudo sudo pv < /home/partimag/${CLONEZILLA_IMAGE} > /dev/${TARGET}
 	echo ""
 	echo ""
 done

@@ -46,7 +46,6 @@ echo ""
 
 for i in "${@:1}"; do
 	lsblk -o name,serial | grep -w sd${i}
-
 done
 
 echo ""
