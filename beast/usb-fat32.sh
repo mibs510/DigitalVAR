@@ -116,12 +116,6 @@ if [ ! -e /home/partimag/${CLONEZILLA_IMAGE} ]; then
 	exit 1
 fi
 
-
-if [ "${DRIVES_TO_BE_IMAGED}" == "" ]; then
-	echo "${RED}ERROR: No USB drives found to image?${NC}"
-	exit 1
-fi
-
 echo "The following drives will be imaged: ${DRIVES_TO_BE_IMAGED}"
 for TARGET in "${@:1}"; do
 	lsblk -o name,serial | grep -w sd${TARGET}
