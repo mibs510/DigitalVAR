@@ -32,6 +32,7 @@ if [ $# -gt 5 ]; then
 fi
 
 function ctrl_c(){
+	echo ""
 	echo "INFO: Trapped Ctrl-C"
 	exit 1
 }
@@ -130,13 +131,12 @@ echo "Press Ctrl+C to exit"
 read -p "Press Enter to continue"
 
 for TARGET in "${@:1}"; do
-do
 	echo "=========================================================================================="
-	echo "| EXECUTING: sudo pv -q < /home/partimag/${CLONEZILLA_IMAGE} > /dev/${TARGET}|"
+	echo "| EXECUTING: sudo pv -q < /home/partimag/${CLONEZILLA_IMAGE} > /dev/sd${TARGET}|"
 	echo "=========================================================================================="
 	echo ""
 	echo ""
-	sudo sudo pv < /home/partimag/${CLONEZILLA_IMAGE} > /dev/${TARGET}
+	sudo sudo pv < /home/partimag/${CLONEZILLA_IMAGE} > /dev/sd${TARGET}
 	echo ""
 	echo ""
 done
