@@ -26,9 +26,9 @@ if [ "$(lsblk -o name,serial | grep 07013A | cut -d' ' -f1)" != "" ]; then
 fi
 
 # Mount "partimag" (/dev/sdb2) from patriot flash drive onto /home/partimag
-if [ "$(df -P /home/partimag | tail -1 | cut -d' ' -f1)" != "/dev/${PARTIMAG}2" ]; then
-	echo "Mounting /dev/${PARTIMAG}2 onto /home/partimag"
-	sudo mount /dev/${PARTIMAG}2 /home/partimag
+if [ "$(df -P /home/partimag | tail -1 | cut -d' ' -f1)" != "/dev/${PARTIMAG}1" ]; then
+	echo "Mounting /dev/${PARTIMAG}1 onto /home/partimag"
+	sudo mount /dev/${PARTIMAG}1 /home/partimag
 fi
 
 # Grab a potential list of "images" by excluding files
@@ -89,7 +89,7 @@ for i in {a..z}; do
 done
 
 for i in {a..z}; do
-	if [ -b /dev/sd${i} ] && [ "sda${i}" != "${PARTIMAG}" ]; then
+	if [ -b /dev/sda${i} ] && [ "sda${i}" != "${PARTIMAG}" ]; then
 		USB_LIST=$USB_LIST"sda$i "
 		NUMBER_OF_DRIVES=$((NUMBER_OF_DRIVES+1))
 	fi

@@ -21,8 +21,8 @@ if [ $# -lt 1 ]; then
 	exit 1
 fi
 
-if [ $# -gt 5 ]; then
-	echo "WARN: Not recommended to image more than five (5) USB drives in series."
+if [ $# -gt 10 ]; then
+	echo "WARN: Not recommended to image more than ten (10) USB drives in series."
 	echo "Run the script in multiple instances in Alt-F1 through F6!"
 	echo "${0} [target] [target] [target] [target] ..."
 	echo "/dev/sd[target]"
@@ -73,7 +73,7 @@ fi
 
 # Grab a potential list of "images" by excluding files
 cd /home/partimag
-ls -l *.img | awk '{print $9}' > /tmp/list_of_images.txt
+sudo ls -l *.img | awk '{print $9}' > /tmp/list_of_images.txt
 cd ${OLDPWD}
 
 # Exit if no director(y/ies) found
@@ -140,6 +140,9 @@ for TARGET in "${@:1}"; do
 	echo ""
 	echo ""
 done
+
+echo "Informing the kernel of new partitions so that usb-qa.sh doesn't fail to mount partitions."
+partprobe
 
 echo ""
 echo "======================="
