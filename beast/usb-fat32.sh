@@ -136,7 +136,7 @@ for TARGET in "${@:1}"; do
 	echo "=========================================================================================="
 	echo ""
 	echo ""
-	sudo sudo pv < /home/partimag/${CLONEZILLA_IMAGE} > /dev/sd${TARGET}
+	sudo sudo pv -f < /home/partimag/${CLONEZILLA_IMAGE} > /dev/sd${TARGET}
 	echo ""
 	echo ""
 done

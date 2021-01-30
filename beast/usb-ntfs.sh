@@ -57,7 +57,8 @@ i=0
 # List valid images
 echo "================================================="
 echo "${RED} Image should be NTFS only! Refer to"
-echo " material specification or other supporting docs!${NC}"
+echo " material specification or other supporting docs!"
+echo "Exception on: 0110-8610 A${NC}"
 echo " Choose an image available from the list below: "
 echo "================================================="
 echo ""
