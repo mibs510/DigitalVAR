@@ -4,7 +4,7 @@ DEBUG=false
 SKIP_XXHSUM=false
 SKIP_PULLOUTS=false
 
-PARTIMAG=$(lsblk -o name,serial | grep S5VWNG0 | cut -d' ' -f1)
+PARTIMAG=$(lsblk -o name,serial | grep 3208LH | cut -d' ' -f1)
 USB_LIST=""
 RED=`tput setaf 1`
 GREEN=`tput setaf 2`
@@ -15,7 +15,7 @@ declare -a BAD_BOYS
 
 # Check to see if patriot USB is connected
 if [ "${PARTIMAG}" == "" ]; then
-	echo "${RED}ERROR: SAMSUNG SSD is not connected to beast!${NC}"
+	echo "${RED}ERROR: Intel SSD is not connected to beast!${NC}"
 	exit 1
 fi
 

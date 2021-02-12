@@ -12,6 +12,7 @@ if [ $# -lt 1 ]; then
 	exit 1
 fi
 
+PARTIMAG=$(lsblk -o name,serial | grep 575857 | cut -d' ' -f1)
 LOG_FILE=/tmp/xxhsum_$(date +%m_%d_%y_%H%M%S).log
 SED_LOG_FILE=/tmp/xxhsum_$(date +%m_%d_%y_%H%M%S).sed
 PDF_LOG_FILE=/tmp/xxhsum_$(date +%m_%d_%y_%H%M%S).pdf
@@ -24,9 +25,8 @@ if [ "x${IMG}x" = "xx" ]; then
 fi
 
 if [ "$(mount | grep '/home/partimag')" == "" ]; then
-	HDD=$(lsblk -o name,serial | grep 575857 | cut -d' ' -f1)
-	if [ -b /dev/${HDD}1 ]; then
-		sudo mount /dev/${HDD}1 /home/partimag
+	if [ -b /dev/${PARTIMAG}1 ]; then
+		sudo mount /dev/${PARTIMAG}1 /home/partimag
 	fi
 fi
 

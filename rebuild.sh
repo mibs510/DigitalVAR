@@ -5,8 +5,8 @@ if [ "${1}" == "--beast" ] || [ "${1}" == "beast" ]; then
 		echo "ERROR: Exit from chroot!!!"
 		exit 1
 	fi
-	sudo cp beast/{bigbox,fluorchem,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,usb-qa.sh,xxhsum} beast/squashfs-root/usr/bin
-	sudo chmod +x beast/squashfs-root/usr/bin/{bigbox,fluorchem,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,usb-qa.sh,xxhsum}
+	sudo cp beast/{bigbox,fluorchem,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,usb-qa.sh,usb-ntfs.sh,usb-fat32.sh,xxhsum} beast/squashfs-root/usr/bin
+	sudo chmod +x beast/squashfs-root/usr/bin/{bigbox,fluorchem,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,usb-qa.sh,usb-fat32.sh,usb-ntfs.sh,xxhsum}
 	sudo cp beast/{lightblue8599.xxhsums,motd.txt,profile,rc.local,resolv.conf} beast/squashfs-root/etc
 	sudo cp beast/sources.list beast/squashfs-root/etc/apt
 	sudo cp beast/drbl-repository.list beast/squashfs-root/etc/apt/sources.list.d

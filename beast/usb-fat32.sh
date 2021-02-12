@@ -4,7 +4,7 @@
 
 trap ctrl_c INT
 
-PARTIMAG=$(lsblk -o name,serial | grep S5VWNG0 | cut -d' ' -f1)
+PARTIMAG=$(lsblk -o name,serial | grep 3208LH | cut -d' ' -f1)
 USB_LIST=()
 DRIVES_TO_BE_IMAGED=""
 RED=`tput setaf 1`
@@ -49,7 +49,7 @@ done
 
 # Check to see if patriot USB is connected
 if [ "${PARTIMAG}" == "" ]; then
-	echo "${RED}ERROR: SAMSUNG SSD is not connected to beast!${NC}"
+	echo "${RED}ERROR: Intel SSD is not connected to beast!${NC}"
 	exit 1
 fi
 

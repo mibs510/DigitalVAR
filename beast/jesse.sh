@@ -12,14 +12,15 @@ if [ $# -lt 1 ]; then
 	exit 1
 fi
 
+PARTIMAG=$(lsblk -o name,serial | grep 575857 | cut -d' ' -f1)
+
 if [ "x${IMG}x" = "xx" ]; then
 	IMG=biotechne_103-0039_v01
 fi
 
 if [ "$(mount | grep '/home/partimag')" == "" ]; then
-	HDD=$(lsblk -o name,serial | grep 575857 | cut -d' ' -f1)
-	if [ -b /dev/${HDD}1 ]; then
-		sudo mount /dev/${HDD}1 /home/partimag
+	if [ -b /dev/${PARTIMAG}1 ]; then
+		sudo mount /dev/${PARTIMAG}1 /home/partimag
 	fi
 fi
 
