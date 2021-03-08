@@ -12,7 +12,7 @@ if [ $# -lt 1 ]; then
 	exit 1
 fi
 
-PARTIMAG=$(lsblk -o name,serial | grep 575857 | cut -d' ' -f1)
+PARTIMAG=$(lsblk -o name,serial | grep 3208LH | cut -d' ' -f1)
 LOG_FILE=/tmp/xxhsum_$(date +%m_%d_%y_%H%M%S).log
 SED_LOG_FILE=/tmp/xxhsum_$(date +%m_%d_%y_%H%M%S).sed
 PDF_LOG_FILE=/tmp/xxhsum_$(date +%m_%d_%y_%H%M%S).pdf
