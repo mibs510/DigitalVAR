@@ -12,7 +12,7 @@ if [ $# -lt 1 ]; then
 	exit 1
 fi
 
-PARTIMAG=$(lsblk -o name,serial | grep 2013 | cut -d' ' -f1)
+PARTIMAG=$(lsblk -o name,serial | grep 3208LH | cut -d' ' -f1)
 
 if [ "x${IMG}x" = "xx" ]; then
 	IMG=biotechne_103-0039_v01
