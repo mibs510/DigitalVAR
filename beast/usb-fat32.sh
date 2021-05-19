@@ -12,6 +12,11 @@ GREEN=`tput setaf 2`
 CYAN=`tput setaf 14`
 NC=`tput sgr0`
 
+if [ $(whoami) != "root" ]; then
+	echo "${RED}ERROR: ${0} must be ran as root!${NC}"
+	exit 1
+fi
+
 if [ $# -lt 1 ]; then
 	echo "${RED}ERROR: Not enough arguments.${NC}"
 	echo "${0} [target] [target] [target] [target] ..."
