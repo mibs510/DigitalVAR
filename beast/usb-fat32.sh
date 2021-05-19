@@ -105,7 +105,7 @@ echo ""
 read -p "Enter the image #> " number
 echo ""
 
-if [ ${number} -lt 0 ] || [ ${number} -gt ${TOTAL_AVAILABLE_IMGS} ]; then
+if ! [[ "${number}" =~ ^[0-9]+$ ]]; then
 	echo "${RED}ERROR: Invalid image number!${NC}"
 	exit 1
 fi
@@ -136,7 +136,7 @@ for TARGET in "${@:1}"; do
 	echo "=========================================================================================="
 	echo ""
 	echo ""
-	sudo sudo pv -f < /home/partimag/${CLONEZILLA_IMAGE} > /dev/sd${TARGET}
+	sudo pv -f < /home/partimag/${CLONEZILLA_IMAGE} > /dev/sd${TARGET}
 	echo ""
 	echo ""
 done

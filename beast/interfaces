@@ -5,6 +5,6 @@
 auto lo
 iface lo inet loopback
 
-auto enp22s0
-allow-hotplug enp22s0
-iface enp22s0 inet dhcp
+auto enp1s0
+allow-hotplug enp1s0
+iface enp1s0 inet dhcp

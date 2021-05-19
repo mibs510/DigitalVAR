@@ -88,8 +88,8 @@ echo ""
 read -p "Enter the image #> " number
 echo ""
 
-if [ ${number} -lt 0 ] || [ ${number} -gt ${TOTAL_AVAILABLE_XXHSUMS} ] || [ "x${number}x" == "xx" ]; then
-	echo "${RED}ERROR: Invalid hash file number!${NC}"
+if ! [[ "${number}" =~ ^[0-9]+$ ]]; then
+	echo "${RED}ERROR: Invalid image number!${NC}"
 	exit 1
 fi
 
