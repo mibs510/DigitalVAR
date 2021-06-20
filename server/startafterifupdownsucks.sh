@@ -16,6 +16,8 @@ done
 # Now we may start:
 sudo systemctl start ssh
 sudo systemctl start syncthing@root.service
+# Update all scripts from Github
+update.sh &
 if [ "${ETH1_MAC}" = "${SERVER1_MAC}" ]; then
 	sudo systemctl start nut-client
 fi

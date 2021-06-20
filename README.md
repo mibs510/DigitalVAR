@@ -118,7 +118,7 @@ Make sure to rename it to filesystem.squashfs and that it resides in the
 `sudo unsquashfs filesystem.squashfs`
 
 ### Packages
-* Installed: syncthing, gsmartcontrol, nut-client
+* Installed: syncthing, gsmartcontrol, nut-client, scrot (backup to fbgrab), ftp-upload, inotify-tools
 * Uninstall: vim-common, vim-runtime, vim-tiny
 
 ### server/desktop-background

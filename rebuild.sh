@@ -67,6 +67,8 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	sudo cp -a server/desktop-background server/squashfs-root/etc/alternatives/desktop-background
 	sudo cp server/drbl-ocs.conf server/squashfs-root/tftpboot/node_root/etc/drbl
 	sudo cp server/drbl-ocs.conf server/squashfs-root/etc/drbl
+	sudo cp server/{bigbox,fluorchem,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,usb-qa.sh,usb-ntfs.sh,usb-fat32.sh,update.sh,xxhsum} server/squashfs-root/usr/bin
+	
 	
 	echo " * Chmoding executables..."
 	sudo chmod +x server/squashfs-root/usr/share/drbl/setup/files/misc/desktop-icons/drbl-live/{Super_Thunar.desktop,Clonezilla-server.desktop,syncthing.desktop}
@@ -75,6 +77,7 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	sudo chmod +x server/squashfs-root/usr/share/drbl/setup/files/DBN/firstboot.default-DBN.drbl
 	sudo chmod +x server/squashfs-root/tftpboot/node_root/etc/init.d/firstboot
 	sudo chmod +x server/squashfs-root/tftpboot/node_root/sbin/Forcevideo-drbl-live
+	sudo chmod +x server/squashfs-root/usr/bin/{bigbox,fluorchem,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,usb-qa.sh,usb-fat32.sh,usb-ntfs.sh,update.sh,xxhsum}
 	
 	echo " * Rebuilding filesystem.squashfs..."
 	sudo rm -rf server/filesystem.squashfs && sudo mksquashfs server/squashfs-root server/filesystem.squashfs -b 1024k -comp xz -Xbcj x86 -e boot && \

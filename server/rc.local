@@ -13,53 +13,52 @@
 
 # set -x
 
-if [ ! -f /sys/class/net/eth1/address ]; then
-	exit 0
+if [ -f /sys/class/net/eth1/address ]; then
+	ETH1_IFACE="eth1"
+	ETH1_MAC=$(cat /sys/class/net/$ETH1_IFACE/address)
+	SERVER1_MAC="00:1e:67:cf:ee:8f"
+	SERVER2_MAC="00:1e:67:e0:9d:6f"
+	
+	if [ "$ETH1_MAC" == "$SERVER1_MAC" ] || [ "$ETH1_MAC" == "$SERVER2_MAC" ]; then
+		
+		PARTIMAG=$(lsblk -o name,serial,label | grep -i partimag | cut -d' ' -f1 | sed "s/[^[:alnum:]-]//g")
+		
+		# Mount partimag onto /home/partimag
+		if [ "$(df -P /home/partimag | tail -1 | cut -d' ' -f1)" != "/dev/${PARTIMAG}" ]; then
+			sudo mount /dev/${PARTIMAG} /home/partimag
+		fi
+	
+		ifupdownsucks.sh &
+		startafterifupdownsucks.sh &
+		mkdir -p /home/user/.config/gtk-3.0
+		mkdir -p /home/user/.ssh
+		cp /opt/{thunar.xml,thunar-volman.xml,xfce4-desktop.xml} /home/user/.config/xfce4/xfconf/xfce-perchannel-xml
+		cp /opt/bookmarks /home/user/.config/gtk-3.0
+		cp /opt/authorized_keys /home/user/.ssh
+		chmod -R 700 /home/user/.ssh
+		chown -R user:user /home/user
+		chown -R user:user /home/partimag
+		exit 0
+	fi
 fi
 
-ETH1_IFACE="eth1"
-ETH1_MAC=$(cat /sys/class/net/$ETH1_IFACE/address)
-SERVER1_MAC="00:1e:67:cf:ee:8f"
-SERVER2_MAC="00:1e:67:e0:9d:6f"
+if [ -f /sys/class/net/eth0/address ]; then
+	ETH0_IFACE="eth0"
+	ETH0_MAC=$(cat /sys/class/net/$ETH0_IFACE/address)
+	USBIMAGER1_MAC="70:b5:e8:47:5c:92"
+	USBIMAGER2_MAC="70:b5:e8:49:b2:a8"
+	
+	if [ "${ETH0_MAC}" == "${USBIMAGER1_MAC}" ] || [ "${ETH0_MAC}" == "${USBIMAGER2_MAC}" ]; then
+		PARTIMAG=$(lsblk -o name,serial,label | grep -i partimag | cut -d' ' -f1 | sed "s/[^[:alnum:]-]//g")
+		
+		# Mount partimag onto /home/partimag
+		if [ "$(df -P /home/partimag | tail -1 | cut -d' ' -f1)" != "/dev/${PARTIMAG}" ]; then
+			sudo mount /dev/${PARTIMAG} /home/partimag
+		fi
+		# Update scripts
+		update.sh &
+	fi
 
-if [ "$ETH1_MAC" == "$SERVER1_MAC" ]; then
-	# Server #1
-	
-	# Mount new 12TB HDD
-	if [ -b /dev/disk/by-id/ata-ST12000NM0007-2A1101_ZJV18GMV-part1 ]; then
-		mount /dev/disk/by-id/ata-ST12000NM0007-2A1101_ZJV18GMV-part1 /home/partimag
-	fi
-	
-	ifupdownsucks.sh &
-	startafterifupdownsucks.sh &
-	mkdir -p /home/user/.config/gtk-3.0
-	mkdir -p /home/user/.ssh
-	cp /opt/{thunar.xml,thunar-volman.xml,xfce4-desktop.xml} /home/user/.config/xfce4/xfconf/xfce-perchannel-xml
-	cp /opt/bookmarks /home/user/.config/gtk-3.0
-	cp /opt/authorized_keys /home/user/.ssh
-	chmod -R 700 /home/user/.ssh
-	chown -R user:user /home/user
-	chown -R user:user /home/partimag
-	exit 0
-elif [ "$ETH1_MAC" == "$SERVER2_MAC" ]; then
-	# Server #2
-	
-	# Mount new 12TB HDD
-	if [ -b /dev/disk/by-id/ata-ST12000NM0007-2A1101_ZJV262A4-part1 ]; then
-		mount /dev/disk/by-id/ata-ST12000NM0007-2A1101_ZJV262A4-part1 /home/partimag
-	fi
-	
-	ifupdownsucks.sh &
-	startafterifupdownsucks.sh &
-	mkdir -p /home/user/.config/gtk-3.0
-	mkdir -p /home/user/.ssh
-	cp /opt/{thunar.xml,thunar-volman.xml} /home/user/.config/xfce4/xfconf/xfce-perchannel-xml
-	cp /opt/bookmarks /home/user/.config/gtk-3.0
-	cp /opt/authorized_keys /home/user/.ssh
-	chmod -R 700 /home/user/.ssh
-	chown -R user:user /home/user
-	chown -R user:user /home/partimag
-	exit 0
 fi
 
 # This rest of this script is executed at the end of each multiuser
