@@ -67,6 +67,8 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	sudo cp -a server/desktop-background server/squashfs-root/etc/alternatives/desktop-background
 	sudo cp server/drbl-ocs.conf server/squashfs-root/tftpboot/node_root/etc/drbl
 	sudo cp server/drbl-ocs.conf server/squashfs-root/etc/drbl
+	sudo cp server/12-prevent-automount.rules server/squashfs-root/etc/udev/rules.d
+	sudo cp server/sources.list server/squashfs-root/etc/apt
 	sudo cp server/{bigbox,fluorchem,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,usb-qa.sh,usb-ntfs.sh,usb-fat32.sh,update.sh,xxhsum} server/squashfs-root/usr/bin
 	
 	

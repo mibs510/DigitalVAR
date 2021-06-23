@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PARTIMAG=$(lsblk -o name,serial,label | grep -i partimag | cut -d' ' -f1 | sed "s/[^[:alnum:]-]//g")
+PARTIMAG=$(lsblk -o name,serial,label | grep -i partimag | cut -d' ' -f1 | sed "s/[^[:alnum:]-]//g" | sed 's/[0-9]*//g')
 CLONER=$(lsblk -o name,serial,label | grep -i cloner | cut -d' ' -f1 | sed "s/[^[:alnum:]-]//g")
 USB_LIST=""
 RED=`tput setaf 1`
