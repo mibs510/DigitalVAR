@@ -21,9 +21,11 @@ if [ "${CLONER}" != "" ]; then
 fi
 
 # Mount partimag onto /home/partimag
-if [ "$(df -P /home/partimag | tail -1 | cut -d' ' -f1)" != "/dev/${PARTIMAG}" ]; then
-	echo "Mounting /dev/${PARTIMAG} onto /home/partimag"
-	sudo mount /dev/${PARTIMAG} /home/partimag
+if [ "$(df -P /home/partimag | tail -1 | cut -d' ' -f1)" != "/dev/${PARTIMAG}1" ]; then
+	if [ -b /dev/${PARTIMAG}1 ]; then
+		echo "Mounting /dev/${PARTIMAG}1 onto /home/partimag"
+		sudo mount /dev/${PARTIMAG}1 /home/partimag
+	fi
 fi
 
 # Grab a potential list of "images" by excluding files
