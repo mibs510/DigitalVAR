@@ -4,7 +4,7 @@
 
 trap ctrl_c INT
 
-PARTIMAG=$(lsblk -o name,serial,label | grep -i partimag | cut -d' ' -f1 | sed "s/[^[:alnum:]-]//g")
+PARTIMAG=$(lsblk -o name,serial,label | grep -i partimag | cut -d' ' -f1 | sed "s/[^[:alnum:]-]//g" | sed 's/[0-9]*//g')
 CLONER=$(lsblk -o name,serial,label | grep -i cloner | cut -d' ' -f1 | sed "s/[^[:alnum:]-]//g")
 USB_LIST=()
 DRIVES_TO_BE_IMAGED=""
@@ -67,9 +67,9 @@ if [ "${CLONER}" != "" ]; then
 fi
 
 # Mount partimag onto /home/partimag
-if [ "$(df -P /home/partimag | tail -1 | cut -d' ' -f1)" != "/dev/${PARTIMAG}" ]; then
-	echo "Mounting /dev/${PARTIMAG} onto /home/partimag"
-	sudo mount /dev/${PARTIMAG} /home/partimag
+if [ "$(df -P /home/partimag | tail -1 | cut -d' ' -f1)" != "/dev/${PARTIMAG}1" ]; then
+	echo "Mounting /dev/${PARTIMAG}1 onto /home/partimag"
+	sudo mount /dev/${PARTIMAG}1 /home/partimag
 fi
 
 # Grab a potential list of "images" by excluding files

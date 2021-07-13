@@ -6,8 +6,8 @@ SERVER1_MAC="00:1e:67:cf:ee:8f"
 
 # set -x
 while true; do
-	ETH_IP=$(/sbin/ifconfig "$ETH_IFACE" | grep 'inet ' | cut -d' ' -f10)
-	if [ "$ETH_IFACE" != "" ]; then
+	ETH_IP=$(/sbin/ifconfig $ETH_IFACE | grep 'inet ' | cut -d' ' -f10)
+	if [ "$ETH_IP" != "" ]; then
 		break
 	fi
 	sleep 2

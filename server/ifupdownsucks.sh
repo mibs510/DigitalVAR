@@ -5,7 +5,7 @@
 # file is not ideally mean't for live filesystems on two different machines with an interface name
 # of ethx and different MAC addresses, but meh.
 
-ETH_IFACE="${1}"
+ETH_IFACE=${1}
 ETH_MAC=$(cat /sys/class/net/$ETH_IFACE/address)
 SERVER1_MAC="00:1e:67:cf:ee:8f"
 SERVER2_MAC="00:1e:67:e0:9d:6f"
@@ -26,7 +26,7 @@ while true; do
 	fi
 	ETH_OPERSTATE=$(cat /sys/class/net/$ETH_IFACE/operstate)
 	if [ "$ETH_MAC" == "$SERVER1_MAC" ] || [ "$ETH_MAC" == "$SERVER2_MAC" ] || [ "$ETH_MAC" == "$USBIMAGER1_MAC" ] || [ "$ETH_MAC" == "$USBIMAGER2_MAC" ] && [ "$(pidof dhcpd)" != "" ]; then
-		echo "$(date +"%m/%d/%y@%r") -- This is server #1" >> $LOG_FILE
+		echo "$(date +"%m/%d/%y@%r") -- Machine MAC Address: $ETH_MAC" >> $LOG_FILE
 		if [ "$ETH_OPERSTATE" == "up" ]; then
 			echo "$(date +"%m/%d/%y@%r") -- $ETH_IFACE is up" >> $LOG_FILE
 			ETH_IP=$(/sbin/ifconfig "$ETH_IFACE" | grep 'inet ' | cut -d' ' -f10)

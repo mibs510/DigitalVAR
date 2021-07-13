@@ -78,7 +78,7 @@ if [ ! -d /home/partimag/${CLONEZILLA_IMAGE} ]; then
 	exit 1
 fi
 
-# Look for all available drives to image. This only excludes  partimag, so be careful!
+# Look for all available drives to image. This only excludes partimag, so be careful!
 for i in {a..z}; do
 	if [ -b /dev/sd${i} ] && [ "sd${i}" != "${PARTIMAG}" ]; then
 		USB_LIST=$USB_LIST"sd$i "

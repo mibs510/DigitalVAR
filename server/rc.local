@@ -29,7 +29,7 @@ if [ -f /sys/class/net/eth1/address ]; then
 		fi
 	
 		ifupdownsucks.sh eth1 &
-		startafterifupdownsucks.sh &
+		startafterifupdownsucks.sh eth1 &
 		mkdir -p /home/user/.config/gtk-3.0
 		mkdir -p /home/user/.ssh
 		cp /opt/{thunar.xml,thunar-volman.xml,xfce4-desktop.xml} /home/user/.config/xfce4/xfconf/xfce-perchannel-xml
@@ -48,7 +48,7 @@ if [ -f /sys/class/net/eth0/address ]; then
 	USBIMAGER1_MAC="70:b5:e8:47:5c:92"
 	USBIMAGER2_MAC="70:b5:e8:49:b2:a8"
 	
-	if [ "${ETH0_MAC}" == "${USBIMAGER1_MAC}" ] || [ "${ETH0_MAC}" == "${USBIMAGER2_MAC}" ] || [ "${ETH0_MAC}" == "${USBIMAGER3_MAC}" ]; then
+	if [ "${ETH0_MAC}" == "${USBIMAGER1_MAC}" ] || [ "${ETH0_MAC}" == "${USBIMAGER2_MAC}" ]; then
 		PARTIMAG=$(lsblk -o name,serial,label | grep -i partimag | cut -d' ' -f1 | sed "s/[^[:alnum:]-]//g")
 		
 		# Mount partimag onto /home/partimag
@@ -57,7 +57,7 @@ if [ -f /sys/class/net/eth0/address ]; then
 		fi
 		
 		ifupdownsucks.sh eth0 &
-		startafterifupdownsucks.sh &
+		startafterifupdownsucks.sh eth0 &
 		
 		# Enable wireless connection where applicable (d1-workstation)
 		#if [ "${ETH0_MAC}" == "${USBIMAGER2_MAC}" ]; then
