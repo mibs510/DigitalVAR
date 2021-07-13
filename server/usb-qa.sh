@@ -4,7 +4,7 @@ DEBUG=false
 SKIP_XXHSUM=false
 SKIP_PULLOUTS=false
 
-PARTIMAG=$(lsblk -o name,serial | grep 3208LH | cut -d' ' -f1)
+PARTIMAG=$(lsblk -o name,serial,label | grep -i partimag | cut -d' ' -f1 | sed "s/[^[:alnum:]-]//g" | sed 's/[0-9]*//g')
 USB_LIST=""
 RED=`tput setaf 1`
 GREEN=`tput setaf 2`
@@ -15,26 +15,22 @@ declare -a BAD_BOYS
 
 # Check to see if patriot USB is connected
 if [ "${PARTIMAG}" == "" ]; then
-	echo "${RED}ERROR: Intel SSD is not connected to beast!${NC}"
-	exit 1
-fi
-
-# Check to see if Western Digital Elements HDD is connected
-if [ "$(lsblk -o name,serial | grep 575857 | cut -d' ' -f1)" != "" ]; then
-	echo "${RED}ERROR: WD Elements drive is connected!${NC}"
+	echo "${RED}ERROR: Insert or connect partimag SSD/HDD!${NC}"
 	exit 1
 fi
 
 # Check to see if CLONER USB is connected
-if [ "$(lsblk -o name,serial | grep 07013A | cut -d' ' -f1)" != "" ]; then
-	echo "${RED}ERROR: CLONER USB is connected!${NC}"
+if [ "${CLONER}" != "" ]; then
+	echo "${RED}ERROR: Remove or disconnect CLONER USB!${NC}"
 	exit 1
 fi
 
-# Mount "partimag" SAMSUNG SSD onto /home/partimag
+# Mount partimag onto /home/partimag
 if [ "$(df -P /home/partimag | tail -1 | cut -d' ' -f1)" != "/dev/${PARTIMAG}1" ]; then
-	echo "Mounting /dev/${PARTIMAG}1 onto /home/partimag"
-	sudo mount /dev/${PARTIMAG}1 /home/partimag
+	if [ -b /dev/${PARTIMAG}1 ]; then
+		echo "Mounting /dev/${PARTIMAG}1 onto /home/partimag"
+		sudo mount /dev/${PARTIMAG}1 /home/partimag
+	fi
 fi
 
 for i in {a..z}; do
