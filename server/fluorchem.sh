@@ -107,7 +107,7 @@ read -p "Press Enter to upload proof & view ${LOG_FILE}"
 clear
 sudo cat ${LOG_FILE}
 # Take screenshot# Take screenshot
-sudo fbgrab ${PNG_FILE}
+sudo scrot ${PNG_FILE}
 # Transfer it to clonezilla server
 sudo ftp-upload -h win10server -u logs ${PNG_FILE}
 ## View log file

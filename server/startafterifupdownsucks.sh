@@ -1,13 +1,13 @@
 #!/bin/bash
 
-ETH1_IFACE="eth1"
-ETH1_MAC=$(cat /sys/class/net/$ETH1_IFACE/address)
+ETH_IFACE=${1}
+ETH_MAC=$(cat /sys/class/net/$ETH_IFACE/address)
 SERVER1_MAC="00:1e:67:cf:ee:8f"
 
 # set -x
 while true; do
-	ETH1_IP=$(/sbin/ifconfig "$ETH1_IFACE" | grep 'inet ' | cut -d' ' -f10)
-	if [ "$ETH1_IP" != "" ]; then
+	ETH_IP=$(/sbin/ifconfig "$ETH_IFACE" | grep 'inet ' | cut -d' ' -f10)
+	if [ "$ETH_IFACE" != "" ]; then
 		break
 	fi
 	sleep 2
@@ -18,7 +18,8 @@ sudo systemctl start ssh
 sudo systemctl start syncthing@root.service
 # Update all scripts from Github
 update.sh &
-if [ "${ETH1_MAC}" = "${SERVER1_MAC}" ]; then
+# Start services and deamons on specific machines only
+if [ "${ETH_MAC}" = "${SERVER1_MAC}" ]; then
 	sudo systemctl start nut-client
 fi
 

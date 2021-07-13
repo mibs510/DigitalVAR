@@ -120,8 +120,11 @@ Make sure to rename it to filesystem.squashfs and that it resides in the
 ### Packages
 * Installed: syncthing, gsmartcontrol, nut-client, 
 			 scrot (backup to fbgrab), ftp-upload, inotify-tools,
-			 udisks2
+			 udisks2, crda
 * Uninstall: vim-common, vim-runtime, vim-tiny
+
+### /etc/default/crda
+Set REGDOMAIN=US otherwise we get a very vague deauthentication by local choice (Reason: 3=DEAUTH_LEAVING) 
 
 ### server/desktop-background
 Symlink to reflect new default wallpapers from svgs to pngs

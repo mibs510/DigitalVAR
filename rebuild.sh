@@ -5,7 +5,7 @@ if [ "${1}" == "--beast" ] || [ "${1}" == "beast" ]; then
 		echo "ERROR: Exit from chroot!!!"
 		exit 1
 	fi
-	sudo cp beast/{bigbox,fluorchem,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,usb-qa.sh,usb-ntfs.sh,usb-fat32.sh,xxhsum} beast/squashfs-root/usr/bin
+	sudo cp beast/{bigbox,fluorchem,fluorchem.sh,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,usb-qa.sh,usb-ntfs.sh,usb-fat32.sh,xxhsum} beast/squashfs-root/usr/bin
 	sudo chmod +x beast/squashfs-root/usr/bin/{bigbox,fluorchem,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,usb-qa.sh,usb-fat32.sh,usb-ntfs.sh,xxhsum}
 	sudo cp beast/{lightblue8599.xxhsums,motd.txt,profile,rc.local,resolv.conf} beast/squashfs-root/etc
 	sudo cp beast/logind.conf beast/squashfs-root/etc/systemd
@@ -43,9 +43,15 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	sudo cp -a server/initrd-root/lib/modules/* server/squashfs-root/tftpboot/node_root/lib/modules
 	sudo rm -rf server/squashfs-root/usr/lib/modules/*
 	sudo cp -a server/initrd-root/lib/modules/* server/squashfs-root/usr/lib/modules
+	echo " * Propigating firmware blobs everywhere..."
+	sudo rm -rf server/squashfs-root/tftpboot/node_root/lib/firmware/*
+	sudo cp -a server/initrd-root/lib/firmware/* server/squashfs-root/tftpboot/node_root/lib/firmware
+	sudo rm -rf server/squashfs-root/usr/lib/firmware/*
+	sudo cp -a server/initrd-root/lib/firmware/* server/squashfs-root/usr/lib/firmware
 	#
 	
 	echo " * Copying everything from 'server/' folder to where they belong..."
+	sudo cp -r server/wicd server/squashfs-root/opt
 	sudo cp server/authorized_keys server/squashfs-root/opt
 	sudo cp server/ocs-live-blacklist.conf server/initrd-root/etc/modprobe.d
 	sudo cp server/ocs-live-blacklist.conf server/squashfs-root/etc/modprobe.d
@@ -69,17 +75,18 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	sudo cp server/drbl-ocs.conf server/squashfs-root/etc/drbl
 	sudo cp server/12-prevent-automount.rules server/squashfs-root/etc/udev/rules.d
 	sudo cp server/sources.list server/squashfs-root/etc/apt
-	sudo cp server/{bigbox,fluorchem,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,usb-qa.sh,usb-ntfs.sh,usb-fat32.sh,update.sh,xxhsum} server/squashfs-root/usr/bin
+	sudo cp server/{bigbox,fluorchem,fluorchem.sh,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,usb-qa.sh,usb-ntfs.sh,usb-fat32.sh,update.sh,xxhsum} server/squashfs-root/usr/bin
+	sudo cp server/ocs-restore-mdisks server/squashfs-root/usr/sbin
 	
 	
 	echo " * Chmoding executables..."
 	sudo chmod +x server/squashfs-root/usr/share/drbl/setup/files/misc/desktop-icons/drbl-live/{Super_Thunar.desktop,Clonezilla-server.desktop,syncthing.desktop}
-	sudo chmod +x server/squashfs-root/usr/sbin/{ocs-live-netcfg,ifupdownsucks.sh,startafterifupdownsucks.sh,drbl-live,drbl-sl}
+	sudo chmod +x server/squashfs-root/usr/sbin/{ocs-live-netcfg,ifupdownsucks.sh,startafterifupdownsucks.sh,drbl-live,drbl-sl,ocs-restore-mdisks}
 	sudo chmod +x server/squashfs-root/usr/share/drbl/sbin/{drbl-functions,ocs-functions,drbl-live-conf-X}
 	sudo chmod +x server/squashfs-root/usr/share/drbl/setup/files/DBN/firstboot.default-DBN.drbl
 	sudo chmod +x server/squashfs-root/tftpboot/node_root/etc/init.d/firstboot
 	sudo chmod +x server/squashfs-root/tftpboot/node_root/sbin/Forcevideo-drbl-live
-	sudo chmod +x server/squashfs-root/usr/bin/{bigbox,fluorchem,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,usb-qa.sh,usb-fat32.sh,usb-ntfs.sh,update.sh,xxhsum}
+	sudo chmod +x server/squashfs-root/usr/bin/{bigbox,fluorchem,fluorchem.sh,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,usb-qa.sh,usb-fat32.sh,usb-ntfs.sh,update.sh,xxhsum}
 	
 	echo " * Rebuilding filesystem.squashfs..."
 	sudo rm -rf server/filesystem.squashfs && sudo mksquashfs server/squashfs-root server/filesystem.squashfs -b 1024k -comp xz -Xbcj x86 -e boot && \
