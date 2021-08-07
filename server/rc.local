@@ -18,8 +18,9 @@ if [ -f /sys/class/net/eth1/address ]; then
 	ETH1_MAC=$(cat /sys/class/net/$ETH1_IFACE/address)
 	SERVER1_MAC="00:1e:67:cf:ee:8f"
 	SERVER2_MAC="00:1e:67:e0:9d:6f"
+	SERVER3_MAC="14:18:77:53:2c:85"
 	
-	if [ "$ETH1_MAC" == "$SERVER1_MAC" ] || [ "$ETH1_MAC" == "$SERVER2_MAC" ]; then
+	if [ "$ETH1_MAC" == "$SERVER1_MAC" ] || [ "$ETH1_MAC" == "$SERVER2_MAC" ] || [ "$ETH1_MAC" == "$SERVER3_MAC" ]; then
 		
 		PARTIMAG=$(lsblk -o name,serial,label | grep -i partimag | cut -d' ' -f1 | sed "s/[^[:alnum:]-]//g")
 		
@@ -30,6 +31,7 @@ if [ -f /sys/class/net/eth1/address ]; then
 	
 		ifupdownsucks.sh eth1 &
 		startafterifupdownsucks.sh eth1 &
+		
 		mkdir -p /home/user/.config/gtk-3.0
 		mkdir -p /home/user/.ssh
 		cp /opt/{thunar.xml,thunar-volman.xml,xfce4-desktop.xml} /home/user/.config/xfce4/xfconf/xfce-perchannel-xml
@@ -56,18 +58,22 @@ if [ -f /sys/class/net/eth0/address ]; then
 			sudo mount /dev/${PARTIMAG} /home/partimag
 		fi
 		
-		ifupdownsucks.sh eth0 &
-		startafterifupdownsucks.sh eth0 &
+		if [ "${ETH0_MAC}" != "${USBIMAGER2_MAC}" ]; then
+			ifupdownsucks.sh eth0 &
+			startafterifupdownsucks.sh eth0 &
+		fi
 		
-		# Enable wireless connection where applicable (d1-workstation)
-		#if [ "${ETH0_MAC}" == "${USBIMAGER2_MAC}" ]; then
-			#systemctl stop wicd
-			#modprobe -r iwlwifi
-			#modprobe iwlwifi
-			#cp -r /opt/wicd/* /etc/wicd
-			#chmod 600 /etc/wicd/{manager-settings.conf,wireless-settings.conf}
-			#systemctl start wicd
-		#fi
+		# Enable wireless connection where applicable (d1-usb-workstation)
+		if [ "${ETH0_MAC}" == "${USBIMAGER2_MAC}" ]; then
+			systemctl stop wicd
+			modprobe -r iwlwifi
+			modprobe iwlwifi
+			cp -r /opt/wicd/* /etc/wicd
+			chmod 600 /etc/wicd/{manager-settings.conf,wireless-settings.conf}
+			systemctl start wicd
+
+			startafterifupdownsucks.sh wlan0 &
+		fi
 		
 		chown -R user:user /home/partimag
 		

@@ -75,7 +75,7 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	sudo cp server/drbl-ocs.conf server/squashfs-root/etc/drbl
 	sudo cp server/12-prevent-automount.rules server/squashfs-root/etc/udev/rules.d
 	sudo cp server/sources.list server/squashfs-root/etc/apt
-	sudo cp server/{bigbox,fluorchem,fluorchem.sh,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,usb-qa.sh,usb-ntfs.sh,usb-fat32.sh,update.sh,xxhsum} server/squashfs-root/usr/bin
+	sudo cp server/{bigbox,fluorchem,fluorchem.sh,iflex.sh,iflex-qa.sh,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,usb-qa.sh,usb-ntfs.sh,usb-fat32.sh,update.sh,xxhsum} server/squashfs-root/usr/bin
 	sudo cp server/ocs-restore-mdisks server/squashfs-root/usr/sbin
 	
 	
@@ -86,7 +86,7 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	sudo chmod +x server/squashfs-root/usr/share/drbl/setup/files/DBN/firstboot.default-DBN.drbl
 	sudo chmod +x server/squashfs-root/tftpboot/node_root/etc/init.d/firstboot
 	sudo chmod +x server/squashfs-root/tftpboot/node_root/sbin/Forcevideo-drbl-live
-	sudo chmod +x server/squashfs-root/usr/bin/{bigbox,fluorchem,fluorchem.sh,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,usb-qa.sh,usb-fat32.sh,usb-ntfs.sh,update.sh,xxhsum}
+	sudo chmod +x server/squashfs-root/usr/bin/{bigbox,fluorchem,fluorchem.sh,iflex.sh,iflex-qa.sh,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,usb-qa.sh,usb-fat32.sh,usb-ntfs.sh,update.sh,xxhsum}
 	
 	echo " * Rebuilding filesystem.squashfs..."
 	sudo rm -rf server/filesystem.squashfs && sudo mksquashfs server/squashfs-root server/filesystem.squashfs -b 1024k -comp xz -Xbcj x86 -e boot && \
