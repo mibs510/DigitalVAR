@@ -5,6 +5,7 @@ SKIP_XXHSUM=false
 SKIP_PULLOUTS=false
 
 PARTIMAG=$(lsblk -o name,serial,label | grep -i partimag | cut -d' ' -f1 | sed "s/[^[:alnum:]-]//g" | sed 's/[0-9]*//g')
+PNG_FILE=/tmp/89-21054-00-001_$(date +%m_%d_%y_%H%M%S).png
 SSD_LIST=""
 RED=`tput setaf 1`
 GREEN=`tput setaf 2`
@@ -60,11 +61,11 @@ if [ "${SSD_LIST}" == "" ]; then
 fi
 
 # Grab a potential list of "images" by excluding files
-ls /home/partimag | grep .xxhsums > /tmp/list_of_xxhsums.txt
+ls /home/partimag | grep .xxhsums | sed 's/.xxhsums//' > /tmp/list_of_xxhsums.txt
 
 # Exit if no .xxhsums files found
 if [ "$(ls -hal /tmp/list_of_xxhsums.txt | awk '{print $5}')" == "0" ]; then
-	echo "${RED}ERROR: NO .xxhsums FOUND IN /home/partimag!${NC}"
+	echo "${RED}ERROR: NO SUM FILES FOUND IN /home/partimag!${NC}"
 	exit 1
 fi
 
@@ -88,15 +89,15 @@ for i in $(seq 0 ${TOTAL_AVAILABLE_XXHSUMS}); do
 	echo "${i} = ${AVAILABLE_XXHSUMS[$i]}"
 done
 echo ""
-read -p "Enter the image #> " number
+read -p "Enter the hash file #> " number
 echo ""
 
 if ! [[ "${number}" =~ ^[0-9]+$ ]]; then
-	echo "${RED}ERROR: Invalid image number!${NC}"
+	echo "${RED}ERROR: Invalid hash file number!${NC}"
 	exit 1
 fi
 
-XXHSUM_FILE=${AVAILABLE_XXHSUMS[${number}]}
+XXHSUM_FILE=${AVAILABLE_XXHSUMS[${number}]}.xxhsums
 
 
 if [ "${DEBUG}" == "true" ]; then
@@ -109,195 +110,66 @@ if [ ! -f /home/partimag/${XXHSUM_FILE} ]; then
 	exit 1
 fi
 
+clear
+
+echo "========================================================================"
+echo "| Device Block Name | Model | Serial Number | File Qty | MD5SUM Result |"
+echo "========================================================================"
+
 if [ "${SKIP_XXHSUM}" == "false" ]; then
 	for i in {a..z}; do
+	
 		EXIT=false
+		QA_FLAG="${GREEN}PASSED${NC}"
+		FILE_QTY="NA"
+		
 		if [ -b /dev/sd${i}4 ] && [ "sd${i}" != "${PARTIMAG}" ]; then
-			echo "mount: /dev/sd${i}"
 			sudo mount /dev/sd${i}4 /mnt
 		
 			if [ "$?" != "0" ] && [ "$EXIT" == "false" ]; then
 				EXIT=true
-				echo "${RED}"
-				echo "================================================================="
-				echo "ERROR: /dev/sd${i}1 COULDN'T BE MOUNTED!!"
-				echo "Adding /dev/sd${i} onto the bad list..."
-				echo "================================================================="
-				echo "${NC}"
-				BAD_BOYS+=(sd${i})
+				QA_FLAG="${RED}FAILED${NC}"
+				BAD_BOYS+=(sd${i})				
 			fi
 		
 			if [ "$EXIT" == "false" ]; then
-				echo "xxhsum: /dev/sd${i}"
 				sudo xxhsum -c /home/partimag/${XXHSUM_FILE} &> /dev/null
 			fi
 			
 			if [ "$?" != "0" ] && [ "$EXIT" == "false" ]; then
 				EXIT=true
-				echo "unmount: /dev/sd${i}"
 				sudo umount /dev/sd${i}4
-				echo "${RED}"
-				echo "==========================================="
-				echo "ERROR: /dev/sd${i} HAS XXHSUM MISMATCH(ES)"
-				echo "Adding /dev/sd${i} onto the bad list..."
-				echo "==========================================="
-				echo "${NC}"
+				QA_FLAG="${RED}FAILED${NC}"
 				BAD_BOYS+=(sd${i})
 			fi
 		
 			if [ "$EXIT" == "false" ]; then
-				echo "unmount: /dev/sd${i}"
+				FILE_QTY=$(find /mnt -type f | wc -l)
 				sudo umount /dev/sd${i}4
 			fi
 		fi
 		if [ -b /dev/sd${i} ] && [ ! -b /dev/sd${i}4 ] && [ "sd${i}" != "${PARTIMAG}" ]; then
-			echo "${RED}"
-			echo "================================================================="
-			echo "ERROR: /dev/sd${i} DOES NOT HAVE ANY PARTITIONS"
-			echo "Adding /dev/sd${i} onto the bad list..."
-			echo "================================================================="
-			echo "${NC}"
+			QA_FLAG="${RED}FAILED${NC}"
 			BAD_BOYS+=(sd${i})
 		fi
+		
+		echo "$(lsblk -o kname,model,serial | grep -w sd${i} | tr -d '\n') ${FILE_QTY} ${QA_FLAG}"
+		
 	done
 	
 	umount /mnt &> /dev/null
 
-	for i in {a..z}; do
-		EXIT=false
-		if [ -b /dev/sda${i}4 ] && [ "sda${i}" != "${PARTIMAG}" ]; then
-			echo "mount: /dev/sda${i}"
-			sudo mount /dev/sda${i}4 /mnt
-		
-			if [ "$?" != "0" ] && [ "$EXIT" == "false" ]; then
-				EXIT=true
-				echo "${RED}"
-				echo "================================================================="
-				echo "ERROR: /dev/sda${i}1 COULDN'T BE MOUNTED!!"
-				echo "Adding /dev/sda${i} onto the bad list..."
-				echo "================================================================="
-				echo "${NC}"
-				BAD_BOYS+=(sda${i})
-			fi
-		
-			if [ "$EXIT" == "false" ]; then
-				echo "xxhsum: /dev/sda${i}"
-				sudo xxhsum -c /home/partimag/${XXHSUM_FILE} &> /dev/null
-			fi
-			
-			if [ "$?" != "0" ] && [ "$EXIT" == "false" ]; then
-				EXIT=true
-				echo "unmount: /dev/sda${i}"
-				sudo umount /dev/sda${i}4
-				echo "${RED}"
-				echo "==========================================="
-				echo "ERROR: /dev/sda${i} HAS MD5SUM MISMATCH(ES)"
-				echo "Adding /dev/sda${i} onto the bad list..."
-				echo "==========================================="
-				echo "${NC}"
-				BAD_BOYS+=(sda${i})
-			fi
-		
-			if [ "$EXIT" == "false" ]; then
-				echo "unmount: /dev/sda${i}"
-				sudo umount /dev/sda${i}4
-			fi
-		fi
-		if [ -b /dev/sda${i} ] && [ ! -b /dev/sda${i}4 ] && [ "sda${i}" != "${PARTIMAG}" ]; then
-			echo "${RED}"
-			echo "================================================================="
-			echo "ERROR: /dev/sda${i} DOES NOT HAVE ANY PARTITIONS"
-			echo "Adding /dev/sda${i} onto the bad list..."
-			echo "================================================================="
-			echo "${NC}"
-			BAD_BOYS+=(sda${i})
-		fi
-	done
 	
-	echo ""
-	echo "========================================="
-	echo "Done xxhsumming files inside USB drives."
-	echo "========================================="
-	echo ""
+	
+# Take screenshot# Take screenshot
+sudo scrot ${PNG_FILE}
+# Transfer it to clonezilla server
+sudo ftp-upload -h win10server -u logs ${PNG_FILE}
+
 fi
 
 umount /mnt &> /dev/null
 
-if [ "${#BAD_BOYS[@]}" != "0" ]; then
-	echo ""
-	echo "========================================================"
-	echo "The following list of drives are determined to be ${RED}BAD${NC}:"
-	echo "========================================================"
-	echo ""
-
-	for i in "${BAD_BOYS[@]}"; do
-		echo "* ${i}"
-	done
-	echo ""
-	echo ""
-fi
-
-if [ "${#BAD_BOYS[@]}" == "0" ]; then
-	echo ""
-	echo "========================================================"
-	echo "${GREEN}All drives passed checksum QA!${NC}:"
-	echo "========================================================"
-	echo ""
-	echo ""
-fi
-
-if [ "${SKIP_PULLOUTS}" == "false" ]; then
-	
-	echo "Checksum filename: ${XXHSUM_FILE}"
-	echo "Total # of drives: ${NUMBER_OF_DRIVES}"
-	echo ""
-	echo ""
-	echo "==========================================================="
-	echo " Watching /dev as you remove each USB drive individually..."
-	echo " Press Ctrl + C when you're finished to exit"
-	echo "==========================================================="
-	echo ""
-	
-	inotifywait -m /dev -e delete |
-		while read path action file; do
-			IGNORE=false
-			
-			# Possible ${file} input: sg1
-			# Seen in Ubuntu 18.04		
-			if [ "$(echo ${file} | grep "sd")" == "" ]; then
-				IGNORE=true
-			fi
-			
-			# Input: sdb or sdb1
-			# Ignore: sd*1
-			if [[ ${file} == sd*4 ]]; then
-				IGNORE=true
-			fi
-			
-			if [ "${IGNORE}" == "false" ]; then
-				BAD=false
-			
-				for i in "${BAD_BOYS[@]}"; do
-					if [ "${file}" == "${i}" ]; then
-						echo "${RED}"
-						echo "${j}. QUARANTINE SSD DRIVE!!!"
-						echo "${NC}"
-						BAD=true
-						j=$((j+1))
-					fi
-				done
-			
-				if [ "${BAD}" == "false" ]; then
-					echo "${GREEN}"
-					echo "${j}. PASSED SSD DRIVE!!!"
-					echo "${NC}"
-					j=$((j+1))			
-				fi
-			fi
-			
-
-		done
-fi
 
 if [ "${DEBUG}" == "true" ]; then
 	set +x

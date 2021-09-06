@@ -57,7 +57,7 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	sudo cp server/ocs-live-blacklist.conf server/squashfs-root/etc/modprobe.d
 	sudo cp server/syncthing.service server/squashfs-root/usr/lib/systemd/user
 	sudo cp server/{syncthing@.service,syncthing-resume.service} server/squashfs-root/lib/systemd/system
-	sudo cp server/{thunar-volman.xml,thunar.xml,bookmarks,xfce4-desktop.xml} server/squashfs-root/opt
+	sudo cp server/{thunar-volman.xml,thunar.xml,bookmarks,xfce4-desktop.xml,terminalrc} server/squashfs-root/opt
 	sudo cp server/{drbl-functions,ocs-functions} server/squashfs-root/usr/share/drbl/sbin
 	sudo cp server/{ocs-live-netcfg,ifupdownsucks.sh,startafterifupdownsucks.sh,drbl-live,drbl-sl} server/squashfs-root/usr/sbin
 	sudo cp server/drbl-live-conf-X server/squashfs-root/usr/share/drbl/sbin/drbl-live-conf-X

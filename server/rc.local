@@ -37,6 +37,10 @@ if [ -f /sys/class/net/eth1/address ]; then
 		cp /opt/{thunar.xml,thunar-volman.xml,xfce4-desktop.xml} /home/user/.config/xfce4/xfconf/xfce-perchannel-xml
 		cp /opt/bookmarks /home/user/.config/gtk-3.0
 		cp /opt/authorized_keys /home/user/.ssh
+		if [ "$ETH1_MAC" == "$SERVER3_MAC" ]; then
+			mkdir -p /home/user/.config/xfce4/terminal
+			cp /opt/terminalrc /home/user/.config/xfce4/terminal
+		fi
 		chmod -R 700 /home/user/.ssh
 		chown -R user:user /home/user
 		chown -R user:user /home/partimag

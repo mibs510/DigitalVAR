@@ -81,11 +81,11 @@ for i in $(seq 0 ${TOTAL_AVAILABLE_XXHSUMS}); do
 	echo "${i} = ${AVAILABLE_XXHSUMS[$i]}"
 done
 echo ""
-read -p "Enter the image #> " number
+read -p "Enter the hash file #> " number
 echo ""
 
 if ! [[ "${number}" =~ ^[0-9]+$ ]]; then
-	echo "${RED}ERROR: Invalid image number!${NC}"
+	echo "${RED}ERROR: Invalid hash number!${NC}"
 	exit 1
 fi
 
