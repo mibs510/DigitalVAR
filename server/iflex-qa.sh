@@ -12,7 +12,6 @@ GREEN=`tput setaf 2`
 NC=`tput sgr0`
 
 j=1
-declare -a BAD_BOYS
 
 # Check to see if patriot USB is connected
 if [ "${PARTIMAG}" == "" ]; then
@@ -113,23 +112,25 @@ fi
 clear
 
 echo "========================================================================"
-echo "| Device Block Name | Model | Serial Number | File Qty | MD5SUM Result |"
+echo "Device Block Name,Model,Serial Number,File Qty,MD5SUM Result" | column -t -s ","
 echo "========================================================================"
 
 if [ "${SKIP_XXHSUM}" == "false" ]; then
 	for i in {a..z}; do
 	
 		EXIT=false
-		QA_FLAG="${GREEN}PASSED${NC}"
+		KNAME="sd${i}"
+		MODEL="$(lsblk -o kname,model | grep -w sd${i} | awk -F '   ' '{print $2}')"
+		SERIALNUM="$(lsblk -o kname,serial | grep -w sd${i} | awk -F '   ' '{print $2}')"
 		FILE_QTY="NA"
+		QA_FLAG="${GREEN}PASSED${NC}"
 		
 		if [ -b /dev/sd${i}4 ] && [ "sd${i}" != "${PARTIMAG}" ]; then
 			sudo mount /dev/sd${i}4 /mnt
 		
 			if [ "$?" != "0" ] && [ "$EXIT" == "false" ]; then
 				EXIT=true
-				QA_FLAG="${RED}FAILED${NC}"
-				BAD_BOYS+=(sd${i})				
+				QA_FLAG="${RED}FAILED${NC}"			
 			fi
 		
 			if [ "$EXIT" == "false" ]; then
@@ -140,20 +141,19 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 				EXIT=true
 				sudo umount /dev/sd${i}4
 				QA_FLAG="${RED}FAILED${NC}"
-				BAD_BOYS+=(sd${i})
 			fi
 		
 			if [ "$EXIT" == "false" ]; then
 				FILE_QTY=$(find /mnt -type f | wc -l)
 				sudo umount /dev/sd${i}4
+				echo "| ${KNAME},${MODEL},${SERIALNUM},${FILE_QTY},${QA_FLAG} |" | column -t -s ","
 			fi
 		fi
 		if [ -b /dev/sd${i} ] && [ ! -b /dev/sd${i}4 ] && [ "sd${i}" != "${PARTIMAG}" ]; then
 			QA_FLAG="${RED}FAILED${NC}"
-			BAD_BOYS+=(sd${i})
+			echo "| ${KNAME},${MODEL},${SERIALNUM},${FILE_QTY},${QA_FLAG} |" | column -t -s ","
 		fi
 		
-		echo "$(lsblk -o kname,model,serial | grep -w sd${i} | tr -d '\n') ${FILE_QTY} ${QA_FLAG}"
 		
 	done
 	
