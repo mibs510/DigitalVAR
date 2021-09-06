@@ -6,6 +6,7 @@ SKIP_PULLOUTS=false
 
 PARTIMAG=$(lsblk -o name,serial,label | grep -i partimag | cut -d' ' -f1 | sed "s/[^[:alnum:]-]//g" | sed 's/[0-9]*//g')
 PNG_FILE=/tmp/89-21054-00-001_$(date +%m_%d_%y_%H%M%S).png
+LOG_FILE=/tmp/89-21054-00-001_$(date +%m_%d_%y_%H%M%S).log
 SSD_LIST=""
 RED=`tput setaf 1`
 GREEN=`tput setaf 2`
@@ -109,11 +110,7 @@ if [ ! -f /home/partimag/${XXHSUM_FILE} ]; then
 	exit 1
 fi
 
-clear
-
-echo "========================================================================"
-echo "Device Block Name,Model,Serial Number,File Qty,MD5SUM Result" | column -t -s ","
-echo "========================================================================"
+echo "Device Block Name,Model,Serial Number,File Qty,MD5SUM Result" > ${LOG_FILE}
 
 if [ "${SKIP_XXHSUM}" == "false" ]; then
 	for i in {a..z}; do
@@ -126,6 +123,7 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 		QA_FLAG="${GREEN}PASSED${NC}"
 		
 		if [ -b /dev/sd${i}4 ] && [ "sd${i}" != "${PARTIMAG}" ]; then
+			echo "Checking sd${i}..."
 			sudo mount /dev/sd${i}4 /mnt
 		
 			if [ "$?" != "0" ] && [ "$EXIT" == "false" ]; then
@@ -146,12 +144,12 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 			if [ "$EXIT" == "false" ]; then
 				FILE_QTY=$(find /mnt -type f | wc -l)
 				sudo umount /dev/sd${i}4
-				echo "| ${KNAME},${MODEL},${SERIALNUM},${FILE_QTY},${QA_FLAG} |" | column -t -s ","
+				echo "${KNAME},${MODEL},${SERIALNUM},${FILE_QTY},${QA_FLAG}" > ${LOG_FILE}
 			fi
 		fi
 		if [ -b /dev/sd${i} ] && [ ! -b /dev/sd${i}4 ] && [ "sd${i}" != "${PARTIMAG}" ]; then
 			QA_FLAG="${RED}FAILED${NC}"
-			echo "| ${KNAME},${MODEL},${SERIALNUM},${FILE_QTY},${QA_FLAG} |" | column -t -s ","
+			echo "${KNAME},${MODEL},${SERIALNUM},${FILE_QTY},${QA_FLAG}" > ${LOG_FILE}
 		fi
 		
 		
@@ -159,16 +157,15 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 	
 	umount /mnt &> /dev/null
 
-	
-	
-# Take screenshot# Take screenshot
-sudo scrot ${PNG_FILE}
-# Transfer it to clonezilla server
-sudo ftp-upload -h win10server -u logs ${PNG_FILE}
-
 fi
 
 umount /mnt &> /dev/null
+clear
+cat ${LOG_FILE} | column -c 78 -t -s ","
+# Take screenshot# Take screenshot
+sudo scrot ${PNG_FILE}
+# Transfer it to clonezilla server
+sudo ftp-upload -h win10server.digital.var -u logs ${PNG_FILE}
 
 
 if [ "${DEBUG}" == "true" ]; then
