@@ -110,7 +110,7 @@ if [ ! -f /home/partimag/${XXHSUM_FILE} ]; then
 	exit 1
 fi
 
-echo "Device Block Name,Model,Serial Number,File Qty,MD5SUM Result" > ${LOG_FILE}
+echo "Device Block Name,Model,Serial Number,File Qty,MD5SUM Result" >> ${LOG_FILE}
 
 if [ "${SKIP_XXHSUM}" == "false" ]; then
 	for i in {a..z}; do
@@ -130,6 +130,10 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 				EXIT=true
 				QA_FLAG="${RED}FAILED${NC}"			
 			fi
+			
+			if [ "$EXIT" == "false" ]; then
+				FILE_QTY=$(find /mnt -type f | wc -l)
+			fi
 		
 			if [ "$EXIT" == "false" ]; then
 				sudo xxhsum -c /home/partimag/${XXHSUM_FILE} &> /dev/null
@@ -140,18 +144,14 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 				sudo umount /dev/sd${i}4
 				QA_FLAG="${RED}FAILED${NC}"
 			fi
+			
+			echo "${KNAME},${MODEL},${SERIALNUM},${FILE_QTY},${QA_FLAG}" >> ${LOG_FILE}
 		
-			if [ "$EXIT" == "false" ]; then
-				FILE_QTY=$(find /mnt -type f | wc -l)
-				sudo umount /dev/sd${i}4
-				echo "${KNAME},${MODEL},${SERIALNUM},${FILE_QTY},${QA_FLAG}" > ${LOG_FILE}
-			fi
 		fi
 		if [ -b /dev/sd${i} ] && [ ! -b /dev/sd${i}4 ] && [ "sd${i}" != "${PARTIMAG}" ]; then
 			QA_FLAG="${RED}FAILED${NC}"
-			echo "${KNAME},${MODEL},${SERIALNUM},${FILE_QTY},${QA_FLAG}" > ${LOG_FILE}
+			echo "${KNAME},${MODEL},${SERIALNUM},${FILE_QTY},${QA_FLAG}" >> ${LOG_FILE}
 		fi
-		
 		
 	done
 	
