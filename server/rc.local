@@ -28,7 +28,7 @@ if [ -f /sys/class/net/eth1/address ]; then
 		if [ "$(df -P /home/partimag | tail -1 | cut -d' ' -f1)" != "/dev/${PARTIMAG}" ]; then
 			sudo mount /dev/${PARTIMAG} /home/partimag
 		fi
-	
+		
 		ifupdownsucks.sh eth1 &
 		startafterifupdownsucks.sh eth1 &
 		
@@ -40,6 +40,7 @@ if [ -f /sys/class/net/eth1/address ]; then
 		if [ "$ETH1_MAC" == "$SERVER3_MAC" ]; then
 			mkdir -p /home/user/.config/xfce4/terminal
 			cp /opt/terminalrc /home/user/.config/xfce4/terminal
+			dhclient eth1
 		fi
 		chmod -R 700 /home/user/.ssh
 		chown -R user:user /home/user

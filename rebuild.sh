@@ -57,7 +57,7 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	sudo cp server/ocs-live-blacklist.conf server/squashfs-root/etc/modprobe.d
 	sudo cp server/syncthing.service server/squashfs-root/usr/lib/systemd/user
 	sudo cp server/{syncthing@.service,syncthing-resume.service} server/squashfs-root/lib/systemd/system
-	sudo cp server/{thunar-volman.xml,thunar.xml,bookmarks,xfce4-desktop.xml,terminalrc} server/squashfs-root/opt
+	sudo cp server/{thunar-volman.xml,thunar.xml,bookmarks,xfce4-desktop.xml,terminalrc,default} server/squashfs-root/opt
 	sudo cp server/{drbl-functions,ocs-functions} server/squashfs-root/usr/share/drbl/sbin
 	sudo cp server/{ocs-live-netcfg,ifupdownsucks.sh,startafterifupdownsucks.sh,drbl-live,drbl-sl} server/squashfs-root/usr/sbin
 	sudo cp server/drbl-live-conf-X server/squashfs-root/usr/share/drbl/sbin/drbl-live-conf-X
@@ -77,6 +77,7 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	sudo cp server/sources.list server/squashfs-root/etc/apt
 	sudo cp server/{bigbox,fluorchem,fluorchem.sh,iflex.sh,iflex-qa.sh,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,usb-qa.sh,usb-ntfs.sh,usb-fat32.sh,update.sh,xxhsum} server/squashfs-root/usr/bin
 	sudo cp server/ocs-restore-mdisks server/squashfs-root/usr/sbin
+	sudo cp server/osc-srv-live server/squashfs-root/sbin
 	
 	
 	echo " * Chmoding executables..."

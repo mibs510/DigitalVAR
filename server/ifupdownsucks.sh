@@ -9,6 +9,7 @@ ETH_IFACE=${1}
 ETH_MAC=$(cat /sys/class/net/$ETH_IFACE/address)
 SERVER1_MAC="00:1e:67:cf:ee:8f"
 SERVER2_MAC="00:1e:67:e0:9d:6f"
+SERVER3_MAC="14:18:77:53:2c:85"
 USBIMAGER1_MAC="70:b5:e8:47:5c:92"
 USBIMAGER2_MAC="70:b5:e8:49:b2:a8"
 SERVER1_IP="192.168.1.241"
@@ -25,7 +26,7 @@ while true; do
 		chown -R user:user /home/partimag
 	fi
 	ETH_OPERSTATE=$(cat /sys/class/net/$ETH_IFACE/operstate)
-	if [ "$ETH_MAC" == "$SERVER1_MAC" ] || [ "$ETH_MAC" == "$SERVER2_MAC" ] || [ "$ETH_MAC" == "$USBIMAGER1_MAC" ] || [ "$ETH_MAC" == "$USBIMAGER2_MAC" ] && [ "$(pidof dhcpd)" != "" ]; then
+	if [ "$ETH_MAC" == "$SERVER1_MAC" ] || [ "$ETH_MAC" == "$SERVER2_MAC" ] || [ "$ETH_MAC" == "$USBIMAGER1_MAC" ] || [ "$ETH_MAC" == "$USBIMAGER2_MAC" ] || [ "$ETH_MAC" == "$SERVER3_MAC" ] && [ "$(pidof dhcpd)" != "" ]; then
 		echo "$(date +"%m/%d/%y@%r") -- Machine MAC Address: $ETH_MAC" >> $LOG_FILE
 		if [ "$ETH_OPERSTATE" == "up" ]; then
 			echo "$(date +"%m/%d/%y@%r") -- $ETH_IFACE is up" >> $LOG_FILE

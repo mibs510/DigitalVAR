@@ -185,6 +185,10 @@ This file basically configures the ethernet that is facing the PXE clients.
 All lines mentioned automate the configuration with a static ip address.
 * Lines edited: 146-149, 151-154, 160-164, 171,174, 442-445, 462-473
 
+### server/osc-srv-live
+check_img_in_pxe_cfg() from drbl-functions:999 eventually claims to be "Unable to find the image (local) label! Make sure the local label is labeled in /tftpboot/nbi_img/pxelinux.cfg/default! Program terminated"
+So we added `cp /opt/default $pxecfg_pd/pxelinux.cfg/default` on the beginning of start_ocs_srv() in ocs-srv-live:40
+
 ### server/rc.local
 rc.local not only gets executed on the server live but also on the PXE 
 clients (units to be images). So becareful of what you put in there.

@@ -114,7 +114,6 @@ echo "Device Block Name,Model,Serial Number,File Qty,MD5SUM Result" >> ${LOG_FIL
 
 if [ "${SKIP_XXHSUM}" == "false" ]; then
 	for i in {a..z}; do
-	
 		EXIT=false
 		KNAME="sd${i}"
 		MODEL="$(lsblk -o kname,model | grep -w sd${i} | awk -F '   ' '{print $2}')"
@@ -144,7 +143,7 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 				sudo umount /dev/sd${i}4
 				QA_FLAG="${RED}FAILED${NC}"
 			fi
-			
+			umount /mnt &> /dev/null
 			echo "${KNAME},${MODEL},${SERIALNUM},${FILE_QTY},${QA_FLAG}" >> ${LOG_FILE}
 		
 		fi
