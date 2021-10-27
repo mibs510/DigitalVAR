@@ -159,6 +159,7 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 fi
 
 umount /mnt &> /dev/null
+read -p "Press Enter to upload proof."
 clear
 cat ${LOG_FILE} | column -c 78 -t -s ","
 # Take screenshot# Take screenshot
