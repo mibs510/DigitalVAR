@@ -110,7 +110,7 @@ if [ ! -f /home/partimag/${XXHSUM_FILE} ]; then
 	exit 1
 fi
 
-echo "Device Block Name,Model,Serial Number,File Qty,MD5SUM Result" >> ${LOG_FILE}
+echo "DevBlk Name,Model,Serial Number,File Qty,MD5SUM Result" >> ${LOG_FILE}
 
 if [ "${SKIP_XXHSUM}" == "false" ]; then
 	for i in {a..z}; do
@@ -159,7 +159,7 @@ if [ "${SKIP_XXHSUM}" == "false" ]; then
 fi
 
 umount /mnt &> /dev/null
-read -p "Press Enter to upload proof."
+read -p "Press Enter to upload proof>"
 clear
 cat ${LOG_FILE} | column -c 78 -t -s ","
 # Take screenshot# Take screenshot
