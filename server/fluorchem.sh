@@ -109,7 +109,7 @@ sudo cat ${LOG_FILE}
 # Take screenshot# Take screenshot
 sudo scrot ${PNG_FILE}
 # Transfer it to clonezilla server
-sudo ftp-upload -h win10server -u logs ${PNG_FILE}
+sudo ftp-upload -h win10server.digital.var -u logs ${PNG_FILE}
 ## View log file
 clear
 sed -e "s/\r//g" ${LOG_FILE} | less

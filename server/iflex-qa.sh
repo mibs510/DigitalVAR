@@ -5,8 +5,8 @@ SKIP_XXHSUM=false
 SKIP_PULLOUTS=false
 
 PARTIMAG=$(lsblk -o name,serial,label | grep -i partimag | cut -d' ' -f1 | sed "s/[^[:alnum:]-]//g" | sed 's/[0-9]*//g')
-PNG_FILE=/tmp/89-21054-00-001_$(date +%m_%d_%y_%H%M%S).png
-LOG_FILE=/tmp/89-21054-00-001_$(date +%m_%d_%y_%H%M%S).log
+PNG_FILE=/tmp/62-50001-00-047_$(date +%m_%d_%y_%H%M%S).png
+LOG_FILE=/tmp/62-50001-00-047_$(date +%m_%d_%y_%H%M%S).log
 SSD_LIST=""
 RED=`tput setaf 1`
 GREEN=`tput setaf 2`
