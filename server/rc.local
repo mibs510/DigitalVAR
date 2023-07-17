@@ -14,13 +14,16 @@
 # set -x
 
 if [ -f /sys/class/net/eth1/address ]; then
+	ETH0_IFACE="eth0"
+	ETH0_MAC=$(cat /sys/class/net/$ETH0_IFACE/address)
 	ETH1_IFACE="eth1"
 	ETH1_MAC=$(cat /sys/class/net/$ETH1_IFACE/address)
-	SERVER1_MAC="00:1e:67:cf:ee:8f"
-	SERVER2_MAC="00:1e:67:e0:9d:6f"
-	SERVER3_MAC="14:18:77:53:2c:85"
+	SERVER1_MAC="c8:1f:66:ca:9a:e2" # server1
+	SERVER2_MAC="90:b1:1c:29:91:55" # server2
+	SERVER3_MAC="14:18:77:53:2c:84" # SSD/HDD Imager
+	SERVER4_MAC="90:b1:1c:28:5c:64" # Backup Clonezilla server2
 	
-	if [ "$ETH1_MAC" == "$SERVER1_MAC" ] || [ "$ETH1_MAC" == "$SERVER2_MAC" ] || [ "$ETH1_MAC" == "$SERVER3_MAC" ]; then
+	if [ "$ETH1_MAC" == "$SERVER1_MAC" ] || [ "$ETH1_MAC" == "$SERVER2_MAC" ] || [ "$ETH1_MAC" == "$SERVER3_MAC" ] || [ "$ETH1_MAC" == "$SERVER4_MAC" ]; then
 		
 		PARTIMAG=$(lsblk -o name,serial,label | grep -i partimag | cut -d' ' -f1 | sed "s/[^[:alnum:]-]//g")
 		
@@ -29,61 +32,24 @@ if [ -f /sys/class/net/eth1/address ]; then
 			sudo mount /dev/${PARTIMAG} /home/partimag
 		fi
 		
-		ifupdownsucks.sh eth1 &
-		startafterifupdownsucks.sh eth1 &
+		if [ "$ETH0_MAC" != "$SERVER3_MAC" ]; then
+			ifupdownsucks.sh eth1 &
+			startafterifupdownsucks.sh eth1 &
+		fi
 		
 		mkdir -p /home/user/.config/gtk-3.0
-		mkdir -p /home/user/.ssh
 		cp /opt/{thunar.xml,thunar-volman.xml,xfce4-desktop.xml} /home/user/.config/xfce4/xfconf/xfce-perchannel-xml
 		cp /opt/bookmarks /home/user/.config/gtk-3.0
-		cp /opt/authorized_keys /home/user/.ssh
-		if [ "$ETH1_MAC" == "$SERVER3_MAC" ]; then
+		if [ "$ETH0_MAC" == "$SERVER3_MAC" ]; then
 			mkdir -p /home/user/.config/xfce4/terminal
 			cp /opt/terminalrc /home/user/.config/xfce4/terminal
-			dhclient eth1
+			dhclient eth0
 		fi
 		chmod -R 700 /home/user/.ssh
 		chown -R user:user /home/user
 		chown -R user:user /home/partimag
 		exit 0
 	fi
-fi
-
-if [ -f /sys/class/net/eth0/address ]; then
-	ETH0_IFACE="eth0"
-	ETH0_MAC=$(cat /sys/class/net/$ETH0_IFACE/address)
-	USBIMAGER1_MAC="70:b5:e8:47:5c:92"
-	USBIMAGER2_MAC="70:b5:e8:49:b2:a8"
-	
-	if [ "${ETH0_MAC}" == "${USBIMAGER1_MAC}" ] || [ "${ETH0_MAC}" == "${USBIMAGER2_MAC}" ]; then
-		PARTIMAG=$(lsblk -o name,serial,label | grep -i partimag | cut -d' ' -f1 | sed "s/[^[:alnum:]-]//g")
-		
-		# Mount partimag onto /home/partimag
-		if [ "$(df -P /home/partimag | tail -1 | cut -d' ' -f1)" != "/dev/${PARTIMAG}" ]; then
-			sudo mount /dev/${PARTIMAG} /home/partimag
-		fi
-		
-		if [ "${ETH0_MAC}" != "${USBIMAGER2_MAC}" ]; then
-			ifupdownsucks.sh eth0 &
-			startafterifupdownsucks.sh eth0 &
-		fi
-		
-		# Enable wireless connection where applicable (d1-usb-workstation)
-		if [ "${ETH0_MAC}" == "${USBIMAGER2_MAC}" ]; then
-			systemctl stop wicd
-			modprobe -r iwlwifi
-			modprobe iwlwifi
-			cp -r /opt/wicd/* /etc/wicd
-			chmod 600 /etc/wicd/{manager-settings.conf,wireless-settings.conf}
-			systemctl start wicd
-
-			startafterifupdownsucks.sh wlan0 &
-		fi
-		
-		chown -R user:user /home/partimag
-		
-	fi
-
 fi
 
 # This rest of this script is executed at the end of each multiuser
@@ -95,11 +61,11 @@ fi
 # set +x
 
 # Common commands applicable to any system
-mkdir -p /home/user/.config/gtk-3.0
-mkdir -p /home/user/.ssh
-cp /opt/{thunar.xml,thunar-volman.xml,xfce4-desktop.xml} /home/user/.config/xfce4/xfconf/xfce-perchannel-xml
-cp /opt/bookmarks /home/user/.config/gtk-3.0
+mkdir -p /home/user/.config/gtk-3.0 > /dev/null 2>&1
+cp /opt/{thunar.xml,thunar-volman.xml,xfce4-desktop.xml} /home/user/.config/xfce4/xfconf/xfce-perchannel-xml > /dev/null 2>&1
+cp /opt/bookmarks /home/user/.config/gtk-3.0 > /dev/null 2>&1
 chown -R user:user /home/user > /dev/null 2>&1
+cp /opt/mount /lib/live 2>&1
 
 
 exit 0

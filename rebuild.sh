@@ -43,11 +43,11 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	sudo cp -a server/initrd-root/lib/modules/* server/squashfs-root/tftpboot/node_root/lib/modules
 	sudo rm -rf server/squashfs-root/usr/lib/modules/*
 	sudo cp -a server/initrd-root/lib/modules/* server/squashfs-root/usr/lib/modules
-	echo " * Propigating firmware blobs everywhere..."
-	sudo rm -rf server/squashfs-root/tftpboot/node_root/lib/firmware/*
-	sudo cp -a server/initrd-root/lib/firmware/* server/squashfs-root/tftpboot/node_root/lib/firmware
-	sudo rm -rf server/squashfs-root/usr/lib/firmware/*
-	sudo cp -a server/initrd-root/lib/firmware/* server/squashfs-root/usr/lib/firmware
+	#echo " * Propigating firmware blobs everywhere..."
+	#sudo rm -rf server/squashfs-root/tftpboot/node_root/lib/firmware/*
+	#sudo cp -a server/initrd-root/lib/firmware/* server/squashfs-root/tftpboot/node_root/lib/firmware
+	#sudo rm -rf server/squashfs-root/usr/lib/firmware/*
+	#sudo cp -a server/initrd-root/lib/firmware/* server/squashfs-root/usr/lib/firmware
 	#
 	
 	echo " * Copying everything from 'server/' folder to where they belong..."
@@ -77,8 +77,13 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	sudo cp server/sources.list server/squashfs-root/etc/apt
 	sudo cp server/{bigbox,fluorchem,fluorchem.sh,iflex.sh,iflex-qa.sh,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,usb-qa.sh,usb-ntfs.sh,usb-fat32.sh,update.sh,xxhsum} server/squashfs-root/usr/bin
 	sudo cp server/ocs-restore-mdisks server/squashfs-root/usr/sbin
-	sudo cp server/osc-srv-live server/squashfs-root/sbin
-	
+	sudo cp server/ocs-srv-live server/squashfs-root/sbin
+	sudo cp server/resolv.conf server/squashfs-root/etc
+	sudo cp server/resolved.conf server/squashfs-root/etc/systemd
+	sudo cp server/start-clonezilla-server.sh server/squashfs-root/opt
+	sudo cp server/Clonezilla-server.desktop server/squashfs-root/usr/share/drbl/setup/files/misc/desktop-icons/drbl-live/Clonezilla-server.desktop
+	sudo cp -r server/mount server/squashfs-root/opt
+
 	
 	echo " * Chmoding executables..."
 	sudo chmod +x server/squashfs-root/usr/share/drbl/setup/files/misc/desktop-icons/drbl-live/{Super_Thunar.desktop,Clonezilla-server.desktop,syncthing.desktop}
@@ -87,6 +92,7 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	sudo chmod +x server/squashfs-root/usr/share/drbl/setup/files/DBN/firstboot.default-DBN.drbl
 	sudo chmod +x server/squashfs-root/tftpboot/node_root/etc/init.d/firstboot
 	sudo chmod +x server/squashfs-root/tftpboot/node_root/sbin/Forcevideo-drbl-live
+	sudo chmod +x server/squashfs-root/opt/start-clonezilla-server.sh
 	sudo chmod +x server/squashfs-root/usr/bin/{bigbox,fluorchem,fluorchem.sh,iflex.sh,iflex-qa.sh,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,usb-qa.sh,usb-fat32.sh,usb-ntfs.sh,update.sh,xxhsum}
 	
 	echo " * Rebuilding filesystem.squashfs..."
@@ -120,8 +126,8 @@ if [ "${1}" == "--test-initrd" ] || [ "${1}" == "test-initrd" ]; then
     -machine accel=kvm \
     -m 2048 \
     -boot once=c,menu=on \
-    -net nic,vlan=0 \
-    -net user,vlan=0 \
+    -net nic \
+    -net user \
     -kernel server/vmlinuz \
     -initrd server/initrd.img\
     -append 'debug boot=live union=overlay config \

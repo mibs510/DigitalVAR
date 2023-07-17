@@ -7,11 +7,9 @@
 
 ETH_IFACE=${1}
 ETH_MAC=$(cat /sys/class/net/$ETH_IFACE/address)
-SERVER1_MAC="00:1e:67:cf:ee:8f"
-SERVER2_MAC="00:1e:67:e0:9d:6f"
-SERVER3_MAC="14:18:77:53:2c:85"
-USBIMAGER1_MAC="70:b5:e8:47:5c:92"
-USBIMAGER2_MAC="70:b5:e8:49:b2:a8"
+SERVER1_MAC="c8:1f:66:ca:9a:e2"
+SERVER2_MAC="90:b1:1c:29:91:55"
+SERVER3_MAC="14:18:77:53:2c:84"
 SERVER1_IP="192.168.1.241"
 SERVER2_IP="192.168.1.242"
 SERVERX_SUBNET="255.255.255.0"
@@ -26,39 +24,22 @@ while true; do
 		chown -R user:user /home/partimag
 	fi
 	ETH_OPERSTATE=$(cat /sys/class/net/$ETH_IFACE/operstate)
-	if [ "$ETH_MAC" == "$SERVER1_MAC" ] || [ "$ETH_MAC" == "$SERVER2_MAC" ] || [ "$ETH_MAC" == "$USBIMAGER1_MAC" ] || [ "$ETH_MAC" == "$USBIMAGER2_MAC" ] || [ "$ETH_MAC" == "$SERVER3_MAC" ] && [ "$(pidof dhcpd)" != "" ]; then
-		echo "$(date +"%m/%d/%y@%r") -- Machine MAC Address: $ETH_MAC" >> $LOG_FILE
+	if [ "$ETH_MAC" == "$SERVER1_MAC" ] || [ "$ETH_MAC" == "$SERVER2_MAC" ] || [ "$ETH_MAC" == "$SERVER3_MAC" ] && [ "$(pidof dhcpd)" != "" ]; then
+		echo "$(date +"%m/%d/%y@%r") -- Machine MAC Address: $ETH_MAC"
 		if [ "$ETH_OPERSTATE" == "up" ]; then
-			echo "$(date +"%m/%d/%y@%r") -- $ETH_IFACE is up" >> $LOG_FILE
+			echo "$(date +"%m/%d/%y@%r") -- $ETH_IFACE is up"
 			ETH_IP=$(/sbin/ifconfig "$ETH_IFACE" | grep 'inet ' | cut -d' ' -f10)
 			if [ "$ETH_IP" == "" ]; then
-				echo "$(date +"%m/%d/%y@%r") -- $ETH_IFACE doesn't have an IP address" >> $LOG_FILE
-				echo "$(date +"%m/%d/%y@%r") -- Starting dhclient on $ETH_IFACE" >> $LOG_FILE
+				echo "$(date +"%m/%d/%y@%r") -- $ETH_IFACE doesn't have an IP address"
+				echo "$(date +"%m/%d/%y@%r") -- Starting dhclient on $ETH_IFACE"
 				dhclient $ETH_IFACE
 			else
-				echo "$(date +"%m/%d/%y@%r") -- IP Address: $ETH_IP" >> $LOG_FILE
+				echo "$(date +"%m/%d/%y@%r") -- IP Address: $ETH_IP"
 			fi
 		else
-			echo "$(date +"%m/%d/%y@%r") -- $ETH_IFACE is down/disconnected" >> $LOG_FILE
+			echo "$(date +"%m/%d/%y@%r") -- $ETH_IFACE is down/disconnected"
 		fi
 	fi
-	#if [ "$ETH_MAC" == "$SERVER2_MAC" ] && [ "$(pidof dhcpd)" != "" ]; then
-		#echo "This is server #2"
-		#if [ "$ETH_OPERSTATE" == "up" ]; then
-			#echo "$(date +"%m/%d/%y@%r") -- $ETH_IFACE is up" >> $LOG_FILE
-			#ETH_IP=$(/sbin/ifconfig "$ETH_IFACE" | grep 'inet ' | cut -d' ' -f10)
-			#if [ "$ETH_IP" == "" ]; then
-				#echo "$(date +"%m/%d/%y@%r") -- $ETH_IFACE doesn't have an IP address" >> $LOG_FILE
-				#echo "$(date +"%m/%d/%y@%r") -- Starting dhclient on $ETH_IFACE" >> $LOG_FILE
-				#dhclient $ETH_IFACE
-			#else
-				#echo "$(date +"%m/%d/%y@%r") -- IP Address: $ETH_IP" >> $LOG_FILE
-			#fi
-		#else
-			#echo "$(date +"%m/%d/%y@%r") -- $ETH_IFACE is down/disconnected" >> $LOG_FILE
-		#fi
-	#fi
-
 	sleep 2
 done
 # set +x

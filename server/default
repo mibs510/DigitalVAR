@@ -1,0 +1,176 @@
+# Created by generate-pxe-menu! Do NOT edit unless you know what you are doing!
+# Keep those comment "MENU DEFAULT" and "MENU HIDE"! Do NOT remove them.
+# Note!!! If "serial" directive exists, it must be the first directive
+
+default vesamenu.c32
+timeout 70
+prompt 0
+noescape 1
+MENU MARGIN 5
+MENU BACKGROUND drblwp.png
+# Set the color for unselected menu item and timout message
+MENU COLOR UNSEL 7;32;41 #c0000090 #00000000
+MENU COLOR TIMEOUT_MSG 7;32;41 #c0000090 #00000000
+MENU COLOR TIMEOUT 7;32;41 #c0000090 #00000000
+MENU COLOR HELP 7;32;41 #c0000090 #00000000
+
+# MENU MASTER PASSWD
+
+say **********************************************
+say Welcome to DRBL.
+say NCHC Free Software Labs, Taiwan.
+say http://drbl.org; http://drbl.nchc.org.tw
+say **********************************************
+
+# Allow client to edit boot parameters
+ALLOWOPTIONS 1
+
+# Set PATH to bios/ or efi64/, which is relative to PXE root dir (/tftpboot/nbi_img/pxelinux.cfg).
+# bios is for legacy PXE booting, while efi64 is for uEFI network booting.
+# This might be improved in syslinux 7.0 using auto detection.
+# For more info, please check:
+# http://www.syslinux.org/archives/2014-April/thread.html#21974
+#PATH efi64/
+PATH bios/
+
+# simple menu title
+MENU TITLE DRBL (http://drbl.org)
+
+label drbl
+  # MENU DEFAULT
+  MENU HIDE
+  MENU LABEL Debian Testing-Unstable Linux (DRBL mode, mostly local resources)
+  # MENU PASSWD
+  # Append DHCP/BOOTP to the kernel command line, i.e., ip=<client-ip>:<boot-server-ip>:<gw-ip>:<netmask>
+  # We need this when using proxy DHCP
+  IPAPPEND 1
+  kernel DRBL-live-vmlinuz
+  append initrd=DRBL-live-initrd.img boot=live union=overlay config components nomodeset net.ifnames=0 nosplash hostname=drbl-client username=drbl keyboard-layouts=NONE locales=en_US.UTF-8 drbl_live_noconfx stick-to-pxe-srv dhcp-vendor-id=DRBLClient ocs_daemonon="ssh" noeject netboot=nfs nfsroot=10.1.0.1:/tftpboot/node_root/clonezilla-live/ dcs_put_dticons="no" clientdir="node_root"
+  TEXT HELP
+  * DRBL version: 2.30.26-drbl1. (C) 2003-2019, NCHC, Taiwan
+  * Disclaimer: DRBL comes with ABSOLUTELY NO WARRANTY
+  ENDTEXT
+
+label clonezilla
+  # MENU DEFAULT
+  MENU HIDE
+  MENU LABEL Clonezilla
+  # MENU PASSWD
+  # Append DHCP/BOOTP to the kernel command line, i.e., ip=<client-ip>:<boot-server-ip>:<gw-ip>:<netmask>
+  # We need this when using proxy DHCP
+  IPAPPEND 1
+  kernel vmlinuz-pxe
+  append initrd=initrd-pxe.img devfs=nomount drblthincli=off selinux=0 quiet text 1     clientdir="node_root"
+  TEXT HELP
+  * Clonezilla version: 3.37.16-drbl1. (C) 2003-2019, NCHC, Taiwan
+  * Disclaimer: Clonezilla comes with ABSOLUTELY NO WARRANTY
+  ENDTEXT
+
+label local
+  # MENU DEFAULT
+  # MENU HIDE
+  MENU LABEL Local operating system (if available)
+  # MENU PASSWD
+  # 2 method to boot local device:
+  # (1) For localboot 0, it is decided by boot order in BIOS, so uncomment the follow 1 line if you want this method:
+  # localboot 0
+
+  # (2) For chain.c32, you can assign the boot device.
+  # Ref: extlinux.doc from syslinux
+  # Syntax: APPEND [hd|fd]<number> [<partition>]
+  # [<partition>] is optional.
+  # Ex:
+  # Second partition (2) on the first hard disk (hd0);
+  # Linux would *typically* call this /dev/hda2 or /dev/sda2, then it's "APPEND hd0 2"
+  #
+  kernel chain.c32
+  append hd0
+  TEXT HELP
+  Boot local OS from first hard disk if it's available
+  ENDTEXT
+
+# ref: http://syslinux.zytor.com/memdisk.php
+label fdos
+  # MENU DEFAULT
+  MENU HIDE
+  MENU LABEL FreeDOS
+  # MENU PASSWD
+  kernel memdisk
+  append initrd=fdos1440_drbl.img
+  TEXT HELP
+  Run FreeDOS
+  ENDTEXT
+
+label drbl-terminal
+  # MENU DEFAULT
+  MENU HIDE
+  MENU LABEL Debian Testing-Unstable Linux (Terminal mode, mostly remote resources)
+  # MENU PASSWD
+  # Append DHCP/BOOTP to the kernel command line, i.e., ip=<client-ip>:<boot-server-ip>:<gw-ip>:<netmask>
+  # We need this when using proxy DHCP
+  IPAPPEND 1
+  kernel vmlinuz-pxe
+  append initrd=initrd-pxe.img devfs=nomount drblthincli=on quiet ramdisk_size=83648 ramdisk_blocksize=1024
+  TEXT HELP
+  Run DRBL in terminal mode.
+  ENDTEXT
+
+# Example for AoE booting
+label AoE-client
+  # MENU DEFAULT
+  MENU HIDE
+  MENU LABEL Diskless client (AoE booting)
+  # MENU PASSWD
+  kernel sanboot.c32
+  append aoe:e0.0
+  TEXT HELP
+  Boot from AoE device
+  ENDTEXT
+
+# Example for Xen client. ///NOTE/// You might have to copy the required file, e.g. xen-3.0.3-1-i386-pae.gz in this case, from /boot to /tftpboot/nbi_img manually.
+# label Xen client
+  # MENU DEFAULT
+#   MENU HIDE
+#   MENU LABEL Xen client
+#   # MENU PASSWD
+#   kernel mboot.c32
+#   append xen-3.0.3-1-i386-pae.gz --- vmlinuz-2.6.18-6-xen-vserver-686 root=/dev/sda1 ro console=tty0 --- initrd-pxe.2.6.18-6-xen-vserver-686.img
+#   TEXT HELP
+#   DRBL client running on Xen kernel
+#   ENDTEXT
+
+# Example for Clonezilla live PXE booting
+# //NOTE// Remember to change the file names to match your files and check parameters in syslinux/syslinux.cfg from the zip file, copy them to here. It might be different from here, say vmlinuz1 path maybe different.
+#label Clonezilla Live
+  # MENU DEFAULT
+#  MENU HIDE
+#  MENU LABEL Clonezilla Live
+#  # MENU PASSWD
+#  kernel vmlinuz1
+#  append initrd=initrd1.img boot=live union=aufs noswap noeject nolocales ip=frommedia vga=788 fetch=tftp://$YOUR_SERVER_IP/filesystem.squashfs
+#  TEXT HELP
+#  Boot Clonezilla live via network
+#  ENDTEXT
+
+
+# Example for GParted live PXE booting
+# //NOTE// Remember to change the file names to match your files and check parameters in syslinux/syslinux.cfg from the zip file, copy them to here. It might be different from here, say vmlinuz1 path maybe different.
+#label GParted Live
+  # MENU DEFAULT
+#  MENU HIDE
+#  MENU LABEL GParted Live
+#  # MENU PASSWD
+#  kernel vmlinuz1
+#  append initrd=initrd1.img boot=live union=aufs noswap noeject ip=frommedia vga=788 fetch=tftp://$YOUR_SERVER_IP/filesystem.squashfs
+#  TEXT HELP
+#  Boot GParted live via network
+#  ENDTEXT
+
+label Clonezilla-live
+  MENU DEFAULT
+  # MENU HIDE
+  MENU LABEL Clonezilla: unicast restore proteinsimple_055-186_v06 to disk sda
+  # MENU PASSWD
+  KERNEL Clonezilla-live-vmlinuz
+  APPEND initrd=Clonezilla-live-initrd.img boot=live union=overlay config components nomodeset net.ifnames=0  nosplash noeject netboot=nfs nfsroot=10.1.0.1:/tftpboot/node_root/clonezilla-live/ ocs_server="10.1.0.1" hostname=ocs-client username=clonezilla systemd.unit=multi-user.target drbl_live_noconfx stick-to-pxe-srv dhcp-vendor-id=DRBLClient drbl_prerun1="mkdir -p /var/lib/live/clonezilla/ocs-live.d" drbl_prerun2="grep -qsE ^sudo -i ocs-live-run-menu /home/clonezilla/.bash_profile || echo sudo -i ocs-live-run-menu >> /home/clonezilla/.bash_profile" keyboard-layouts=NONE locales=en_US.UTF-8 ocs_daemonon="ssh" ocs_prerun="mount -t nfs 10.1.0.1:/home/partimag /home/partimag/" ocs_live_run="ocs-sr -l en_US.UTF-8  -g auto -e1 auto -e2 -r --clone-hidden-data -p poweroff -scr restoredisk proteinsimple_055-186_v06 sda"
+
