@@ -1,22 +1,21 @@
 # DigitalVAR
----
 
 This repository's main purpose is to hold and document modifications done
 to Clonezilla (Live/SE). These modifications were specifically targeted
 for our production needs. The motivation behind such changes were done
-so to speed up the process of rebooting a server, to fix broken basic
+to speed up the process of rebooting a server, to fix broken basic
 GUI features, to add basic IT functions (server edition). Additionally,
-I've added a lot of scripts and basic C programs in [beast/](beast) 
+I've added a lot of scripts and basic C programs in [server/](server) 
 which are used to automate many of our production needs for SSDs/HDDs &
 USBs.
  
 ### rebuild.sh
 The main purpose of [rebuild.sh](rebuild.sh) is to be able to use any filesystem.squashfs,
-wether it has been modified already or not and to ultimately produce the same
+whether it has been modified already or not and to ultimately produce the same
 consistent image each time, hence all the recopying of files. All files
-located in [server/](server) and [beast/](beast)  are files that have been in some way 
+located in [server/](server) are files that have been in some way 
 modified from the original filesystem.squashfs. I've also included the 
-copying of symlinks as well. However all changes may not have been 
+copying of symlinks as well. However, all changes may not have been 
 accounted for, those will be eventually dealt with.
 
 
@@ -25,10 +24,6 @@ The following is the synopsis:
 rebuild.sh OPTION
 
 OPTION:
-
---beast, beast						- Rebuild for imaging beast
-
---beast-chroot, beast-chroot		- Chroot into beast's rootfs
 
 --server, server					- Rebuild for imaging servers
 
@@ -41,76 +36,33 @@ OPTION:
 ### --test-initrd, test-initrd
 You will need [qemu](https://www.qemu.org/) installed in your system.
 
-# Beast
----
+# Server
 
-### beast/filesystem.squashfs
-You'll need an exisitng filesystem.squahfs as I couldn't upload my working
-copy due to file size limits on github. A download link to can be found 
-[here](https://mega.nz/#!u9ZhGIzQ!l_C5uRzM-TDhhGgjuEz2r_npwrV16YNlYHrJYxuBjlk).
-You'll have to rename it (filesystem.squashfs) and uncompress it inside 
-/path/to/[DigitalVAR/beast](beast/) by executing the following:
-
-`sudo unsquashfs filesystem.squashfs`
-
-### Packages
-* Installed: inotify-tools, curl, sshpass, pandoc, pdftk, imagemagick,
-			 texlive-latex-base, texlive-fonts-recommended,
-			 texlive-fonts-extra, lmodern, ftp-upload
-* Uninstalled: 
-
-You could reproduce this by chrooting:
-
-`./rebuild.sh beast-chroot`
-
-and then installing said package(s):
-
-`apt update && apt install curl inotify-tools`
-
-#### DO NOT UPDATE PACKAGES (apt upgrade)
-
-### beast/rc.local
-The purpose of [rc.local](beast/rc.local) was to provide a 
-quick-n-dirty-easy-updater for all scripts and C programs. It also gave
-us the flexibilty to manage updates remotely upon each boot without the
-need of repacking filesystem.squashfs for each minor change.
-
-### beast/motd.txt
-[motd.txt](beast/motd.txt) will give you a synopsis of all the scripts
-and C programs I wrote. This txt file is displayed on every tty login 
-instance, as seen in [profile](beast/profile).
-
-### Adding new tools (as seen in motd.txt)
+### Adding new tools
 Three files are involved in my quick-n-dirty-easy-updater to deploy new
 tools on-the-fly.
 
-* Add the files/executables in [beast/](beast/) directory
-* Chmod them (`chmod +x script.sh/binarary`) if they're executables
+* Add the files/executables in [server/](server/) directory
+* Chmod them (`chmod +x script.sh`) if they're executables
 
   Although it's not necessary as the quick-n-dirty-easy-updater takes 
-  care of this but it might be needed for local development purposes.
+  care of this, but it might be needed for local development purposes.
 
-* Open: [file-chmodx](beast/file-chmodx), [file-dest](beast/file-dest), and [files](beast/files)
-* Add the name of the file into [files](beast/files) at the end of the existing list
-* Add the destintation of where the file will reside in the filesystem.squashfs at the end of [file-dest](beast/file-dest)
-* If the file is an executable/script add the file name with its absolute path into the end of [file-chmodx](beast/file-chmodx)
-* Optionally add the synopsis of the new tool into [motd.txt](beast/motd.txt)
+* Open: [file-chmodx](server/file-chmodx), [file-dest](server/file-dest), and [files](server/files)
+* Add the name of the file into [files](server/files) at the end of the existing list
+* Add the destintation of where the file will reside in the filesystem.squashfs at the end of [file-dest](server/file-dest)
+* If the file is an executable/script add the file name with its absolute path into the end of [file-chmodx](server/file-chmodx)
 
 Don't forget to add the new file into lines 8-9 in `rebuild.sh` so that
 filesystem.squashfs gets updated on the next rebuild.
 
-### Deploying
-Copy filesystem.squahfs to /path/to/CLONER/live
-
-# Server
----
 ### server/filesystem.squashfs
-Much like the beast, I tried writing rebuild.sh and keeping all files that 
+I tried writing rebuild.sh and keeping all files that 
 I've modified so that rebuild.sh can give you what I once made in a 
-presistent manner. If you don't want to go throgh and make surethat all
+persistent manner. If you don't want to go through and make sure that all
 changes have been made from an original copy, then you can download my
 working copy [here](https://mega.nz/#!D5YBQQKQ!YM46X2bZytg074hqV75LkB1kiZI_Cq9woTLLZi8DG8E) 
-(resquashed on 9/16/2018). Although its more than likely this has changed 
+(re-squashed on 9/16/2018). Although it's more than likely this has changed 
 by the time you download it, the changes won't be major from now on out. 
 Make sure to rename it to filesystem.squashfs and that it resides in the 
 [server/](server/) directory. To uncompress it, execute the following:
