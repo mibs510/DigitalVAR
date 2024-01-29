@@ -157,9 +157,9 @@ for the ability of (a) to click on a USB mass storage device and automatically
 mount it, and (b) to set Thunar's default view as 'detailed list'.
 
 ### server/vmlinuz - Kernel
-Follow the steps below to update the Linux kernel. The linux Kernel is located in two locations. The first being in the live folder inside the USB drive that allows our servers to boot Clonezilla in secure mode. THe second location is critical to our workflow and allows us to image computers without disabling secure boot. This copy of the Linux kernel is located inside of squash filesystem.
+Follow the steps below to update the Linux kernel. The linux Kernel is located in two locations. The first being in the live folder inside the USB drive that allows our servers to boot Clonezilla in secure mode. The second location is critical to our workflow and allows us to image computers without disabling secure boot. This copy of the Linux kernel is located inside of the squash filesystem. that is uncompressed into RAM during boot
 
-Note: We cannot use a custom compiled kernel. This is because we want to use a signed boot loader without the need to disable secure boot on each computer we image. We can only do this if we download a signed copy of the kernel which isn't modifiable.
+Note: We cannot use a custom compiled kernel. This is because we do not want to disable secure boot for each computer that we want to image and the only way to accomplish this is to use a signed kernel + bootloader. We can only do this if we download a signed copy of the kernel which isn't modifiable.
 
 * Download the latest Clonezilla Ubuntu AMD64 zip from [https://clonezilla.org/downloads.php](https://clonezilla.org/downloads.php)
 * Unzip it: `uzip clonezilla-live-*.zip`
@@ -173,8 +173,13 @@ Then unsquash filesystem.squashfs to get the signed shim and grubnet bootloader
 Copy the following files into server/secure-netboot:
 * `cp squashfs-root/usr/lib/shim/shimx64.efi.signed.latest /path/to/DigitalVAR/server/secure-netboot/shimx64.efi`
 * `cp squashfs-root/usr/lib/grub/x86_64-efi-signed/grubnetx64.efi.signed /path/to/DigitalVAR/server/secure-netboot/grubx64.efi`
+Copy the firmware + device drivers folder into server/squashfs-root for filesystem.squashfs
+* `rm -rf /path/to/DigitalVAR/server/squashfs-root/lib/modules/old-v.w.x-y-z`
+* `rm -rf /path/to/DigitalVAR/server/squashfs-root/lib/firmware`
+* `cp squashfs-root/lib/firmware /path/to/DigitalVAR/server/squashfs-root/lib`
+* `cp squashfs-root/lib/modules/v.w.x-y-z /path/to/DigitalVAR/server/squashfs-root/lib/modules`
 * Rebuild the server filesystem.squashfs: 
-  `./rebuild.sh server`
+* `./rebuild.sh server`
 Copy the following into the Clonezilla USB boot drive:
 * `/path/to/latest/downloaded/clonezilla-zip/live/vmlinuz` -> /path/to/Clonezilla-USB/live
 * `/path/to/latest/downloaded/clonezilla-zip/live/initrd.img` -> /path/to/Clonezilla-USB/live
