@@ -1,48 +1,15 @@
 #!/bin/bash
-
-if [ "${1}" == "--beast" ] || [ "${1}" == "beast" ]; then
-	if [ "$(df -P beast/squashfs-root/dev | tail -1 | cut -d' ' -f1)" == "udev" ]; then
-		echo "ERROR: Exit from chroot!!!"
-		exit 1
-	fi
-	sudo cp beast/{bigbox,fluorchem,fluorchem.sh,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,usb-qa.sh,usb-ntfs.sh,usb-fat32.sh,xxhsum} beast/squashfs-root/usr/bin
-	sudo chmod +x beast/squashfs-root/usr/bin/{bigbox,fluorchem,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,usb-qa.sh,usb-fat32.sh,usb-ntfs.sh,xxhsum}
-	sudo cp beast/{lightblue8599.xxhsums,motd.txt,profile,rc.local,resolv.conf} beast/squashfs-root/etc
-	sudo cp beast/logind.conf beast/squashfs-root/etc/systemd
-	sudo cp beast/sources.list beast/squashfs-root/etc/apt
-	sudo cp beast/drbl-repository.list beast/squashfs-root/etc/apt/sources.list.d
-	sudo cp beast/interfaces beast/squashfs-root/etc/network
-	sudo cp beast/S03prep-drbl-clonezilla beast/squashfs-root/etc/ocs/ocs-live.d
-	sudo cp beast/{id_rsa,id_rsa.pub} beast/squashfs-root/opt
-	sudo rm -rf beast/filesystem.squashfs && sudo mksquashfs beast/squashfs-root beast/filesystem.squashfs -b 1024k -comp xz -Xbcj x86 -e boot && \
-	echo "NOTE: Copy beast/filesystem.squashfs to CLONER/live"
-	exit 0
-fi
-
-if [ "${1}" == "--beast-chroot" ] || [ "${1}" == "beast-chroot" ]; then
-	sudo mount -B /dev beast/squashfs-root/dev
-	sudo mount -B /tmp beast/squashfs-root/tmp
-	sudo mount -B /proc beast/squashfs-root/proc
-	sudo mount -B /sys beast/squashfs-root/sys
-	sudo chroot beast/squashfs-root/
-	sudo umount beast/squashfs-root/dev
-	sudo umount beast/squashfs-root/tmp
-	sudo umount beast/squashfs-root/proc
-	sudo umount beast/squashfs-root/sys
-	exit 0
-fi
-
 if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	if [ "$(df -P server/squashfs-root/dev | tail -1 | cut -d' ' -f1)" == "udev" ]; then
 		echo "ERROR: Exit from chroot!!!"
 		exit 1
 	fi
 	# Propigate kernel modules throughout everywhere
-	echo " * Propigating kernel modules everywhere..."
-	sudo rm -rf server/squashfs-root/tftpboot/node_root/lib/modules/*
-	sudo cp -a server/initrd-root/lib/modules/* server/squashfs-root/tftpboot/node_root/lib/modules
-	sudo rm -rf server/squashfs-root/usr/lib/modules/*
-	sudo cp -a server/initrd-root/lib/modules/* server/squashfs-root/usr/lib/modules
+	#echo " * Propigating kernel modules everywhere..."
+	#sudo rm -rf server/squashfs-root/tftpboot/node_root/lib/modules/*
+	#sudo cp -a server/initrd-root/lib/modules/* server/squashfs-root/tftpboot/node_root/lib/modules
+	#sudo rm -rf server/squashfs-root/usr/lib/modules/*
+	#sudo cp -a server/initrd-root/lib/modules/* server/squashfs-root/usr/lib/modules
 	#echo " * Propigating firmware blobs everywhere..."
 	#sudo rm -rf server/squashfs-root/tftpboot/node_root/lib/firmware/*
 	#sudo cp -a server/initrd-root/lib/firmware/* server/squashfs-root/tftpboot/node_root/lib/firmware
@@ -51,8 +18,7 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	#
 	
 	echo " * Copying everything from 'server/' folder to where they belong..."
-	sudo cp -r server/wicd server/squashfs-root/opt
-	sudo cp server/authorized_keys server/squashfs-root/opt
+	sudo cp server/secure-netboot/* server/squashfs-root/tftpboot/nbi_img
 	sudo cp server/ocs-live-blacklist.conf server/initrd-root/etc/modprobe.d
 	sudo cp server/ocs-live-blacklist.conf server/squashfs-root/etc/modprobe.d
 	sudo cp server/syncthing.service server/squashfs-root/usr/lib/systemd/user
@@ -76,18 +42,17 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	sudo cp server/12-prevent-automount.rules server/squashfs-root/etc/udev/rules.d
 	sudo cp server/sources.list server/squashfs-root/etc/apt
 	sudo cp server/{bigbox,fluorchem,fluorchem.sh,iflex.sh,iflex-qa.sh,onthefly.sh,onthefly-ssd.sh,jesse.sh,usb.sh,usb-qa.sh,usb-ntfs.sh,usb-fat32.sh,update.sh,xxhsum} server/squashfs-root/usr/bin
-	sudo cp server/ocs-restore-mdisks server/squashfs-root/usr/sbin
-	sudo cp server/ocs-srv-live server/squashfs-root/sbin
+	sudo cp server/{ocs-restore-mdisks,ocs-srv-live,ocs-expand-gpt-pt} server/squashfs-root/usr/sbin
 	sudo cp server/resolv.conf server/squashfs-root/etc
 	sudo cp server/resolved.conf server/squashfs-root/etc/systemd
 	sudo cp server/start-clonezilla-server.sh server/squashfs-root/opt
+	sudo cp server/ocs-functions-clonezilla-3.1.1-27 server/squashfs-root/opt
 	sudo cp server/Clonezilla-server.desktop server/squashfs-root/usr/share/drbl/setup/files/misc/desktop-icons/drbl-live/Clonezilla-server.desktop
-	sudo cp -r server/mount server/squashfs-root/opt
 
 	
 	echo " * Chmoding executables..."
 	sudo chmod +x server/squashfs-root/usr/share/drbl/setup/files/misc/desktop-icons/drbl-live/{Super_Thunar.desktop,Clonezilla-server.desktop,syncthing.desktop}
-	sudo chmod +x server/squashfs-root/usr/sbin/{ocs-live-netcfg,ifupdownsucks.sh,startafterifupdownsucks.sh,drbl-live,drbl-sl,ocs-restore-mdisks}
+	sudo chmod +x server/squashfs-root/usr/sbin/{ocs-live-netcfg,ifupdownsucks.sh,startafterifupdownsucks.sh,drbl-live,drbl-sl,ocs-restore-mdisks,ocs-expand-gpt-pt}
 	sudo chmod +x server/squashfs-root/usr/share/drbl/sbin/{drbl-functions,ocs-functions,drbl-live-conf-X}
 	sudo chmod +x server/squashfs-root/usr/share/drbl/setup/files/DBN/firstboot.default-DBN.drbl
 	sudo chmod +x server/squashfs-root/tftpboot/node_root/etc/init.d/firstboot
@@ -172,8 +137,6 @@ fi
 echo "ERROR: Wrong arguments or not enough arguments"
 echo "Example: ${0} [OPTION]"
 echo "OPTION:"
-echo " --beast, beast                   - Rebuild for imaging beast"
-echo " --beast-chroot, beast-chroot     - Chroot into beast's rootfs"
 echo " --server, server                 - Rebuild for imaging servers"
 echo " --server-chroot, server-chroot   - Chroot into server's rootfs"
 echo " --test-initrd, test-initrd       - Test Clonezilla-Live initrd with qemu"

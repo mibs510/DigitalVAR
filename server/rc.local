@@ -22,8 +22,9 @@ if [ -f /sys/class/net/eth1/address ]; then
 	SERVER2_MAC="90:b1:1c:29:91:55" # server2
 	SERVER3_MAC="14:18:77:53:2c:84" # SSD/HDD Imager
 	SERVER4_MAC="90:b1:1c:28:5c:64" # Backup Clonezilla server2
+	SERVER5_MAC="ec:f4:bb:e8:99:c5" # Middle row
 	
-	if [ "$ETH1_MAC" == "$SERVER1_MAC" ] || [ "$ETH1_MAC" == "$SERVER2_MAC" ] || [ "$ETH1_MAC" == "$SERVER3_MAC" ] || [ "$ETH1_MAC" == "$SERVER4_MAC" ]; then
+	if [ "$ETH1_MAC" == "$SERVER1_MAC" ] || [ "$ETH1_MAC" == "$SERVER2_MAC" ] || [ "$ETH1_MAC" == "$SERVER3_MAC" ] || [ "$ETH1_MAC" == "$SERVER4_MAC" ] || [ "$ETH1_MAC" == "$SERVER5_MAC" ]; then
 		
 		PARTIMAG=$(lsblk -o name,serial,label | grep -i partimag | cut -d' ' -f1 | sed "s/[^[:alnum:]-]//g")
 		
@@ -45,7 +46,6 @@ if [ -f /sys/class/net/eth1/address ]; then
 			cp /opt/terminalrc /home/user/.config/xfce4/terminal
 			dhclient eth0
 		fi
-		chmod -R 700 /home/user/.ssh
 		chown -R user:user /home/user
 		chown -R user:user /home/partimag
 		exit 0
@@ -64,8 +64,9 @@ fi
 mkdir -p /home/user/.config/gtk-3.0 > /dev/null 2>&1
 cp /opt/{thunar.xml,thunar-volman.xml,xfce4-desktop.xml} /home/user/.config/xfce4/xfconf/xfce-perchannel-xml > /dev/null 2>&1
 cp /opt/bookmarks /home/user/.config/gtk-3.0 > /dev/null 2>&1
+cp /usr/share/drbl/setup/files/misc/desktop-icons/* /home/user/Desktop > /dev/null 2>&1
 chown -R user:user /home/user > /dev/null 2>&1
-cp /opt/mount /lib/live 2>&1
+cp /opt/mount /lib/live > /dev/null 2>&1
 
 
 exit 0

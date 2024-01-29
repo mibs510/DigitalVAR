@@ -26,10 +26,6 @@ rebuild.sh OPTION
 
 OPTION:
 
---beast, beast						- Rebuild for imaging beast
-
---beast-chroot, beast-chroot		- Chroot into beast's rootfs
-
 --server, server					- Rebuild for imaging servers
 
 --server-chroot, server-chroot		- Chroot into server's rootfs
@@ -40,67 +36,6 @@ OPTION:
 
 ### --test-initrd, test-initrd
 You will need [qemu](https://www.qemu.org/) installed in your system.
-
-# Beast
----
-
-### beast/filesystem.squashfs
-You'll need an exisitng filesystem.squahfs as I couldn't upload my working
-copy due to file size limits on github. A download link to can be found 
-[here](https://mega.nz/#!u9ZhGIzQ!l_C5uRzM-TDhhGgjuEz2r_npwrV16YNlYHrJYxuBjlk).
-You'll have to rename it (filesystem.squashfs) and uncompress it inside 
-/path/to/[DigitalVAR/beast](beast/) by executing the following:
-
-`sudo unsquashfs filesystem.squashfs`
-
-### Packages
-* Installed: inotify-tools, curl, sshpass, pandoc, pdftk, imagemagick,
-			 texlive-latex-base, texlive-fonts-recommended,
-			 texlive-fonts-extra, lmodern, ftp-upload
-* Uninstalled: 
-
-You could reproduce this by chrooting:
-
-`./rebuild.sh beast-chroot`
-
-and then installing said package(s):
-
-`apt update && apt install curl inotify-tools`
-
-#### DO NOT UPDATE PACKAGES (apt upgrade)
-
-### beast/rc.local
-The purpose of [rc.local](beast/rc.local) was to provide a 
-quick-n-dirty-easy-updater for all scripts and C programs. It also gave
-us the flexibilty to manage updates remotely upon each boot without the
-need of repacking filesystem.squashfs for each minor change.
-
-### beast/motd.txt
-[motd.txt](beast/motd.txt) will give you a synopsis of all the scripts
-and C programs I wrote. This txt file is displayed on every tty login 
-instance, as seen in [profile](beast/profile).
-
-### Adding new tools (as seen in motd.txt)
-Three files are involved in my quick-n-dirty-easy-updater to deploy new
-tools on-the-fly.
-
-* Add the files/executables in [beast/](beast/) directory
-* Chmod them (`chmod +x script.sh/binarary`) if they're executables
-
-  Although it's not necessary as the quick-n-dirty-easy-updater takes 
-  care of this but it might be needed for local development purposes.
-
-* Open: [file-chmodx](beast/file-chmodx), [file-dest](beast/file-dest), and [files](beast/files)
-* Add the name of the file into [files](beast/files) at the end of the existing list
-* Add the destintation of where the file will reside in the filesystem.squashfs at the end of [file-dest](beast/file-dest)
-* If the file is an executable/script add the file name with its absolute path into the end of [file-chmodx](beast/file-chmodx)
-* Optionally add the synopsis of the new tool into [motd.txt](beast/motd.txt)
-
-Don't forget to add the new file into lines 8-9 in `rebuild.sh` so that
-filesystem.squashfs gets updated on the next rebuild.
-
-### Deploying
-Copy filesystem.squahfs to /path/to/CLONER/live
 
 # Server
 ---
@@ -172,6 +107,7 @@ that faces the PXE clients.
 
 ### server/ocs-functions
 * Line(s) edited: 4865-4866, 6596-6598, 6651-6653, 6932-6934, 7609-7911, no more `Press Enter` nonsense
+* Line 8819: Prevent set-netboot-1st-efi-nvram from running. reorders the boot order on most Dell firmware so that PXE (IPv4 & IPv6) are at the top. 
 
 ### server/ocs-live-blacklist.conf
 This is used to blacklist kernel modules from loading. Usually these 
@@ -221,43 +157,28 @@ for the ability of (a) to click on a USB mass storage device and automatically
 mount it, and (b) to set Thunar's default view as 'detailed list'.
 
 ### server/vmlinuz - Kernel
-We used Clonezilla SE stable release (2.5.1-16) as the base image for
-our modified copy. The kernel that was shipped out with (4.9.0-2-amd64)
-was infact missing some entries in the modules.alias file for newer
-hardware. So I decided to update to the latest kernel (4.18.7 - as of 9/9/2018).
+Follow the steps below to update the Linux kernel. The linux Kernel is located in two locations. The first being in the live folder inside the USB drive that allows our servers to boot Clonezilla in secure mode. THe second location is critical to our workflow and allows us to image computers without disabling secure boot. This copy of the Linux kernel is located inside of squash filesystem.
 
-The kernel modules are located in three different places!!!
- * initrd.img (/lib/modules) - Server and PXE use
- * /lib/modules - Server use after initrd.img
- * /tftpboot/nbi_root/lib/modules - PXE use, after initrd.img is done /tftpboot/nbi_root directory gets mounted as /
+Note: We cannot use a custom compiled kernel. This is because we want to use a signed boot loader without the need to disable secure boot on each computer we image. We can only do this if we download a signed copy of the kernel which isn't modifiable.
 
-The steps below summarize what needs to be done so that
-filesystem.squashfs & the intial ramdisk can utilize the new kernel
-modules. All three locations must have the same exact modules.
-
-* Download the latest stable kernel from [http://kernel.org/](http://kernel.org)
-* Untar it: `tar xvf linux-*.tar.xz`
-* `cd linux-*`
-* `make menuconfig`
-   
-   Include all desired modules, I included: iSCSi, SCSi, PATA, SATA, NVMe, Ethernet, USB Ethernet, 802.11, and all filesystems
-   
-   `make allmodconfig` did not yield a usable kernel and modules
-* `make -j 16` (16 = CPU cores * 2)
-* `mkdir install`
-* `INSTALL_MOD_PATH="install" make modules_install`
-* `cp arch/x86/boot/bzImage /path/to/DigitalVAR/server/vmlinuz`
-* Delete old modules: `rm -rf /path/to/DigitalVAR/server/initrd-root/lib/modules/*`
-* Delete unneeded symlinks: `rm -rf install/lib/modules/*/{build,source}`
-* Strip debugging symbols from kernel modules: `find install/ -iname "*.ko" -exec strip --strip-debug {} \;`
-* Copy new modules: `cp -r install/lib/modules/* /path/to/DigitalVAR/server/initrd-root/lib/modules`
-* Go back to this repo: `cd /path/to/DigitalVAR`
-* Rebuild initial ramdisk `./rebuild.sh initrd`
-* Test initial ramdisk (Optional, kernel should not panic, will dump you into busybox bash if successful):
-  `./rebuild.sh test-initrd`
-* Rebuild the server filesystem.squashfs to propigate drivers (Not needed until complete with all other modifications): 
+* Download the latest Clonezilla Ubuntu AMD64 zip from [https://clonezilla.org/downloads.php](https://clonezilla.org/downloads.php)
+* Unzip it: `uzip clonezilla-live-*.zip`
+* `cd clonezilla-live-*`
+Copy the following into server/secure-netboot:
+* `cp live/vmlinuz /path/to/DigitalVAR/server/secure-netboot`
+* `cp live/initrd.img /path/to/DigitalVAR/server/secure-netboot`
+Then unsquash filesystem.squashfs to get the signed shim and grubnet bootloader
+* `cd live`
+* `sudo unsquashfs filesystem.squashfs`
+Copy the following files into server/secure-netboot:
+* `cp squashfs-root/usr/lib/shim/shimx64.efi.signed.latest /path/to/DigitalVAR/server/secure-netboot/shimx64.efi`
+* `cp squashfs-root/usr/lib/grub/x86_64-efi-signed/grubnetx64.efi.signed /path/to/DigitalVAR/server/secure-netboot/grubx64.efi`
+* Rebuild the server filesystem.squashfs: 
   `./rebuild.sh server`
-
+Copy the following into the Clonezilla USB boot drive:
+* `/path/to/latest/downloaded/clonezilla-zip/live/vmlinuz` -> /path/to/Clonezilla-USB/live
+* `/path/to/latest/downloaded/clonezilla-zip/live/initrd.img` -> /path/to/Clonezilla-USB/live
+* `/path/to/DigitalVAR/server/filesystem.squashfs` -> /path/to/Clonezilla-USB/live
 
 ### Deploying
-Copy initrd.img, filesystem.squahfs, and vmlinuz to /path/to/CLONER SE/live
+Copy initrd.img, filesystem.squashfs, and vmlinuz to /path/to/CLONER SE/live
