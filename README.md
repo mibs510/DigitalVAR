@@ -157,12 +157,12 @@ for the ability of (a) to click on a USB mass storage device and automatically
 mount it, and (b) to set Thunar's default view as 'detailed list'.
 
 ### server/vmlinuz - Kernel
-Follow the steps below to update the Linux kernel. The linux Kernel is located in two locations. The first being in the live folder inside the USB drive that allows our servers to boot Clonezilla in secure mode. The second location is critical to our workflow and allows us to image computers without disabling secure boot. This copy of the Linux kernel is located inside of the squash filesystem. that is uncompressed into RAM during boot
+Follow the steps below to update the Linux kernel. The linux Kernel is located in two locations. The first being in the live folder inside the USB drive that allows our servers to boot Clonezilla in secure mode. The second location is critical to our workflow and allows us to image computers without disabling secure boot. This copy of the Linux kernel is located inside of the squash filesystem that is uncompressed into RAM during boot
 
-Note: We cannot use a custom compiled kernel. This is because we do not want to disable secure boot for each computer that we want to image and the only way to accomplish this is to use a signed kernel + bootloader. We can only do this if we download a signed copy of the kernel which isn't modifiable.
+Note: We cannot use a custom compiled kernel. This is because we do not want to disable secure boot for each computer that we want to image and the only way to accomplish this is to use a signed kernel + bootloader. We can only do this if we download a signed copy of the kernel which isn't modifiable. Refer to [this](https://docs.vyatta.com/en/supported-platforms/vrouter/installation-and-upgrade/pxe-boot/installing-vyatta-nos-using-pxe-boot/booting-a-secure-boot-uefi-system-using-pxe) for more information regarding secure netboot.
 
 * Download the latest Clonezilla Ubuntu AMD64 zip from [https://clonezilla.org/downloads.php](https://clonezilla.org/downloads.php)
-* Unzip it: `uzip clonezilla-live-*.zip`
+* Unzip it: `unzip clonezilla-live-*.zip`
 * `cd clonezilla-live-*`
 Copy the following into server/secure-netboot:
 * `cp live/vmlinuz /path/to/DigitalVAR/server/secure-netboot`
@@ -170,9 +170,11 @@ Copy the following into server/secure-netboot:
 Then unsquash filesystem.squashfs to get the signed shim and grubnet bootloader
 * `cd live`
 * `sudo unsquashfs filesystem.squashfs`
-Copy the following files into server/secure-netboot:
-* `cp squashfs-root/usr/lib/shim/shimx64.efi.signed.latest /path/to/DigitalVAR/server/secure-netboot/shimx64.efi`
-* `cp squashfs-root/usr/lib/grub/x86_64-efi-signed/grubnetx64.efi.signed /path/to/DigitalVAR/server/secure-netboot/grubx64.efi`
+Copy the following files and directory into server/secure-netboot:
+* `cp /path/to/clonezilla-live-*-*-amd64/live/squashfs-root/usr/lib/shim/shimx64.efi.signed.latest /path/to/DigitalVAR/server/secure-netboot/shimx64.efi`
+* `cp /path/to/clonezilla-live-*-*-amd64/live/squashfs-root/usr/lib/grub/x86_64-efi-signed/grubnetx64.efi.signed /path/to/DigitalVAR/server/secure-netboot/grubx64.efi`
+* `cp /path/to/clonezilla-live-*-*-amd64/EFI/boot/bootx64.efi /path/to/DigitalVAR/server/secure-netboot`
+* `cp /path/to/clonezilla-live-*-*-amd64/live/squashfs-root/usr/lib/grub/x86_64-efi /path/to/DigitalVAR/server/secure-netboot`
 Copy the firmware + device drivers folder into server/squashfs-root for filesystem.squashfs
 * `rm -rf /path/to/DigitalVAR/server/squashfs-root/lib/modules/old-v.w.x-y-z`
 * `rm -rf /path/to/DigitalVAR/server/squashfs-root/lib/firmware`

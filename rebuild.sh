@@ -18,7 +18,7 @@ if [ "${1}" == "--server" ] || [ "${1}" == "server" ]; then
 	#
 	
 	echo " * Copying everything from 'server/' folder to where they belong..."
-	sudo cp server/secure-netboot/* server/squashfs-root/tftpboot/nbi_img
+	sudo cp -r server/secure-netboot/* server/squashfs-root/tftpboot/nbi_img
 	sudo cp server/ocs-live-blacklist.conf server/initrd-root/etc/modprobe.d
 	sudo cp server/ocs-live-blacklist.conf server/squashfs-root/etc/modprobe.d
 	sudo cp server/syncthing.service server/squashfs-root/usr/lib/systemd/user
